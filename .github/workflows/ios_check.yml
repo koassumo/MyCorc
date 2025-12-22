@@ -1,0 +1,27 @@
+name: iOS Build Check 🍏
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+
+jobs:
+  build-ios:
+    runs-on: macos-latest # 👈 Самое важное: просим у GitHub виртуальный Мак
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'zulu'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Compile Kotlin for iOS
+        # Эта команда проверит, что твой Kotlin-код превращается в Swift без ошибок
+        run: ./gradlew :composeApp:compileKotlinIosSimulatorArm64
