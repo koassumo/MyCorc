@@ -13,7 +13,9 @@ composeMultiplatform = "1.9.3"
 junit = "4.13.2"
 kotlin = "2.2.21"
 
-kotlinx-datetime = "0.6.0"
+kotlinx-datetime = "0.7.1"
+
+
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
