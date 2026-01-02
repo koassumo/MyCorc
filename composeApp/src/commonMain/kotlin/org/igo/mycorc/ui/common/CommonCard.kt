@@ -23,13 +23,17 @@ fun CommonCard(
     modifier: Modifier = Modifier,
 
     // Внешние отступы (Margin)
-    cardPadding: PaddingValues = PaddingValues(vertical = 8.dp, horizontal = Dimens.ScreenPaddingSides),
+    cardPadding: PaddingValues = PaddingValues(
+        top = Dimens.CommonCardPaddingTop,
+        start = Dimens.ScreenPaddingSides,
+        end = Dimens.ScreenPaddingSides,
+        bottom = Dimens.CommonCardPaddingBottom),
 
     // Внутренние отступы (Padding) - берем из Dimens
     contentPadding: PaddingValues = PaddingValues(
         top = Dimens.CommonCardContentPaddingTop,
-        start = Dimens.CommonCardContentPaddingSides,
-        end = Dimens.CommonCardContentPaddingSides,
+        //start = Dimens.CommonCardContentPaddingSides,
+        //end = Dimens.CommonCardContentPaddingSides,
         bottom = Dimens.CommonCardContentPaddingBottom
     ),
 

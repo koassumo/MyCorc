@@ -3,7 +3,6 @@ package org.igo.mycorc.domain.model
 import kotlin.time.Instant
 import kotlin.time.ExperimentalTime
 
-
 data class Note @OptIn(ExperimentalTime::class) constructor(
     val id: String,
 
@@ -13,11 +12,6 @@ data class Note @OptIn(ExperimentalTime::class) constructor(
     val createdAt: Instant = kotlin.time.Clock.System.now(),
 
 
-
-
-
-
-    
     // --- 2. Что засунули (Биомасса) ---
     val massWeight: Double,       // Вес сырья (кг)
     val massValue: Double,        // Объем сырья
