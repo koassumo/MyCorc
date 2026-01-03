@@ -15,9 +15,10 @@ import kotlin.time.ExperimentalTime
 
 class DashboardViewModel : ViewModel() {
 
-    // 1. Храним состояние (закрытое и открытое)
+    // 1. Вышка (Broadcaster + Storage)
     private val _state = MutableStateFlow(DashboardState())
-    val state: StateFlow<DashboardState> = _state.asStateFlow()
+    // 2. Публичная частота (ReadOnly Stream)
+    val state: StateFlow<DashboardState> = _state.asStateFlow() //.asStateFlow это типа наследования вышки(!)
 
     init {
         loadNotes()

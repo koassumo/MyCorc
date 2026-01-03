@@ -14,7 +14,11 @@ kotlin {
             jvmTarget.set(JvmTarget.JVM_11)
         }
     }
-    
+
+    // 👇 1. ВКЛЮЧАЕМ DESKTOP (JVM)
+    jvm("desktop")
+
+
     listOf(
         iosArm64(),
         iosSimulatorArm64()
@@ -54,6 +58,20 @@ kotlin {
 
 
         }
+
+
+
+        // 👇 2. ЗАВИСИМОСТИ ДЛЯ DESKTOP
+        val desktopMain by getting {
+            dependencies {
+                implementation(compose.desktop.currentOs)
+                // Библиотека для работы корутин в оконном интерфейсе Java (Swing)
+                // Если будет гореть красным - скажи, добавим в toml файл.
+                implementation(libs.kotlinx.coroutines.swing)
+            }
+        }
+
+
         commonTest.dependencies {
             implementation(libs.kotlin.test)
             //
@@ -93,3 +111,17 @@ dependencies {
     debugImplementation(compose.uiTooling)
 }
 
+
+// 👇 3. НАСТРОЙКИ ЗАПУСКА ПРИЛОЖЕНИЯ НА ПК
+compose.desktop {
+    application {
+        // Указываем точку входа (MainKt - это файл main.kt, который мы создадим)
+        mainClass = "org.igo.mycorc.MainKt"
+
+        nativeDistributions {
+            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+            packageName = "MyCorc"
+            packageVersion = "1.0.0"
+        }
+    }
+}
