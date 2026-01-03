@@ -14,7 +14,7 @@ data class BottomNavItem(
 
 // Наш список кнопок. Легко добавить новую здесь.
 val bottomNavItems = listOf(
-    BottomNavItem("Партии", Destinations.NOTES, Icons.Default.Home),
+    BottomNavItem("Партии", Destinations.DASHBOARD, Icons.Default.Home),
     BottomNavItem("Заводы", Destinations.FACILITIES, Icons.Default.Settings),
     BottomNavItem("Профиль", Destinations.PROFILE, Icons.Default.AccountCircle)
 )

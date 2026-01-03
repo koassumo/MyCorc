@@ -16,12 +16,12 @@ import androidx.compose.ui.Modifier
 import org.igo.mycorc.ui.common.CommonBottomBar
 import org.igo.mycorc.ui.navigation.Destinations
 import org.igo.mycorc.ui.navigation.bottomNavItems
-import org.igo.mycorc.ui.screen.notelist.NoteListScreen
+import org.igo.mycorc.ui.screen.dashboard.DashboardScreen
 
 @Composable
 fun MainScreen() {
     // Храним текущий экран в переменной (простейшая навигация)
-    var currentRoute by remember { mutableStateOf(Destinations.NOTES) }
+    var currentRoute by remember { mutableStateOf(Destinations.DASHBOARD) }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -42,7 +42,7 @@ fun MainScreen() {
                 .padding(innerPadding) // Учитываем высоту нижней панели
         ) {
             when (currentRoute) {
-                Destinations.NOTES -> NoteListScreen()
+                Destinations.DASHBOARD -> DashboardScreen()
 
                 Destinations.FACILITIES -> PlaceholderScreen("Раздел Заводы")
                 Destinations.PROFILE -> PlaceholderScreen("Личный кабинет")

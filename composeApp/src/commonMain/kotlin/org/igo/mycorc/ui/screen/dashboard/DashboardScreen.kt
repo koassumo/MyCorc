@@ -1,4 +1,4 @@
-package org.igo.mycorc.ui.screen.notelist
+package org.igo.mycorc.ui.screen.dashboard
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,33 +11,32 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import org.igo.mycorc.domain.model.Note
 import org.igo.mycorc.ui.common.CommonCard
 import org.igo.mycorc.ui.common.CommonTopBar
+import org.koin.compose.viewmodel.koinViewModel // 👈 Обязательный импорт для Koin
 
 @Composable
-fun NoteListScreen() {
-    val viewModel = remember { NoteListViewModel() }
+fun DashboardScreen() {
+    // 💉 ВНЕДРЕНИЕ ЗАВИСИМОСТИ (Koin)
+    // Koin сам создаст ViewModel (и переживет поворот экрана)
+    val viewModel = koinViewModel<DashboardViewModel>()
+
     val state by viewModel.state.collectAsState()
 
     Column(Modifier.fillMaxSize()) {
+        CommonTopBar(title = "Dashboard") // Поменял заголовок под новое имя
 
-        // 1. Наша универсальная шапка
-        CommonTopBar(title = "Мои партии")
-
-        // 2. Контент
         if (state.isLoading) {
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator()
             }
         } else {
-            // Список от края до края
             LazyColumn(modifier = Modifier.fillMaxSize()) {
                 items(state.notes) { note ->
-                    NoteItem(note = note)
+                    DashboardItem(note = note)
                 }
             }
         }
@@ -45,8 +44,7 @@ fun NoteListScreen() {
 }
 
 @Composable
-fun NoteItem(note: Note) {
-    // CommonCard сам возьмет отступы из Dimens
+fun DashboardItem(note: Note) {
     CommonCard(
         onClick = { println("Нажали на ${note.id}") }
     ) {
@@ -54,7 +52,11 @@ fun NoteItem(note: Note) {
         Text(text = "Вес: ${note.massWeight} кг")
 
         if (note.coalWeight != null) {
-            Text(text = "🏁 Уголь: ${note.coalWeight} кг", color = MaterialTheme.colorScheme.primary)
+            Text(
+                text = "🏁 Уголь: ${note.coalWeight} кг",
+                // Используем цвет из нашей новой темы (Theme.kt)
+                color = MaterialTheme.colorScheme.primary
+            )
         }
     }
 }

@@ -1,7 +1,7 @@
 package org.igo.mycorc.ui.navigation
 
 object Destinations {
-    const val NOTES = "notes"
-    const val FACILITIES = "facilities"
-    const val PROFILE = "profile"
+    const val DASHBOARD = "DASHBOARD"
+    const val FACILITIES = "FACILITIES"
+    const val PROFILE = "PROFILE"
 }

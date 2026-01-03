@@ -1,4 +1,4 @@
-package org.igo.mycorc.ui.screen.notelist
+package org.igo.mycorc.ui.screen.dashboard
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,11 +13,11 @@ import org.igo.mycorc.domain.model.Note
 import org.igo.mycorc.domain.model.NoteStatus
 import kotlin.time.ExperimentalTime
 
-class NoteListViewModel : ViewModel() {
+class DashboardViewModel : ViewModel() {
 
     // 1. Храним состояние (закрытое и открытое)
-    private val _state = MutableStateFlow(NoteListState())
-    val state: StateFlow<NoteListState> = _state.asStateFlow()
+    private val _state = MutableStateFlow(DashboardState())
+    val state: StateFlow<DashboardState> = _state.asStateFlow()
 
     init {
         loadNotes()
