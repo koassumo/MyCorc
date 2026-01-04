@@ -17,6 +17,7 @@ import org.igo.mycorc.ui.common.CommonBottomBar
 import org.igo.mycorc.ui.navigation.Destinations
 import org.igo.mycorc.ui.navigation.bottomNavItems
 import org.igo.mycorc.ui.screen.dashboard.DashboardScreen
+import org.igo.mycorc.ui.screen.settings.SettingsScreen
 
 @Composable
 fun MainScreen() {
@@ -43,8 +44,8 @@ fun MainScreen() {
         ) {
             when (currentRoute) {
                 Destinations.DASHBOARD -> DashboardScreen()
-
                 Destinations.FACILITIES -> PlaceholderScreen("Раздел Заводы")
+                Destinations.SETTINGS -> SettingsScreen()
                 Destinations.PROFILE -> PlaceholderScreen("Личный кабинет")
             }
         }
