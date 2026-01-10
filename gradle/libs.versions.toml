@@ -18,6 +18,7 @@ koin = "4.0.0"
 
 kotlinx-coroutines = "1.9.0"
 
+
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-testJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }

@@ -9,7 +9,7 @@ val uiModule = module {
     // Koin сам посмотрит в конструктор NoteListViewModel, увидит, что там нужно,
     // найдет это в других модулях и подставит.
     viewModelOf(::DashboardViewModel)
-    viewModelOf(::SettingsViewModel)
+    viewModelOf(::SettingsViewModel)  //да прибудет с тобою koin (1)
 }
 
 
