@@ -6,6 +6,8 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.sqldelight)
 }
 
 kotlin {
@@ -36,6 +38,8 @@ kotlin {
             //
             implementation(libs.koin.android)
             // implementation(libs.koin.compose)
+            implementation(libs.sqldelight.android)
+
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -55,11 +59,11 @@ kotlin {
             implementation(libs.koin.compose.viewmodel)
 
             implementation(libs.multiplatform.settings)
-
+            implementation(libs.sqldelight.coroutines)
+            // Serialization (у тебя уже должен быть)
+            implementation(libs.kotlinx.serialization.json)
 
         }
-
-
 
         // 👇 2. ЗАВИСИМОСТИ ДЛЯ DESKTOP
         val desktopMain by getting {
@@ -68,14 +72,28 @@ kotlin {
                 // Библиотека для работы корутин в оконном интерфейсе Java (Swing)
                 // Если будет гореть красным - скажи, добавим в toml файл.
                 implementation(libs.kotlinx.coroutines.swing)
+                implementation(libs.sqldelight.jvm)
             }
         }
 
+        iosMain.dependencies {
+            implementation(libs.sqldelight.native)
+        }
 
         commonTest.dependencies {
             implementation(libs.kotlin.test)
             //
             implementation(libs.koin.test)
+        }
+    }
+}
+
+// 👇 НАСТРОЙКА ГЕНЕРАЦИИ БАЗЫ
+sqldelight {
+    databases {
+        create("AppDatabase") {
+            // Пакет, где появится сгенерированный класс AppDatabase
+            packageName.set("org.igo.mycorc.db")
         }
     }
 }
