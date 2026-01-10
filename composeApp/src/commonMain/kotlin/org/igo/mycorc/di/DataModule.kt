@@ -1,7 +1,7 @@
 package org.igo.mycorc.di
 
 import org.igo.mycorc.data.repository.NoteRepositoryImpl
-import org.igo.mycorc.domain.repository.NoteRepository
+import org.igo.mycorc.domain.rep_interface.NoteRepository
 import org.koin.dsl.module
 
 val dataModule = module {

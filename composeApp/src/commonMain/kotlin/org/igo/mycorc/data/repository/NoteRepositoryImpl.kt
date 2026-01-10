@@ -1,6 +1,6 @@
 package org.igo.mycorc.data.repository
 
-import org.igo.mycorc.domain.repository.NoteRepository
+import org.igo.mycorc.domain.rep_interface.NoteRepository
 
 class NoteRepositoryImpl : NoteRepository {
 
