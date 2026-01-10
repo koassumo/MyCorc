@@ -1,0 +1,38 @@
+import kotlin.Boolean;
+import org.igo.mycorc.domain.model.NoteStatus;
+import org.igo.mycorc.domain.model.NotePayload;
+
+-- Создание таблицы
+CREATE TABLE noteEntity (
+    id TEXT NOT NULL PRIMARY KEY,
+    userId TEXT NOT NULL,
+    status TEXT AS NoteStatus NOT NULL,
+    updatedAt INTEGER NOT NULL,
+    isSynced INTEGER AS Boolean NOT NULL DEFAULT 0,
+    payload TEXT AS NotePayload NOT NULL
+);
+
+-- Запросы (Functions)
+
+-- Получить все (свежие сверху)
+getAllNotes:
+SELECT * FROM noteEntity
+ORDER BY updatedAt DESC;
+
+-- Для Синхронизации: найти готовые к отправке
+getUnsyncedNotes:
+SELECT * FROM noteEntity
+WHERE isSynced = 0 AND status = 'READY_TO_SEND';
+
+-- Вставка или обновление
+insertNote:
+INSERT OR REPLACE INTO noteEntity(id, userId, status, updatedAt, isSynced, payload)
+VALUES (?, ?, ?, ?, ?, ?);
+
+-- Получить одну запись
+getNoteById:
+SELECT * FROM noteEntity WHERE id = ?;
+
+-- Удалить всё (для тестов или выхода из аккаунта)
+deleteAll:
+DELETE FROM noteEntity;

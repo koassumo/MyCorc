@@ -1,39 +1,40 @@
 package org.igo.mycorc.domain.model
 
-import kotlin.time.Instant
-import kotlin.time.ExperimentalTime
+import kotlinx.serialization.Serializable
 
-data class Note @OptIn(ExperimentalTime::class) constructor(
-    val id: String,
+enum class NoteStatus {
+    DRAFT,
+    READY_TO_SEND,
+    SENT,
+    APPROVED,
+    REJECTED
+}
 
-    // --- 1. Когда начали ---
-    // Было: val createdAt: kotlin.time.Instant (Ошибка)
-    // Стало: Instant (из kotlinx.datetime)
-    val createdAt: Instant = kotlin.time.Clock.System.now(),
-
-
-    // --- 2. Что засунули (Биомасса) ---
-    val massWeight: Double,       // Вес сырья (кг)
-    val massValue: Double,        // Объем сырья
-    val massDescription: String,  // Описание
-
-    // --- 3. Что получили (Уголь) ---
-    val coalWeight: Double? = null,
-    val coalValue: Double? = null,
-    val coalQuality: String? = null,
-
-    // --- 4. Прочее ---
-    val imageUrl: String? = null,
-    val comment: String = "",
-    val status: NoteStatus = NoteStatus.DRAFT
+@Serializable
+data class NotePayload(
+    val step: String = "START",
+    val biomass: BiomassData? = null,
+    val coal: CoalData? = null,
+    val packaging: PackagingData? = null,
+    val locationComment: String? = null
 )
 
+@Serializable
+data class BiomassData(
+    val weight: Double,
+    val type: String,
+    val photoPath: String? = null
+)
 
+@Serializable
+data class CoalData(
+    val weight: Double,
+    val quality: String,
+    val photoPath: String? = null
+)
 
-// Статусы жизненного цикла записи
-enum class NoteStatus {
-    DRAFT,      // Лежит только на телефоне
-    SYNCED,     // Улетело в Firebase
-    VERIFIED,   // Проверено аудитором
-    PAID        // Деньги получены (CORC выпущен)
-}
+@Serializable
+data class PackagingData(
+    val bagCount: Int,
+    val photoPath: String? = null
+)
