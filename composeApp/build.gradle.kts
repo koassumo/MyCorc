@@ -54,7 +54,7 @@ kotlin {
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
 
-            //implementation(libs.multiplatform.settings)
+            implementation(libs.multiplatform.settings)
 
 
         }

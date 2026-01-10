@@ -9,5 +9,8 @@ import org.koin.dsl.module
 val dataModule = module {
     // Явно говорим: "Когда просят NoteRepository, создай NoteRepositoryImpl"
     single<NoteRepository> { NoteRepositoryImpl() }
-    single<SettingsRepository> { SettingsRepositoryImpl() }
+
+    // Koin: "Ага, SettingsRepositoryImpl просит settings.
+    // Я найду settings в platformModule и отдам ему (get())"
+    single<SettingsRepository> { SettingsRepositoryImpl(get()) }
 }
