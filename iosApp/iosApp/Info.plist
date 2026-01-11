@@ -14,5 +14,9 @@
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
+
+    <key>NSCameraUsageDescription</key>
+    <string>We need camera access to attach photos to your biochar batches.</string>
+
 </dict>
 </plist>

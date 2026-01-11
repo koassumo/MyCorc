@@ -60,9 +60,8 @@ kotlin {
 
             implementation(libs.multiplatform.settings)
             implementation(libs.sqldelight.coroutines)
-            // Serialization (у тебя уже должен быть)
             implementation(libs.kotlinx.serialization.json)
-
+            implementation(libs.peekaboo.image.picker)
         }
 
         // 👇 2. ЗАВИСИМОСТИ ДЛЯ DESKTOP
