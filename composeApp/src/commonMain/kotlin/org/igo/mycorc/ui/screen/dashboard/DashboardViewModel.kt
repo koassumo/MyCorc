@@ -2,18 +2,23 @@ package org.igo.mycorc.ui.screen.dashboard
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlin.time.Clock
 import org.igo.mycorc.domain.model.Note
 import org.igo.mycorc.domain.model.NoteStatus
+import org.igo.mycorc.domain.usecase.GetNoteListUseCase
+import org.igo.mycorc.domain.usecase.SaveNoteUseCase
+import kotlin.random.Random
 import kotlin.time.ExperimentalTime
 
-class DashboardViewModel : ViewModel() {
+// 👇 Внедряем UseCases через конструктор. Koin сам все подставит.
+class DashboardViewModel (
+    private val getNoteListUseCase: GetNoteListUseCase,
+    private val saveNoteUseCase: SaveNoteUseCase
+) : ViewModel() {
 
     // 1. Вышка (Broadcaster + Storage)
     private val _state = MutableStateFlow(DashboardState())
@@ -21,39 +26,38 @@ class DashboardViewModel : ViewModel() {
     val state: StateFlow<DashboardState> = _state.asStateFlow() //.asStateFlow это типа наследования вышки(!)
 
     init {
-        loadNotes()
+        subscribeToNotes()
     }
 
-    @OptIn(ExperimentalTime::class)
-    private fun loadNotes() {
+    private fun subscribeToNotes() {
         viewModelScope.launch {
-            // Показываем крутилку
-            _state.update { it.copy(isLoading = true) }
-
-            // Имитация задержки сети (чтобы ты увидел загрузку)
-            delay(1000)
-
-            // Генерируем фейковые данные для теста
-            val dummyNotes = List(5) { index ->
-                Note(
-                    id = index.toString(),
-                    createdAt = Clock.System.now(),
-                    massWeight = 500.0 + (index * 50),
-                    massValue = 10.0,
-                    massDescription = "Дуб, партия №${index + 1}",
-                    status = NoteStatus.DRAFT,
-                    // Добавим уголь только для четных, чтобы проверить условие в UI
-                    coalWeight = if (index % 2 == 0) 200.0 else null
-                )
+            // 👇 Подписываемся на реальный Flow из БД
+            getNoteListUseCase().collect { realNotes ->
+                _state.update {
+                    it.copy(
+                        isLoading = false,
+                        notes = realNotes
+                    )
+                }
             }
+        }
+    }
 
-            // Обновляем состояние (убираем крутилку, кладем данные)
-            _state.update {
-                it.copy(
-                    isLoading = false,
-                    notes = dummyNotes
-                )
-            }
+    // Метод для тестирования записи в БД (вызовем его по кнопке в UI)
+    @OptIn(ExperimentalTime::class)
+    fun addTestNote() {
+        viewModelScope.launch {
+            val newNote = Note(
+                id = Random.nextLong().toString(), // В реальном проекте используйте UUID
+                createdAt = kotlin.time.Clock.System.now(),
+                massWeight = Random.nextInt(100, 1000).toDouble(),
+                massDescription = "Тестовая партия #${Random.nextInt(1, 99)}",
+                status = NoteStatus.DRAFT,
+                coalWeight = null
+            )
+            saveNoteUseCase(newNote)
+            // Нам не нужно вручную обновлять _state.notes!
+            // SQLDelight сам уведомит Flow, и subscribeToNotes() получит новый список.
         }
     }
 }
