@@ -2,6 +2,8 @@ package org.igo.mycorc.di
 
 import app.cash.sqldelight.ColumnAdapter
 import app.cash.sqldelight.db.SqlDriver
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import org.igo.mycorc.db.AppDatabase
 import org.igo.mycorc.db.NoteEntity
@@ -9,16 +11,18 @@ import org.igo.mycorc.domain.model.NotePayload
 import org.igo.mycorc.domain.model.NoteStatus
 import org.igo.mycorc.domain.rep_interface.SettingsRepository
 import org.igo.mycorc.data.repository.SettingsRepositoryImpl
+// 👇 Добавили новые импорты
+import org.igo.mycorc.data.mapper.NoteDbMapper
+import org.igo.mycorc.domain.rep_interface.NoteRepository
+import org.igo.mycorc.data.repository.NoteRepositoryImpl
 import org.koin.dsl.module
 
 val dataModule = module {
 
-    // 1. Сама База Данных (Singleton)
+    // 1. Сама База Данных
     single<AppDatabase> {
-        // ИЗМЕНЕНИЕ: Просим сразу готовый драйвер (он создается в PlatformModule)
         val driver = get<SqlDriver>()
 
-        // --- МАГИЯ JSON АДАПТЕРА ---
         val payloadAdapter = object : ColumnAdapter<NotePayload, String> {
             override fun decode(databaseValue: String) = Json.decodeFromString<NotePayload>(databaseValue)
             override fun encode(value: NotePayload) = Json.encodeToString(value)
@@ -29,25 +33,31 @@ val dataModule = module {
             override fun encode(value: NoteStatus) = value.name
         }
 
+        // Адаптер для boolean пока оставляем, может пригодиться, но в конструктор не передаем,
+        // раз SQLDelight сгенерировал Long.
         val booleanAdapter = object : ColumnAdapter<Boolean, Long> {
             override fun decode(databaseValue: Long): Boolean = databaseValue == 1L
             override fun encode(value: Boolean): Long = if (value) 1L else 0L
         }
 
-        // Создаем и возвращаем готовую базу
         AppDatabase(
             driver = driver,
             noteEntityAdapter = NoteEntity.Adapter(
                 statusAdapter = statusAdapter,
-                isSyncedAdapter = booleanAdapter,
+                // isSyncedAdapter = booleanAdapter, // Закомментировано, так как SQLDelight ждет Long
                 payloadAdapter = payloadAdapter
             )
         )
     }
 
-    // Репозиторий настроек
+    // 2. Репозиторий настроек
     single<SettingsRepository> { SettingsRepositoryImpl(get()) }
 
-    // Репозиторий заметок (пока закомментирован, включим на следующем шаге)
-    // single<NoteRepository> { NoteRepositoryImpl(get()) }
+    // 3. 👇 НОВАЯ ЧАСТЬ: Подключаем работу с заметками
+
+    // Сначала учим Koin создавать Маппер (он нужен Репозиторию)
+    factory { NoteDbMapper() }
+
+    // Теперь создаем Репозиторий. get() подставит Database, второй get() подставит Mapper
+    single<NoteRepository> { NoteRepositoryImpl(get(), get()) }
 }

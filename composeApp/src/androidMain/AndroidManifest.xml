@@ -14,6 +14,7 @@
         <activity
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity,DiscouragedApi"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|mnc|colorMode|density|fontScale|layoutDirection|locale|mcc|navigation|smallestScreenSize|touchscreen|uiMode"
             android:exported="true"
             android:name=".MainActivity">
 

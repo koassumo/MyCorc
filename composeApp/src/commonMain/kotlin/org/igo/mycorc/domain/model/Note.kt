@@ -1,40 +1,24 @@
 package org.igo.mycorc.domain.model
 
-import kotlinx.serialization.Serializable
+import kotlinx.datetime.Instant
+import kotlin.time.ExperimentalTime
 
-enum class NoteStatus {
-    DRAFT,
-    READY_TO_SEND,
-    SENT,
-    APPROVED,
-    REJECTED
-}
 
-@Serializable
-data class NotePayload(
-    val step: String = "START",
-    val biomass: BiomassData? = null,
-    val coal: CoalData? = null,
-    val packaging: PackagingData? = null,
-    val locationComment: String? = null
-)
+// Это основной класс, с которым работает UI.
+// Мы добавили сюда поля, которые раньше были спрятаны в JSON, чтобы UI мог их показать.
+data class Note @OptIn(ExperimentalTime::class) constructor(
+    val id: String,
+    val createdAt: Instant,
+    val status: NoteStatus,
 
-@Serializable
-data class BiomassData(
-    val weight: Double,
-    val type: String,
-    val photoPath: String? = null
-)
+    // Данные о биомассе
+    val massWeight: Double = 0.0,
+    val massDescription: String = "",
+    val massValue: Double = 0.0, // Если нужно для расчетов
 
-@Serializable
-data class CoalData(
-    val weight: Double,
-    val quality: String,
-    val photoPath: String? = null
-)
+    // Данные об угле (может быть null)
+    val coalWeight: Double? = null,
 
-@Serializable
-data class PackagingData(
-    val bagCount: Int,
-    val photoPath: String? = null
+    // Технические поля
+    val isSynced: Boolean = false
 )

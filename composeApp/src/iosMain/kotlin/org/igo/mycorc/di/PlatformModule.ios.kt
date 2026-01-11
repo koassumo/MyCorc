@@ -1,20 +1,19 @@
-package org.igo.mycorc.di
+﻿package org.igo.mycorc.di
 
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.native.NativeSqliteDriver
-import com.russhwolf.settings.NSUserDefaultsSettings
-import com.russhwolf.settings.Settings
 import org.igo.mycorc.db.AppDatabase
 import org.koin.core.module.Module
 import org.koin.dsl.module
+import com.russhwolf.settings.Settings
+import com.russhwolf.settings.NSUserDefaultsSettings
 import platform.Foundation.NSUserDefaults
-
 actual val platformModule: Module = module {
-    single<Settings> {
-        NSUserDefaultsSettings(NSUserDefaults.standardUserDefaults)
-    }
-
     single<SqlDriver> {
         NativeSqliteDriver(AppDatabase.Schema, "mycorc.db")
+    }
+    single<Settings> {
+        val userDefaults = NSUserDefaults.standardUserDefaults
+        NSUserDefaultsSettings(userDefaults)
     }
 }
