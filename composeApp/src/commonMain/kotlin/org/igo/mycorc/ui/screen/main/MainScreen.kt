@@ -17,7 +17,9 @@ import org.igo.mycorc.ui.common.CommonBottomBar
 import org.igo.mycorc.ui.navigation.Destinations
 import org.igo.mycorc.ui.navigation.bottomNavItems
 import org.igo.mycorc.ui.screen.dashboard.DashboardScreen
+import org.igo.mycorc.ui.screen.create.CreateNoteScreen
 import org.igo.mycorc.ui.screen.settings.SettingsScreen
+
 
 @Composable
 fun MainScreen() {
@@ -28,11 +30,14 @@ fun MainScreen() {
         modifier = Modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
-            CommonBottomBar(
-                items = bottomNavItems,
-                currentRoute = currentRoute,
-                onNavigate = { route -> currentRoute = route }
-            )
+        // 👇 Скрываем нижнюю панель, если мы на экране создания заметки
+            if (currentRoute != Destinations.CREATE_NOTE) {
+                CommonBottomBar(
+                    items = bottomNavItems,
+                    currentRoute = currentRoute,
+                    onNavigate = { route -> currentRoute = route }
+                )
+            }
         }
     ) { innerPadding ->
 
@@ -43,10 +48,18 @@ fun MainScreen() {
                 .padding(innerPadding) // Учитываем высоту нижней панели
         ) {
             when (currentRoute) {
-                Destinations.DASHBOARD -> DashboardScreen()
+                // 👇 Передаем DashboardScreen функцию для перехода
+                Destinations.DASHBOARD -> DashboardScreen(
+                    onNavigateToCreate = { currentRoute = Destinations.CREATE_NOTE }
+                )
                 Destinations.FACILITIES -> PlaceholderScreen("Раздел Заводы")
                 Destinations.SETTINGS -> SettingsScreen()
                 Destinations.PROFILE -> PlaceholderScreen("Личный кабинет")
+
+                // 👇 Обработка нового экрана
+                Destinations.CREATE_NOTE -> CreateNoteScreen(
+                    onNavigateBack = { currentRoute = Destinations.DASHBOARD }
+                )
             }
         }
     }

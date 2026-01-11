@@ -5,4 +5,5 @@ object Destinations {
     const val FACILITIES = "FACILITIES"
     const val SETTINGS = "SETTINGS"
     const val PROFILE = "PROFILE"
+    const val CREATE_NOTE = "CREATE_NOTE"
 }

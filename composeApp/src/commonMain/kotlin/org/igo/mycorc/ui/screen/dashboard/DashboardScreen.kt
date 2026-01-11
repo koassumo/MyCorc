@@ -25,7 +25,9 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Icon
 
 @Composable
-fun DashboardScreen() {
+fun DashboardScreen(
+    onNavigateToCreate: () -> Unit // 👈 Принимаем колбэк навигации
+) {
     val viewModel = koinViewModel<DashboardViewModel>()
     val state by viewModel.state.collectAsState()
 
@@ -36,7 +38,7 @@ fun DashboardScreen() {
         topBar = { CommonTopBar(title = "Dashboard") },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { viewModel.addTestNote() },
+                onClick = onNavigateToCreate,
                 containerColor = MaterialTheme.colorScheme.primary
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Добавить")
