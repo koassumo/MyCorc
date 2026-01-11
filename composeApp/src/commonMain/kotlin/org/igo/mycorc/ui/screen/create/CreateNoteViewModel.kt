@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.igo.mycorc.data.local.ImageStorage
 import org.igo.mycorc.domain.model.Note
 import org.igo.mycorc.domain.model.NoteStatus
 import org.igo.mycorc.domain.usecase.SaveNoteUseCase
