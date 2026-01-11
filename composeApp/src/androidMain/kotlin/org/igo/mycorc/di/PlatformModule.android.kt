@@ -8,6 +8,8 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.SharedPreferencesSettings
+import org.igo.mycorc.data.local.AndroidImageStorage
+import org.igo.mycorc.data.local.ImageStorage
 
 actual val platformModule: Module = module {
     single<SqlDriver> {
@@ -21,5 +23,9 @@ actual val platformModule: Module = module {
     single<Settings> {
         val sharedPrefs = androidContext().getSharedPreferences("mycorc_settings", 0)
         SharedPreferencesSettings(sharedPrefs)
+    }
+
+    single<ImageStorage> {
+        AndroidImageStorage(androidContext())
     }
 }

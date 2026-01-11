@@ -9,6 +9,8 @@ import java.io.File
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.PreferencesSettings
 import java.util.prefs.Preferences
+import org.igo.mycorc.data.local.JvmImageStorage
+import org.igo.mycorc.data.local.ImageStorage
 
 actual val platformModule: Module = module {
     single<SqlDriver> {
@@ -23,5 +25,9 @@ actual val platformModule: Module = module {
     single<Settings> {
         val preferences = Preferences.userRoot().node("org.igo.mycorc")
         PreferencesSettings(preferences)
+    }
+
+    single<ImageStorage> {
+        JvmImageStorage()
     }
 }

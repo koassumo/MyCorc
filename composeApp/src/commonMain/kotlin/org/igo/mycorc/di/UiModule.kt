@@ -4,14 +4,20 @@ import org.igo.mycorc.ui.screen.dashboard.DashboardViewModel
 import org.igo.mycorc.ui.screen.settings.SettingsViewModel
 import org.igo.mycorc.ui.screen.create.CreateNoteViewModel
 import org.koin.core.module.dsl.viewModelOf
+import org.koin.core.module.dsl.viewModel // Используем DSL для ручного создания
 import org.koin.dsl.module
 
 val uiModule = module {
-    // Koin сам посмотрит в конструктор NoteListViewModel, увидит, что там нужно,
-    // найдет это в других модулях и подставит.
     viewModelOf(::DashboardViewModel)
-    viewModelOf(::SettingsViewModel)  //да прибудет с тобою koin (1)
-    viewModelOf(::CreateNoteViewModel)
+    viewModelOf(::SettingsViewModel)
+
+    // 👇 ДОБАВИЛИ <CreateNoteViewModel> (явно указываем тип)
+    viewModel<CreateNoteViewModel> {
+        CreateNoteViewModel(get(), get())
+    }
+    //сборка не проходит, пришлось через get прописать
+
 }
+
 
 

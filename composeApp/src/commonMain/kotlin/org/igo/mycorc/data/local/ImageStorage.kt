@@ -1,4 +1,5 @@
 package org.igo.mycorc.data.local
 
-class ImageStorage {
+interface ImageStorage {
+    suspend fun saveImage(bytes: ByteArray): String
 }

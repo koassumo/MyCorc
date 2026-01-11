@@ -14,6 +14,10 @@ import org.igo.mycorc.ui.common.CommonCard
 import org.igo.mycorc.ui.common.CommonTopBar
 import org.koin.compose.viewmodel.koinViewModel
 import kotlin.math.roundToInt
+import org.igo.mycorc.ui.common.AppImagePicker
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Delete
 
 @Composable
 fun CreateNoteScreen(
@@ -38,7 +42,6 @@ fun CreateNoteScreen(
             )
         },
         bottomBar = {
-            // Кнопка "Сохранить" внизу
             Button(
                 onClick = { viewModel.saveNote() },
                 modifier = Modifier
@@ -54,7 +57,7 @@ fun CreateNoteScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .verticalScroll(rememberScrollState()) // Чтобы можно было скроллить, если клавиатура вылезет
+                .verticalScroll(rememberScrollState())
         ) {
 
             // 1. Блок Биомассы
@@ -65,19 +68,57 @@ fun CreateNoteScreen(
                 range = 0f..2000f
             )
 
-            // 2. Блок Угля
+            // 2. Блок Фото
+            CommonCard {
+                Text(text = "Фотография", style = MaterialTheme.typography.titleMedium)
+                Spacer(Modifier.height(16.dp))
+
+                // 👇 Вводим локальную переменную для безопасной проверки (Smart Cast fix)
+                val currentImage = state.imageBytes
+
+                if (currentImage == null) {
+                    // Если фото нет — показываем кнопку камеры
+                    AppImagePicker { bytes ->
+                        viewModel.onPhotoPicked(bytes)
+                    }
+                } else {
+                    // Если фото есть — показываем статус
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Default.CheckCircle,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(Modifier.width(8.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text("Фото добавлено!", style = MaterialTheme.typography.bodyMedium)
+                            Text(
+                                // Показываем размер в КБ
+                                text = "${currentImage.size / 1024} KB",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                        IconButton(onClick = { viewModel.clearPhoto() }) {
+                            Icon(Icons.Default.Delete, contentDescription = "Удалить")
+                        }
+                    }
+                }
+            }
+
+            // 3. Блок Угля
             SmartInputCard(
                 title = "Вес Угля (кг)",
                 value = state.coalWeight,
                 onValueChange = { viewModel.updateCoal(it) },
                 range = 0f..1000f,
-                accent = true // Подсветим другим цветом
+                accent = true
             )
         }
     }
-}
+} // 👈 ВОТ ОНА, ГЛАВНАЯ ЗАКРЫВАЮЩАЯ СКОБКА! Теперь все, что ниже, находится СНАРУЖИ.
 
-// 👇 Наш многоразовый компонент (Card + Input + Slider)
+// 👇 Вспомогательные функции вынесены из тела CreateNoteScreen
 @Composable
 fun SmartInputCard(
     title: String,
@@ -94,11 +135,9 @@ fun SmartInputCard(
         Spacer(Modifier.height(16.dp))
 
         Row(verticalAlignment = Alignment.CenterVertically) {
-            // Поле ввода цифр
             OutlinedTextField(
                 value = value.toString(),
                 onValueChange = { str ->
-                    // Пробуем превратить строку в Double, если ошибка — оставляем старое
                     val num = str.toDoubleOrNull()
                     if (num != null) onValueChange(num)
                 },
@@ -109,10 +148,9 @@ fun SmartInputCard(
 
         Spacer(Modifier.height(8.dp))
 
-        // Слайдер (Бегунок)
         Slider(
             value = value.toFloat(),
-            onValueChange = { onValueChange(it.toDouble().roundTo(1)) }, // Округляем до 1 знака
+            onValueChange = { onValueChange(it.toDouble().roundTo(1)) },
             valueRange = range,
             colors = SliderDefaults.colors(
                 thumbColor = color,
@@ -122,7 +160,6 @@ fun SmartInputCard(
     }
 }
 
-// Вспомогательная функция для округления (чтобы не было 500.00000001)
 fun Double.roundTo(decimals: Int): Double {
     var multiplier = 1.0
     repeat(decimals) { multiplier *= 10 }

@@ -39,7 +39,7 @@ kotlin {
             implementation(libs.koin.android)
             // implementation(libs.koin.compose)
             implementation(libs.sqldelight.android)
-
+            implementation(libs.peekaboo.image.picker)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -61,7 +61,7 @@ kotlin {
             implementation(libs.multiplatform.settings)
             implementation(libs.sqldelight.coroutines)
             implementation(libs.kotlinx.serialization.json)
-            implementation(libs.peekaboo.image.picker)
+
         }
 
         // 👇 2. ЗАВИСИМОСТИ ДЛЯ DESKTOP
@@ -72,11 +72,13 @@ kotlin {
                 // Если будет гореть красным - скажи, добавим в toml файл.
                 implementation(libs.kotlinx.coroutines.swing)
                 implementation(libs.sqldelight.jvm)
+                // здесь нет peekaboo для desktop
             }
         }
 
         iosMain.dependencies {
             implementation(libs.sqldelight.native)
+            implementation(libs.peekaboo.image.picker)
         }
 
         commonTest.dependencies {

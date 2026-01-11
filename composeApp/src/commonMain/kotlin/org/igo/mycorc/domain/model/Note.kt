@@ -14,10 +14,13 @@ data class Note @OptIn(ExperimentalTime::class) constructor(
     // Данные о биомассе
     val massWeight: Double = 0.0,
     val massDescription: String = "",
-    val massValue: Double = 0.0, // Если нужно для расчетов
+    val massValue: Double = 0.0,
 
     // Данные об угле (может быть null)
     val coalWeight: Double? = null,
+
+    // Фото
+    val photoPath: String? = null,
 
     // Технические поля
     val isSynced: Boolean = false
