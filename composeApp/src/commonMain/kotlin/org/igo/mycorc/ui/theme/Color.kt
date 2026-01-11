@@ -324,4 +324,5 @@ val GrayDark = Green900         // Темно-серый фон
 val ErrorRed = Red700
 
 
-// 4. Ошибки
+// 6. Ошибки
+
