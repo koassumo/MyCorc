@@ -26,6 +26,13 @@ fun CreateNoteScreen(
     val viewModel = koinViewModel<CreateNoteViewModel>()
     val state by viewModel.state.collectAsState()
 
+    // Чистим состояние, когда экран УНИЧТОЖАЕТСЯ (при выходе)
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.resetState()
+        }
+    }
+
     // Если запись сохранена — уходим назад
     LaunchedEffect(state.isSaved) {
         if (state.isSaved) {

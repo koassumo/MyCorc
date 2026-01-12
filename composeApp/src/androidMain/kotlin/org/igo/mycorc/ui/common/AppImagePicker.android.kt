@@ -1,14 +1,17 @@
 package org.igo.mycorc.ui.common
 
-// 👇 ВОТ ЭТИ ИМПОРТЫ КРИТИЧЕСКИ ВАЖНЫ, ИХ НЕ ХВАТАЛО
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import java.io.File
 
@@ -16,15 +19,14 @@ import java.io.File
 actual fun AppImagePicker(onImagePicked: (ByteArray) -> Unit) {
     val context = LocalContext.current
 
-    // Храним Uri временного файла, куда камера сохранит фото
+    // Храним Uri временного файла, куда камера будет писать
     var tempImageUri by remember { mutableStateOf<Uri?>(null) }
 
-    // Создаем лаунчер для запуска камеры
+    // 1. Лаунчер для КАМЕРЫ (срабатывает, когда камера закрылась)
     val cameraLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicture()
     ) { success ->
         if (success && tempImageUri != null) {
-            // Если фото сделано успешно, читаем байты из файла
             val imageBytes = readBytesFromUri(context, tempImageUri!!)
             if (imageBytes != null) {
                 onImagePicked(imageBytes)
@@ -32,28 +34,34 @@ actual fun AppImagePicker(onImagePicked: (ByteArray) -> Unit) {
         }
     }
 
+    // 2. Лаунчер для ЗАПРОСА ПРАВ (срабатывает, когда юзер нажал "Разрешить" или "Запретить")
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            // Ура, разрешили! Сразу запускаем камеру, чтобы юзеру не пришлось тыкать второй раз
+            tempImageUri = createTempUri(context)
+            tempImageUri?.let { cameraLauncher.launch(it) }
+        } else {
+            Toast.makeText(context, "Без доступа к камере фото сделать нельзя", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     Button(
         onClick = {
-            try {
-                // 1. Создаем временный файл
-                val tempFile = File.createTempFile("camera_photo_", ".jpg", context.cacheDir).apply {
-                    createNewFile()
-                    deleteOnExit()
-                }
+            // 3. ПРОВЕРКА ПРАВ перед кликом
+            val permissionStatus = ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.CAMERA
+            )
 
-                // 2. Получаем URI через FileProvider
-                // ВАЖНО: authority должен совпадать с тем, что в AndroidManifest.xml
-                val uri = FileProvider.getUriForFile(
-                    context,
-                    "org.igo.mycorc.fileprovider",
-                    tempFile
-                )
-
-                // 3. Запоминаем URI и запускаем камеру
-                tempImageUri = uri
-                cameraLauncher.launch(uri)
-            } catch (e: Exception) {
-                e.printStackTrace()
+            if (permissionStatus == PackageManager.PERMISSION_GRANTED) {
+                // Права уже есть — просто работаем
+                tempImageUri = createTempUri(context)
+                tempImageUri?.let { cameraLauncher.launch(it) }
+            } else {
+                // Прав нет — вызываем системное диалоговое окно
+                permissionLauncher.launch(Manifest.permission.CAMERA)
             }
         }
     ) {
@@ -61,7 +69,28 @@ actual fun AppImagePicker(onImagePicked: (ByteArray) -> Unit) {
     }
 }
 
-// Вспомогательная функция для чтения байтов
+// --- Вспомогательные функции ---
+
+private fun createTempUri(context: Context): Uri? {
+    return try {
+        val tempFile = File.createTempFile("camera_photo_", ".jpg", context.cacheDir).apply {
+            createNewFile()
+            deleteOnExit()
+        }
+        // ВАЖНО: authority должен совпадать с тем, что в AndroidManifest.xml
+        // У тебя там "${applicationId}.fileprovider". Если appId = "org.igo.mycorc", то всё ок.
+        FileProvider.getUriForFile(
+            context,
+            "org.igo.mycorc.fileprovider",
+            tempFile
+        )
+    } catch (e: Exception) {
+        e.printStackTrace()
+        Toast.makeText(context, "Ошибка создания файла: ${e.message}", Toast.LENGTH_SHORT).show()
+        null
+    }
+}
+
 private fun readBytesFromUri(context: Context, uri: Uri): ByteArray? {
     return try {
         context.contentResolver.openInputStream(uri)?.use { inputStream ->

@@ -112,6 +112,11 @@ class CreateNoteViewModel(
             _state.update { it.copy(isSaved = true) }
         }
     }
+
+    // Сбрасываем форму в исходное состояние
+    fun resetState() {
+        _state.update { CreateNoteState() }
+    }
 }
 
 
