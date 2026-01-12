@@ -12,6 +12,10 @@ import platform.UIKit.*
 import platform.darwin.NSObject
 import platform.posix.memcpy
 
+// 👇 ЯВНЫЕ ИМПОРТЫ РЕШАЮТ ПРОБЛЕМУ "Unresolved reference"
+import platform.UIKit.UIImagePickerControllerSourceTypeCamera
+import platform.UIKit.UIImagePickerControllerOriginalImage
+
 @Composable
 actual fun AppImagePicker(onImagePicked: (ByteArray) -> Unit) {
     // Создаем делегат, который будет обрабатывать результат камеры
@@ -31,13 +35,13 @@ private fun launchCamera(delegate: ImagePickerDelegate) {
     val picker = UIImagePickerController()
 
     // ПРОВЕРЯЕМ: Если камера доступна, включаем её.
-    // Если это симулятор (где камеры нет), код не упадет, просто ничего не произойдет или выведет лог.
     if (UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceTypeCamera)) {
         picker.sourceType = UIImagePickerControllerSourceTypeCamera
     } else {
-        // На симуляторе камеры нет, можно для тестов включить галерею,
-        // но по твоему требованию (только камера) мы тут просто выходим.
+        // На симуляторе камеры нет
         println("Камера недоступна на этом устройстве")
+        // Можно раскомментировать строку ниже, чтобы на симуляторе открывалась галерея для тестов:
+        // picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary
         return
     }
 
@@ -62,7 +66,7 @@ class ImagePickerDelegate(
         picker: UIImagePickerController,
         didFinishPickingMediaWithInfo: Map<Any?, *>
     ) {
-        // 1. Достаем фото из результата
+        // 1. Достаем фото из результата (теперь константа точно найдется)
         val image = didFinishPickingMediaWithInfo[UIImagePickerControllerOriginalImage] as? UIImage
 
         image?.let {
