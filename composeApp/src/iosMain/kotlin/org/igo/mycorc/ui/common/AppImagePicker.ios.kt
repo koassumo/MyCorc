@@ -1,27 +1,95 @@
 package org.igo.mycorc.ui.common
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
-import com.preat.peekaboo.image.picker.SelectionMode
-import com.preat.peekaboo.image.picker.rememberImagePickerLauncher
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.addressOf
+import kotlinx.cinterop.usePinned
+import platform.Foundation.NSData
+import platform.UIKit.*
+import platform.darwin.NSObject
+import platform.posix.memcpy
 
 @Composable
 actual fun AppImagePicker(onImagePicked: (ByteArray) -> Unit) {
-    val scope = rememberCoroutineScope()
+    // Создаем делегат, который будет обрабатывать результат камеры
+    val delegate = remember {
+        ImagePickerDelegate(onImagePicked)
+    }
 
-    val singleImagePicker = rememberImagePickerLauncher(
-        selectionMode = SelectionMode.Single,
-        scope = scope,
-        onResult = { byteArrays ->
-            byteArrays.firstOrNull()?.let {
-                onImagePicked(it)
+    Button(onClick = {
+        launchCamera(delegate)
+    }) {
+        Text("Сделать фото")
+    }
+}
+
+// Функция запуска камеры
+private fun launchCamera(delegate: ImagePickerDelegate) {
+    val picker = UIImagePickerController()
+
+    // ПРОВЕРЯЕМ: Если камера доступна, включаем её.
+    // Если это симулятор (где камеры нет), код не упадет, просто ничего не произойдет или выведет лог.
+    if (UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceTypeCamera)) {
+        picker.sourceType = UIImagePickerControllerSourceTypeCamera
+    } else {
+        // На симуляторе камеры нет, можно для тестов включить галерею,
+        // но по твоему требованию (только камера) мы тут просто выходим.
+        println("Камера недоступна на этом устройстве")
+        return
+    }
+
+    // Отключаем редактирование (кроп и т.д.)
+    picker.allowsEditing = false
+    picker.delegate = delegate
+
+    // Находим текущий экран (ViewController), чтобы показать поверх него камеру
+    val keyWindow = UIApplication.sharedApplication.windows.firstOrNull { (it as UIWindow).isKeyWindow() } as? UIWindow
+    val rootViewController = keyWindow?.rootViewController
+
+    rootViewController?.presentViewController(picker, animated = true, completion = null)
+}
+
+// Делегат (обработчик событий камеры)
+class ImagePickerDelegate(
+    private val onImagePicked: (ByteArray) -> Unit
+) : NSObject(), UIImagePickerControllerDelegateProtocol, UINavigationControllerDelegateProtocol {
+
+    @OptIn(ExperimentalForeignApi::class)
+    override fun imagePickerController(
+        picker: UIImagePickerController,
+        didFinishPickingMediaWithInfo: Map<Any?, *>
+    ) {
+        // 1. Достаем фото из результата
+        val image = didFinishPickingMediaWithInfo[UIImagePickerControllerOriginalImage] as? UIImage
+
+        image?.let {
+            // 2. Конвертируем UIImage в JPEG (качество 0.8)
+            val jpegData = UIImageJPEGRepresentation(it, 0.8)
+            jpegData?.let { data ->
+                // 3. Превращаем в ByteArray и отдаем в Compose
+                onImagePicked(data.toByteArray())
             }
         }
-    )
 
-    Button(onClick = { singleImagePicker.launch() }) {
-        Text("Добавить фото")
+        // 4. Закрываем шторку камеры
+        picker.dismissViewControllerAnimated(true, completion = null)
+    }
+
+    // Если пользователь нажал "Отмена"
+    override fun imagePickerControllerDidCancel(picker: UIImagePickerController) {
+        picker.dismissViewControllerAnimated(true, completion = null)
+    }
+}
+
+// Вспомогательная функция: превращает iOS NSData в Kotlin ByteArray
+@OptIn(ExperimentalForeignApi::class)
+fun NSData.toByteArray(): ByteArray {
+    return ByteArray(this.length.toInt()).apply {
+        usePinned { pinned ->
+            memcpy(pinned.addressOf(0), this@toByteArray.bytes, this@toByteArray.length)
+        }
     }
 }

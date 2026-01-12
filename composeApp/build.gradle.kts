@@ -39,7 +39,8 @@ kotlin {
             implementation(libs.koin.android)
             // implementation(libs.koin.compose)
             implementation(libs.sqldelight.android)
-            implementation(libs.peekaboo.image.picker)
+            // implementation(libs.peekaboo.image.picker)
+            implementation(libs.androidx.core.ktx)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -78,7 +79,7 @@ kotlin {
 
         iosMain.dependencies {
             implementation(libs.sqldelight.native)
-            implementation(libs.peekaboo.image.picker)
+            // implementation(libs.peekaboo.image.picker)
         }
 
         commonTest.dependencies {
