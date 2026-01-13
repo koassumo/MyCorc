@@ -8,10 +8,11 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.usePinned
 import platform.Foundation.NSData
-import platform.UIKit.* // Импортирует сам класс перечисления
+import platform.UIKit.*
 import platform.darwin.NSObject
 import platform.posix.memcpy
 
+// Константа для ключа изображения (она глобальная, с ней проблем не было)
 import platform.UIKit.UIImagePickerControllerOriginalImage
 
 @Composable
@@ -30,15 +31,16 @@ actual fun AppImagePicker(onImagePicked: (ByteArray) -> Unit) {
 private fun launchCamera(delegate: ImagePickerDelegate) {
     val picker = UIImagePickerController()
 
-    // Используем правильный короткий синтаксис Kotlin
-    val cameraSource = UIImagePickerControllerSourceType.Camera
-    val librarySource = UIImagePickerControllerSourceType.PhotoLibrary
+    // 👇 ИСПРАВЛЕНИЕ: Используем полные имена констант внутри класса.
+    // Kotlin Native иногда не сокращает их, если префикс совпадает с названием класса.
+    val cameraSource = UIImagePickerControllerSourceType.UIImagePickerControllerSourceTypeCamera
+    val librarySource = UIImagePickerControllerSourceType.UIImagePickerControllerSourceTypePhotoLibrary
 
-    // ЛОГИКА: Пробуем камеру. Если нет (симулятор) — открываем галерею.
+    // Логика: пробуем камеру, если нет (симулятор) — галерею.
     if (UIImagePickerController.isSourceTypeAvailable(cameraSource)) {
         picker.sourceType = cameraSource
     } else {
-        println("Камера недоступна (возможно, симулятор). Открываем галерею.")
+        println("Камера недоступна (симулятор). Открываем галерею.")
         picker.sourceType = librarySource
     }
 
