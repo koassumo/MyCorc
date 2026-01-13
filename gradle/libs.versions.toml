@@ -20,7 +20,7 @@ multiplatformSettings = "1.2.0"
 sqldelight = "2.0.2"
 serialization = "1.7.3" # Проверь, что это есть
 gitlive-firebase = "1.13.0"
-google-services = "4.4.2"
+google-services = "4.4.4"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
