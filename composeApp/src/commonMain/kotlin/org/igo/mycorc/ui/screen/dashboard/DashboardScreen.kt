@@ -24,6 +24,22 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Icon
 
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.CloudUpload
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+
+
+
+
 @Composable
 fun DashboardScreen(
     onNavigateToCreate: () -> Unit // 👈 Принимаем колбэк навигации
@@ -59,7 +75,11 @@ fun DashboardScreen(
             } else {
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
                     items(state.notes) { note ->
-                        DashboardItem(note = note)
+                        DashboardItem(
+                            note = note,
+                            // 👇 Прокидываем действие нажатия на кнопку "Отправить"
+                            onSendClick = { viewModel.syncNote(note) }
+                        )
                     }
                 }
             }
@@ -68,19 +88,63 @@ fun DashboardScreen(
 }
 
 @Composable
-fun DashboardItem(note: Note) {
+fun DashboardItem(
+    note: Note,
+    onSendClick: () -> Unit // Колбэк для кнопки
+) {
     CommonCard(
         onClick = { println("Нажали на ${note.id}") }
     ) {
-        Text(text = note.massDescription, style = MaterialTheme.typography.titleLarge)
-        Text(text = "Вес: ${note.massWeight} кг")
+        Column(Modifier.fillMaxWidth()) {
+            // --- Основная инфа ---
+            Text(text = note.massDescription, style = MaterialTheme.typography.titleLarge)
+            Text(text = "Вес: ${note.massWeight} кг")
 
-        if (note.coalWeight != null) {
-            Text(
-                text = "🏁 Уголь: ${note.coalWeight} кг",
-                // Используем цвет из нашей новой темы (Theme.kt)
-                color = MaterialTheme.colorScheme.primary
-            )
+            if (note.coalWeight != null) {
+                Text(
+                    text = "🏁 Уголь: ${note.coalWeight} кг",
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // --- Блок синхронизации ---
+            if (!note.isSynced) {
+                // ВАРИАНТ 1: Если НЕ отправлено — показываем большую кнопку
+                Button(
+                    onClick = onSendClick,
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.errorContainer, // Красный/Оранжевый оттенок для внимания
+                        contentColor = MaterialTheme.colorScheme.onErrorContainer
+                    )
+                ) {
+                    Icon(Icons.Default.CloudUpload, contentDescription = null)
+                    Spacer(Modifier.width(8.dp))
+                    Text("Отправить на сервер")
+                }
+            } else {
+                // ВАРИАНТ 2: Если отправлено — показываем статус
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.align(Alignment.End) // Прижимаем вправо
+                ) {
+                    Text(
+                        text = "Синхронизировано",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = Color.Gray
+                    )
+                    Spacer(Modifier.width(4.dp))
+                    Icon(
+                        imageVector = Icons.Default.CheckCircle,
+                        contentDescription = "Ok",
+                        tint = Color(0xFF4CAF50), // Зеленый цвет
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            }
         }
     }
 }
+               // Используем цвет из нашей новой темы (Theme.kt)

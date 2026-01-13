@@ -21,10 +21,9 @@ class NoteDbMapper {
             status = entity.status,
             coalWeight = payload.coal?.weight,
 
-            // 👇 Вот тут мы вручную превращаем Long (0 или 1) в Boolean
-            // Если вы отключили адаптер, SQLDelight скорее всего вернул Long.
-            // Если вдруг там Boolean, IDE подскажет убрать "== 1L"
-            // isSynced = entity.isSynced == 1L
+            // 👇 ВАЖНО: Мы раскомментировали эту строку.
+            // Так как в SQLDelight у тебя "INTEGER AS Boolean", то entity.isSynced — это уже Boolean.
+            isSynced = entity.isSynced
         )
     }
 }

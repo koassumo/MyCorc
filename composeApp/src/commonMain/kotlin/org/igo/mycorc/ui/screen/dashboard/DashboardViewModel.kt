@@ -53,11 +53,28 @@ class DashboardViewModel (
                 massWeight = Random.nextInt(100, 1000).toDouble(),
                 massDescription = "Тестовая партия #${Random.nextInt(1, 99)}",
                 status = NoteStatus.DRAFT,
-                coalWeight = null
+                coalWeight = null,
+                isSynced = false
             )
             saveNoteUseCase(newNote)
             // Нам не нужно вручную обновлять _state.notes!
             // SQLDelight сам уведомит Flow, и subscribeToNotes() получит новый список.
+        }
+    }
+
+    // 👇 ФУНКЦИЯ "ОТПРАВКИ"
+    // Пока сервера нет, мы просто меняем статус в БД, чтобы проверить UI
+    @OptIn(ExperimentalTime::class)
+    fun syncNote(note: Note) {
+        viewModelScope.launch {
+            // 1. Эмулируем задержку сети (для красоты)
+            // kotlinx.coroutines.delay(1000)
+
+            // 2. Обновляем статус на "Отправлено"
+            val syncedNote = note.copy(isSynced = true)
+
+            // 3. Сохраняем. SQLDelight сам обновит экран.
+            saveNoteUseCase(syncedNote)
         }
     }
 }
