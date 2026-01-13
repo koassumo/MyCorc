@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.sqldelight)
+    alias(libs.plugins.google.services)
 }
 
 kotlin {
@@ -62,7 +63,7 @@ kotlin {
             implementation(libs.multiplatform.settings)
             implementation(libs.sqldelight.coroutines)
             implementation(libs.kotlinx.serialization.json)
-
+            implementation(libs.firebase.auth)
         }
 
         // 👇 2. ЗАВИСИМОСТИ ДЛЯ DESKTOP
