@@ -11,13 +11,19 @@ import org.igo.mycorc.domain.model.NotePayload
 import org.igo.mycorc.domain.model.NoteStatus
 import org.igo.mycorc.domain.rep_interface.SettingsRepository
 import org.igo.mycorc.data.repository.SettingsRepositoryImpl
-// 👇 Добавили новые импорты
 import org.igo.mycorc.data.mapper.NoteDbMapper
 import org.igo.mycorc.domain.rep_interface.NoteRepository
 import org.igo.mycorc.data.repository.NoteRepositoryImpl
 import org.koin.dsl.module
+import dev.gitlive.firebase.Firebase
+import dev.gitlive.firebase.auth.auth
+import org.igo.mycorc.domain.rep_interface.AuthRepository
+import org.igo.mycorc.data.repository.AuthRepositoryImpl
 
 val dataModule = module {
+
+    single { Firebase.auth }
+    single<AuthRepository> { AuthRepositoryImpl(get()) }
 
     // 1. Сама База Данных
     single<AppDatabase> {
