@@ -42,6 +42,8 @@ kotlin {
             implementation(libs.sqldelight.android)
             // implementation(libs.peekaboo.image.picker)
             implementation(libs.androidx.core.ktx)
+            implementation(project.dependencies.platform(libs.firebase.bom))
+
         }
         commonMain.dependencies {
             implementation(compose.runtime)

@@ -8,6 +8,7 @@ import kotlin.time.ExperimentalTime
 // Мы добавили сюда поля, которые раньше были спрятаны в JSON, чтобы UI мог их показать.
 data class Note @OptIn(ExperimentalTime::class) constructor(
     val id: String,
+    val userId: String = "",
     val createdAt: Instant,
     val status: NoteStatus,
 

@@ -13,6 +13,7 @@ class NoteDbMapper {
 
         return Note(
             id = entity.id,
+            userId = entity.userId, // <-- Пробрасываем ID владельца
             createdAt = kotlinx.datetime.Instant.fromEpochMilliseconds(entity.updatedAt), // Конвертируем Long в дату
             // Берем бизнес-данные из JSON-контейнера
             massWeight = payload.biomass?.weight ?: 0.0,
@@ -23,7 +24,8 @@ class NoteDbMapper {
 
             // 👇 ВАЖНО: Мы раскомментировали эту строку.
             // Так как в SQLDelight у тебя "INTEGER AS Boolean", то entity.isSynced — это уже Boolean.
-            isSynced = entity.isSynced
+            isSynced = entity.isSynced,
+            photoPath = null // Путь к фото пока не храним в БД явно, или он внутри payload?
         )
     }
 }

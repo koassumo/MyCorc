@@ -2,7 +2,7 @@ import kotlin.Boolean;
 import org.igo.mycorc.domain.model.NoteStatus;
 import org.igo.mycorc.domain.model.NotePayload;
 
--- Создание таблицы
+-- Создание таблицы (userId уже есть, отлично)
 CREATE TABLE noteEntity (
     id TEXT NOT NULL PRIMARY KEY,
     userId TEXT NOT NULL,
@@ -14,17 +14,18 @@ CREATE TABLE noteEntity (
 
 -- Запросы (Functions)
 
--- Получить все (свежие сверху)
+-- Получить все (только для конкретного юзера!)
 getAllNotes:
 SELECT * FROM noteEntity
+WHERE userId = ?
 ORDER BY updatedAt DESC;
 
--- Для Синхронизации: найти готовые к отправке
+-- Для Синхронизации: найти готовые к отправке (только для конкретного юзера)
 getUnsyncedNotes:
 SELECT * FROM noteEntity
-WHERE isSynced = 0 AND status = 'READY_TO_SEND';
+WHERE userId = ? AND isSynced = 0 AND status = 'READY_TO_SEND';
 
--- Вставка или обновление
+-- Вставка или обновление (тут все ок)
 insertNote:
 INSERT OR REPLACE INTO noteEntity(id, userId, status, updatedAt, isSynced, payload)
 VALUES (?, ?, ?, ?, ?, ?);
@@ -33,6 +34,10 @@ VALUES (?, ?, ?, ?, ?, ?);
 getNoteById:
 SELECT * FROM noteEntity WHERE id = ?;
 
--- Удалить всё (для тестов или выхода из аккаунта)
+-- Удалить всё (для выхода из аккаунта или очистки кэша юзера)
+deleteAllForUser:
+DELETE FROM noteEntity WHERE userId = ?;
+
+-- Полная очистка (на всякий случай)
 deleteAll:
 DELETE FROM noteEntity;

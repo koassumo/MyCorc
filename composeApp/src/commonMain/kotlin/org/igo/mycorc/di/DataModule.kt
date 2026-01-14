@@ -64,6 +64,9 @@ val dataModule = module {
     // Сначала учим Koin создавать Маппер (он нужен Репозиторию)
     factory { NoteDbMapper() }
 
-    // Теперь создаем Репозиторий. get() подставит Database, второй get() подставит Mapper
-    single<NoteRepository> { NoteRepositoryImpl(get(), get()) }
+    // Теперь создаем Репозиторий.
+    // get() -> AppDatabase
+    // get() -> NoteDbMapper
+    // get() -> AuthRepository (добавили третьим параметром для фильтрации по юзеру)
+    single<NoteRepository> { NoteRepositoryImpl(get(), get(), get()) }
 }
