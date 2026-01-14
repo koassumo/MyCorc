@@ -1,3 +1,4 @@
+//UiModule.kt
 package org.igo.mycorc.di
 
 // 👇 ЭТИ ДВА ИМПОРТА КРИТИЧЕСКИ ВАЖНЫ ДЛЯ viewModelOf

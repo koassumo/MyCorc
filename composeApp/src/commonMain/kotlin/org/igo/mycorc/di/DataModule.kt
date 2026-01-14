@@ -1,3 +1,5 @@
+//DataModule.kt
+
 package org.igo.mycorc.di
 
 import app.cash.sqldelight.ColumnAdapter
@@ -22,8 +24,9 @@ import org.igo.mycorc.data.repository.AuthRepositoryImpl
 
 val dataModule = module {
 
-    single { Firebase.auth }
-    single<AuthRepository> { AuthRepositoryImpl(get()) }
+    // так нельзя - на десктопе Firebase не работает
+    //single { Firebase.auth }
+    //single<AuthRepository> { AuthRepositoryImpl(get()) }
 
     // 1. Сама База Данных
     single<AppDatabase> {

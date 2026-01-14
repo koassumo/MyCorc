@@ -1,3 +1,5 @@
+//DomainModule.kt
+
 package org.igo.mycorc.di
 
 import org.igo.mycorc.domain.usecase.GetNoteDetailsUseCase

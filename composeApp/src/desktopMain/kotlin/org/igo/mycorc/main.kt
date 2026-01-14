@@ -1,3 +1,5 @@
+//main.kt
+
 package org.igo.mycorc
 
 import androidx.compose.ui.window.Window

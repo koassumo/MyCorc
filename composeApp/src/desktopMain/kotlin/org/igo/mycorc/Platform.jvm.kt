@@ -1,3 +1,5 @@
+//Platform.jvm.kt
+
 package org.igo.mycorc
 
 class JVMPlatform: Platform {
