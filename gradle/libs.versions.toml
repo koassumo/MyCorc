@@ -21,6 +21,8 @@ sqldelight = "2.0.2"
 serialization = "1.7.3" # Проверь, что это есть
 gitlive-firebase = "1.13.0"
 google-services = "4.4.4"
+firebase-bom = "33.7.0"
+
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -52,6 +54,8 @@ sqldelight-coroutines = { module = "app.cash.sqldelight:coroutines-extensions", 
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
 
 firebase-auth = { module = "dev.gitlive:firebase-auth", version.ref = "gitlive-firebase" }
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
+
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
