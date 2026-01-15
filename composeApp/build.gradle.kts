@@ -42,7 +42,8 @@ kotlin {
             implementation(libs.sqldelight.android)
             // implementation(libs.peekaboo.image.picker)
             implementation(libs.androidx.core.ktx)
-            //implementation(project.dependencies.platform(libs.firebase.bom)) никогда для KMP
+
+            implementation(libs.ktor.client.okhttp)
 
         }
         commonMain.dependencies {
@@ -65,7 +66,12 @@ kotlin {
             implementation(libs.multiplatform.settings)
             implementation(libs.sqldelight.coroutines)
             implementation(libs.kotlinx.serialization.json)
-            implementation(libs.firebase.auth)
+
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ktor.serialization.kotlinx.json)
+            implementation(libs.ktor.client.logging)
+
         }
 
         // 👇 2. ЗАВИСИМОСТИ ДЛЯ DESKTOP
@@ -77,12 +83,16 @@ kotlin {
                 implementation(libs.kotlinx.coroutines.swing)
                 implementation(libs.sqldelight.jvm)
                 // здесь нет peekaboo для desktop
+                implementation(libs.ktor.client.cio)
+
             }
         }
 
         iosMain.dependencies {
             implementation(libs.sqldelight.native)
             // implementation(libs.peekaboo.image.picker)
+            implementation(libs.ktor.client.darwin)
+
         }
 
         commonTest.dependencies {

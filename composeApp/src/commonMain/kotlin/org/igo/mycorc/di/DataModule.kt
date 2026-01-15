@@ -17,16 +17,20 @@ import org.igo.mycorc.data.mapper.NoteDbMapper
 import org.igo.mycorc.domain.rep_interface.NoteRepository
 import org.igo.mycorc.data.repository.NoteRepositoryImpl
 import org.koin.dsl.module
-import dev.gitlive.firebase.Firebase
-import dev.gitlive.firebase.auth.auth
 import org.igo.mycorc.domain.rep_interface.AuthRepository
-import org.igo.mycorc.data.repository.AuthRepositoryImpl
+import org.igo.mycorc.data.remote.buildHttpClient
+import org.igo.mycorc.data.auth.AuthStorage
+import org.igo.mycorc.data.repository.AuthRepositoryRestImpl
 
 val dataModule = module {
 
     // так нельзя - на десктопе Firebase не работает
     //single { Firebase.auth }
     //single<AuthRepository> { AuthRepositoryImpl(get()) }
+
+    single { buildHttpClient() }
+    single { AuthStorage(get()) }
+    single<AuthRepository> { AuthRepositoryRestImpl(client = get(), storage = get()) }
 
     // 1. Сама База Данных
     single<AppDatabase> {

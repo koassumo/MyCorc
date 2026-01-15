@@ -4,5 +4,5 @@ import org.igo.mycorc.domain.model.Note
 
 data class DashboardState(
     val isLoading: Boolean = false,
-    val notes: List<Note> = emptyList() // 👈 Добавили список
+    val notes: List<Note> = emptyList()
 )

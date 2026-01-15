@@ -12,8 +12,7 @@ import com.russhwolf.settings.PreferencesSettings
 import java.util.prefs.Preferences
 import org.igo.mycorc.data.local.JvmImageStorage
 import org.igo.mycorc.data.local.ImageStorage
-import org.igo.mycorc.domain.rep_interface.AuthRepository
-import org.igo.mycorc.data.repository.DesktopAuthStub
+
 
 actual val platformModule: Module = module {
     single<SqlDriver> {
@@ -34,5 +33,4 @@ actual val platformModule: Module = module {
         JvmImageStorage()
     }
 
-    single<AuthRepository> { DesktopAuthStub() }
 }

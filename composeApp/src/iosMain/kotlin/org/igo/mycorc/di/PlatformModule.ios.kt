@@ -11,10 +11,7 @@ import com.russhwolf.settings.NSUserDefaultsSettings
 import platform.Foundation.NSUserDefaults
 import org.igo.mycorc.data.local.IosImageStorage
 import org.igo.mycorc.data.local.ImageStorage
-import dev.gitlive.firebase.Firebase
-import dev.gitlive.firebase.auth.auth
-import org.igo.mycorc.domain.rep_interface.AuthRepository
-import org.igo.mycorc.data.repository.AuthRepositoryImpl
+
 
 actual val platformModule: Module = module {
 
@@ -30,8 +27,5 @@ actual val platformModule: Module = module {
     single<ImageStorage> {
         IosImageStorage()
     }
-
-    single { Firebase.auth }
-    single<AuthRepository> { AuthRepositoryImpl(get()) }
 
 }

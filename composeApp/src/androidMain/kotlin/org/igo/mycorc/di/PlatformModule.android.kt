@@ -12,10 +12,7 @@ import com.russhwolf.settings.Settings
 import com.russhwolf.settings.SharedPreferencesSettings
 import org.igo.mycorc.data.local.AndroidImageStorage
 import org.igo.mycorc.data.local.ImageStorage
-import dev.gitlive.firebase.Firebase
-import dev.gitlive.firebase.auth.auth
-import org.igo.mycorc.domain.rep_interface.AuthRepository
-import org.igo.mycorc.data.repository.AuthRepositoryImpl
+
 
 actual val platformModule: Module = module {
     single<SqlDriver> {
@@ -35,6 +32,4 @@ actual val platformModule: Module = module {
         AndroidImageStorage(androidContext())
     }
 
-    single { Firebase.auth }
-    single<AuthRepository> { AuthRepositoryImpl(get()) }
 }

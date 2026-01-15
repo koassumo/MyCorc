@@ -18,4 +18,7 @@ class DesktopAuthStub : AuthRepository {
     }
 
     override suspend fun logout() {}
+
+    override suspend fun getIdTokenOrNull(): String? = null
+
 }
