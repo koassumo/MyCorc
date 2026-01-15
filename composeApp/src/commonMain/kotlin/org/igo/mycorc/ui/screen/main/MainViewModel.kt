@@ -1,4 +1,4 @@
-﻿package org.igo.mycorc.ui.screen.main
+package org.igo.mycorc.ui.screen.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

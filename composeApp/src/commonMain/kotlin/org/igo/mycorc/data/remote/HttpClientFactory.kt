@@ -1,4 +1,4 @@
-﻿package org.igo.mycorc.data.remote
+package org.igo.mycorc.data.remote
 
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
@@ -22,6 +22,6 @@ fun buildHttpClient(): HttpClient =
             )
         }
         install(Logging) {
-            level = LogLevel.BODY
+            level = LogLevel.HEADERS
         }
     }

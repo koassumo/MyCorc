@@ -1,4 +1,4 @@
-﻿package org.igo.mycorc.ui.screen.auth
+package org.igo.mycorc.ui.screen.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

@@ -1,4 +1,4 @@
-﻿package org.igo.mycorc.data.auth
+package org.igo.mycorc.data.auth
 
 import com.russhwolf.settings.Settings
 

@@ -1,4 +1,4 @@
-﻿package org.igo.mycorc.data.repository
+package org.igo.mycorc.data.repository
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -11,7 +11,6 @@ import io.ktor.http.contentType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive

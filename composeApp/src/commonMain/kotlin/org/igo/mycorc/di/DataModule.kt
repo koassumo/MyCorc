@@ -24,10 +24,6 @@ import org.igo.mycorc.data.repository.AuthRepositoryRestImpl
 
 val dataModule = module {
 
-    // так нельзя - на десктопе Firebase не работает
-    //single { Firebase.auth }
-    //single<AuthRepository> { AuthRepositoryImpl(get()) }
-
     single { buildHttpClient() }
     single { AuthStorage(get()) }
     single<AuthRepository> { AuthRepositoryRestImpl(client = get(), storage = get()) }

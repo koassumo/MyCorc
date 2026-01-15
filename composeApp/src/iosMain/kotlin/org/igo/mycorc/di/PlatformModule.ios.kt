@@ -1,4 +1,4 @@
-﻿// PlatformModule.ios.kt
+// PlatformModule.ios.kt
 package org.igo.mycorc.di
 
 import app.cash.sqldelight.db.SqlDriver

@@ -1,4 +1,4 @@
-﻿package org.igo.mycorc.ui.screen.auth
+package org.igo.mycorc.ui.screen.auth
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*

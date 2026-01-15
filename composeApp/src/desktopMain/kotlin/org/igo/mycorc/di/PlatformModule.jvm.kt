@@ -1,4 +1,4 @@
-﻿//PlatformModule.jvm.kt
+//PlatformModule.jvm.kt
 package org.igo.mycorc.di
 
 import app.cash.sqldelight.db.SqlDriver

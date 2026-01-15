@@ -1,4 +1,4 @@
-﻿package org.igo.mycorc.domain.rep_interface
+package org.igo.mycorc.domain.rep_interface
 
 import kotlinx.coroutines.flow.Flow
 import org.igo.mycorc.domain.model.AppUser

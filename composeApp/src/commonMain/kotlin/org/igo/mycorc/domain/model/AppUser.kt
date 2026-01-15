@@ -1,4 +1,4 @@
-﻿package org.igo.mycorc.domain.model
+package org.igo.mycorc.domain.model
 
 data class AppUser(
     val id: String,

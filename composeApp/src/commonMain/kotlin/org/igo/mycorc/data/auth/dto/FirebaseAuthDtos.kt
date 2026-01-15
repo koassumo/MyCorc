@@ -1,4 +1,4 @@
-﻿package org.igo.mycorc.data.auth.dto
+package org.igo.mycorc.data.auth.dto
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

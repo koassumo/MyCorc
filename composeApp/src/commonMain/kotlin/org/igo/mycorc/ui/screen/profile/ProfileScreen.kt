@@ -1,4 +1,4 @@
-﻿package org.igo.mycorc.ui.screen.profile
+package org.igo.mycorc.ui.screen.profile
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*

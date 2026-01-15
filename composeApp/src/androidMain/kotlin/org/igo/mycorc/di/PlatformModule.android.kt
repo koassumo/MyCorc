@@ -1,4 +1,4 @@
-﻿//PlatformModule.android.kt
+//PlatformModule.android.kt
 
 package org.igo.mycorc.di
 
