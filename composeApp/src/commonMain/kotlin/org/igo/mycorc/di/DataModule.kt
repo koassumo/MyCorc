@@ -21,12 +21,17 @@ import org.igo.mycorc.domain.rep_interface.AuthRepository
 import org.igo.mycorc.data.remote.buildHttpClient
 import org.igo.mycorc.data.auth.AuthStorage
 import org.igo.mycorc.data.repository.AuthRepositoryRestImpl
+import org.igo.mycorc.data.remote.firestore.FirestorePackagesApi
+import org.igo.mycorc.domain.rep_interface.NoteSyncRepository
+import org.igo.mycorc.data.repository.NoteSyncRepositoryImpl
 
 val dataModule = module {
 
     single { buildHttpClient() }
     single { AuthStorage(get()) }
     single<AuthRepository> { AuthRepositoryRestImpl(client = get(), storage = get()) }
+    single { FirestorePackagesApi(client = get(), projectId = "mycorc") }
+    single<NoteSyncRepository> { NoteSyncRepositoryImpl(db = get(), authRepository = get(), api = get()) }
 
     // 1. Сама База Данных
     single<AppDatabase> {

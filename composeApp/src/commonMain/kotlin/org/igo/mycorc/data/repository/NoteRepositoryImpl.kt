@@ -4,7 +4,7 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.IO
+
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
@@ -14,7 +14,6 @@ import org.igo.mycorc.data.mapper.NoteDbMapper
 import org.igo.mycorc.db.AppDatabase
 import org.igo.mycorc.domain.model.Note
 import org.igo.mycorc.domain.model.NotePayload
-import org.igo.mycorc.domain.model.NoteStatus
 import org.igo.mycorc.domain.rep_interface.AuthRepository
 import org.igo.mycorc.domain.rep_interface.NoteRepository
 import kotlin.time.ExperimentalTime

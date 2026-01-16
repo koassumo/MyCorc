@@ -1,3 +1,4 @@
+-- "C:\android\MyCorc\composeApp\src\commonMain\sqldelight\org\igo\mycorc\db\Note.sq"
 import kotlin.Boolean;
 import org.igo.mycorc.domain.model.NoteStatus;
 import org.igo.mycorc.domain.model.NotePayload;
@@ -41,3 +42,11 @@ DELETE FROM noteEntity WHERE userId = ?;
 -- Полная очистка (на всякий случай)
 deleteAll:
 DELETE FROM noteEntity;
+
+-- запрос в firebase (только для конкретного юзера)
+markNoteSynced:
+UPDATE noteEntity
+SET isSynced = 1,
+    status = ?,
+    updatedAt = ?
+WHERE id = ? AND userId = ?;

@@ -13,12 +13,15 @@ import org.igo.mycorc.domain.usecase.GetNoteListUseCase
 import org.igo.mycorc.domain.usecase.SaveNoteUseCase
 import kotlin.random.Random
 import kotlin.time.ExperimentalTime
+import org.igo.mycorc.domain.usecase.SyncNoteUseCase
 
 // 👇 Внедряем UseCases через конструктор. Koin сам все подставит.
 class DashboardViewModel (
     private val getNoteListUseCase: GetNoteListUseCase,
-    private val saveNoteUseCase: SaveNoteUseCase
+    private val saveNoteUseCase: SaveNoteUseCase,
+    private val syncNoteUseCase: SyncNoteUseCase
 ) : ViewModel() {
+
 
     // 1. Вышка (Broadcaster + Storage)
     private val _state = MutableStateFlow(DashboardState())
@@ -63,18 +66,10 @@ class DashboardViewModel (
     }
 
     // 👇 ФУНКЦИЯ "ОТПРАВКИ"
-    // Пока сервера нет, мы просто меняем статус в БД, чтобы проверить UI
     @OptIn(ExperimentalTime::class)
     fun syncNote(note: Note) {
         viewModelScope.launch {
-            // 1. Эмулируем задержку сети (для красоты)
-            // kotlinx.coroutines.delay(1000)
-
-            // 2. Обновляем статус на "Отправлено"
-            val syncedNote = note.copy(isSynced = true)
-
-            // 3. Сохраняем. SQLDelight сам обновит экран.
-            saveNoteUseCase(syncedNote)
+            syncNoteUseCase(note)
         }
     }
 }
