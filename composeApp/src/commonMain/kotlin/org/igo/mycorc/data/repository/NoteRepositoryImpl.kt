@@ -43,7 +43,7 @@ class NoteRepositoryImpl(
                 // Если залогинен — слушаем таблицу, фильтруя по user.id
                 queries.getAllNotes(userId = user.id)
                     .asFlow()
-                    .mapToList(Dispatchers.IO) // Слушаем изменения таблицы
+                    .mapToList(Dispatchers.Default) // Слушаем изменения таблицы
                     .map { entities ->
                         entities.map { mapper.map(it) }  // Превращаем каждую строку БД в Note
                     }
