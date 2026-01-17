@@ -16,8 +16,13 @@ import org.koin.compose.viewmodel.koinViewModel
 import kotlin.math.roundToInt
 import org.igo.mycorc.ui.common.AppImagePicker
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import coil3.compose.AsyncImage
 
 @Composable
 fun CreateNoteScreen(
@@ -40,26 +45,27 @@ fun CreateNoteScreen(
         }
     }
 
-    Scaffold(
-        topBar = {
-            CommonTopBar(
-                title = "Новая партия",
-                canNavigateBack = true,
-                navigateUp = onNavigateBack
-            )
-        },
-        bottomBar = {
-            Button(
-                onClick = { viewModel.saveNote() },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-                    .height(50.dp)
-            ) {
-                Text("Сохранить партию")
+    Box(modifier = Modifier.fillMaxSize()) {
+        Scaffold(
+            topBar = {
+                CommonTopBar(
+                    title = "Новая партия",
+                    canNavigateBack = true,
+                    navigateUp = onNavigateBack
+                )
+            },
+            bottomBar = {
+                Button(
+                    onClick = { viewModel.saveNote() },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                        .height(50.dp)
+                ) {
+                    Text("Сохранить партию")
+                }
             }
-        }
-    ) { innerPadding ->
+        ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -80,34 +86,36 @@ fun CreateNoteScreen(
                 Text(text = "Фотография", style = MaterialTheme.typography.titleMedium)
                 Spacer(Modifier.height(16.dp))
 
-                // 👇 Вводим локальную переменную для безопасной проверки (Smart Cast fix)
-                val currentImage = state.imageBytes
+                val photoPath = state.photoPath
 
-                if (currentImage == null) {
+                if (photoPath == null) {
                     // Если фото нет — показываем кнопку камеры
                     AppImagePicker { bytes ->
                         viewModel.onPhotoPicked(bytes)
                     }
                 } else {
-                    // Если фото есть — показываем статус
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            imageVector = Icons.Default.CheckCircle,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary
+                    // Если фото есть — показываем превью
+                    Column {
+                        AsyncImage(
+                            model = "file://$photoPath",
+                            contentDescription = "Превью фото",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(200.dp)
+                                .clickable { viewModel.openFullscreenPhoto() },
+                            contentScale = ContentScale.Crop
                         )
-                        Spacer(Modifier.width(8.dp))
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text("Фото добавлено!", style = MaterialTheme.typography.bodyMedium)
+                        Spacer(Modifier.height(8.dp))
+                        Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
-                                // Показываем размер в КБ
-                                text = "${currentImage.size / 1024} KB",
+                                text = "Фото сохранено",
                                 style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.weight(1f)
                             )
-                        }
-                        IconButton(onClick = { viewModel.clearPhoto() }) {
-                            Icon(Icons.Default.Delete, contentDescription = "Удалить")
+                            IconButton(onClick = { viewModel.clearPhoto() }) {
+                                Icon(Icons.Default.Delete, contentDescription = "Удалить")
+                            }
                         }
                     }
                 }
@@ -122,8 +130,39 @@ fun CreateNoteScreen(
                 accent = true
             )
         }
+        }
+
+        // Полноэкранный просмотр фото
+        if (state.showFullscreenPhoto && state.photoPath != null) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black)
+            ) {
+                AsyncImage(
+                    model = "file://${state.photoPath}",
+                    contentDescription = "Полноэкранное фото",
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Fit
+                )
+
+                // Кнопка "назад"
+                IconButton(
+                    onClick = { viewModel.closeFullscreenPhoto() },
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
+                        .padding(16.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Закрыть",
+                        tint = Color.White
+                    )
+                }
+            }
+        }
     }
-} // 👈 ВОТ ОНА, ГЛАВНАЯ ЗАКРЫВАЮЩАЯ СКОБКА! Теперь все, что ниже, находится СНАРУЖИ.
+}
 
 // 👇 Вспомогательные функции вынесены из тела CreateNoteScreen
 @Composable

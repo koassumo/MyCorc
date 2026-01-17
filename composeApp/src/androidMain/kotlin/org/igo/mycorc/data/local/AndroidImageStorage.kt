@@ -14,4 +14,10 @@ class AndroidImageStorage(private val context: Context) : ImageStorage {
         file.writeBytes(bytes)
         return@withContext file.absolutePath
     }
+
+    override suspend fun deleteImage(path: String) {
+        withContext(Dispatchers.IO) {
+            File(path).delete()
+        }
+    }
 }

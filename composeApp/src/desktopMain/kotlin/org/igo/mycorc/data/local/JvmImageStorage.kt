@@ -13,4 +13,8 @@ class JvmImageStorage : ImageStorage {
         file.writeBytes(bytes)
         return file.absolutePath
     }
+
+    override suspend fun deleteImage(path: String) {
+        File(path).delete()
+    }
 }

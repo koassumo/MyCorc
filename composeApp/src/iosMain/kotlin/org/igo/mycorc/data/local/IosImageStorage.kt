@@ -32,8 +32,10 @@ class IosImageStorage : ImageStorage {
         return fileUrl.path ?: ""
     }
 
-    // Метод getImage я убрал, так как его нет в интерфейсе ImageStorage.
-    // Если он понадобится в будущем, мы сначала добавим его в интерфейс.
+    @OptIn(ExperimentalForeignApi::class)
+    override suspend fun deleteImage(path: String) {
+        NSFileManager.defaultManager.removeItemAtPath(path, null)
+    }
 }
 
 // Вспомогательная функция (расширение) должна быть вне класса или внутри companion object,
