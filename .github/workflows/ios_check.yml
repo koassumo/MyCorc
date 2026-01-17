@@ -1,9 +1,7 @@
 name: iOS Build Check 🍏
 
 on:
-  push:
-    branches: [ "main", "master" ]
-  pull_request:
+  workflow_dispatch:  # Только вручную через кнопку "Run workflow" на GitHub
 
 jobs:
   build-ios:
