@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.igo.mycorc.data.local.ImageStorage
+import org.igo.mycorc.core.time.TimeProvider
 import org.igo.mycorc.domain.model.Note
 import org.igo.mycorc.domain.model.NoteStatus
 import org.igo.mycorc.domain.usecase.SaveNoteUseCase
@@ -16,7 +17,7 @@ import kotlin.time.ExperimentalTime
 data class CreateNoteState @OptIn(ExperimentalTime::class) constructor(
     val biomassWeight: Double = 500.0,
     val coalWeight: Double = 200.0,
-    val description: String = "Партия от ${kotlin.time.Clock.System.now().epochSeconds}",
+    val description: String = "",
     val isSaved: Boolean = false,
 
     // 👇 Добавляем поле для временного хранения фото
@@ -54,7 +55,8 @@ data class CreateNoteState @OptIn(ExperimentalTime::class) constructor(
 
 class CreateNoteViewModel(
     private val saveNoteUseCase: SaveNoteUseCase,
-    private val imageStorage: ImageStorage // 👈 Koin сам подставит нужную реализацию!
+    private val imageStorage: ImageStorage,
+    private val timeProvider: TimeProvider
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(CreateNoteState())
@@ -93,7 +95,7 @@ class CreateNoteViewModel(
             // Б. Создаем объект заметки уже с путем к фото
             val newNote = Note(
                 id = Random.nextLong().toString(), // По-хорошему здесь нужен UUID
-                createdAt = kotlin.time.Clock.System.now(),
+                createdAt = timeProvider.now(),
                 massWeight = currentState.biomassWeight,
                 massDescription = currentState.description,
                 status = NoteStatus.DRAFT,

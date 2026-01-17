@@ -10,13 +10,14 @@ import org.igo.mycorc.domain.model.Note
 import org.igo.mycorc.domain.model.NoteStatus
 import org.igo.mycorc.domain.rep_interface.AuthRepository
 import org.igo.mycorc.domain.rep_interface.NoteSyncRepository
-import kotlin.time.Clock
+import org.igo.mycorc.core.time.TimeProvider
 import kotlin.time.ExperimentalTime
 
 class NoteSyncRepositoryImpl(
     private val db: AppDatabase,
     private val authRepository: AuthRepository,
-    private val api: FirestorePackagesApi
+    private val api: FirestorePackagesApi,
+    private val timeProvider: TimeProvider
 ) : NoteSyncRepository {
 
     private val json = Json { encodeDefaults = true; ignoreUnknownKeys = true }
@@ -60,7 +61,7 @@ class NoteSyncRepositoryImpl(
                 idToken = idToken
             )
 
-            val nowMillis = Clock.System.now().toEpochMilliseconds()
+            val nowMillis = timeProvider.nowEpochMillis()
 
             db.noteQueries.markNoteSynced(
                 status = NoteStatus.SENT,

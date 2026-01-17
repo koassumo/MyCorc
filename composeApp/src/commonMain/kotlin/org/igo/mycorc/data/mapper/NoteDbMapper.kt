@@ -3,6 +3,7 @@ package org.igo.mycorc.data.mapper
 import org.igo.mycorc.db.NoteEntity
 import org.igo.mycorc.domain.model.Note
 import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 class NoteDbMapper {
 
@@ -14,7 +15,7 @@ class NoteDbMapper {
         return Note(
             id = entity.id,
             userId = entity.userId, // <-- Пробрасываем ID владельца
-            createdAt = kotlinx.datetime.Instant.fromEpochMilliseconds(entity.updatedAt), // Конвертируем Long в дату
+            createdAt = Instant.fromEpochMilliseconds(entity.updatedAt), // Конвертируем Long в дату
             // Берем бизнес-данные из JSON-контейнера
             massWeight = payload.biomass?.weight ?: 0.0,
             massValue = 0.0, // Этого поля нет в payload, возможно расчетное или заглушка

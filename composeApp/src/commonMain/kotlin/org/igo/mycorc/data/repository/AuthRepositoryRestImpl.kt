@@ -22,14 +22,15 @@ import org.igo.mycorc.domain.model.AppUser
 import org.igo.mycorc.domain.rep_interface.AuthRepository
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
-import kotlin.time.Clock
+import org.igo.mycorc.core.time.TimeProvider
 import kotlin.time.ExperimentalTime
 
 
 @OptIn(ExperimentalTime::class)
 class AuthRepositoryRestImpl(
     private val client: HttpClient,
-    private val storage: AuthStorage
+    private val storage: AuthStorage,
+    private val timeProvider: TimeProvider
 ) : AuthRepository {
 
     private val apiKey: String = "AIzaSyBXXcox-yKCugwAQCrRN_EnOkfXX0-E0-M"
@@ -76,7 +77,7 @@ class AuthRepositoryRestImpl(
         val token = storage.idTokenOrNull() ?: return null
         val refresh = storage.refreshTokenOrNull() ?: return null
 
-        val now = Clock.System.now().epochSeconds
+        val now = timeProvider.nowEpochSeconds()
 
         val exp = storage.expiresAtEpochSecOrNull() ?: decodeJwtExpOrNull(token)
 
@@ -87,7 +88,7 @@ class AuthRepositoryRestImpl(
     }
 
     private fun persistSession(resp: SignInUpResponseDto) {
-        val now = Clock.System.now().epochSeconds
+        val now = timeProvider.nowEpochSeconds()
 
 
         val expiresAt = now + (resp.expiresIn.toLongOrNull() ?: 3600L)
@@ -116,7 +117,7 @@ class AuthRepositoryRestImpl(
                 )
             }.body()
 
-            val now = Clock.System.now().epochSeconds
+            val now = timeProvider.nowEpochSeconds()
             val expiresAt = now + (resp.expiresIn.toLongOrNull() ?: 3600L)
 
             storage.save(

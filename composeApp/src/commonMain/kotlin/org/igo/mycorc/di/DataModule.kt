@@ -16,6 +16,9 @@ import org.igo.mycorc.data.repository.SettingsRepositoryImpl
 import org.igo.mycorc.data.mapper.NoteDbMapper
 import org.igo.mycorc.domain.rep_interface.NoteRepository
 import org.igo.mycorc.data.repository.NoteRepositoryImpl
+import org.koin.core.module.dsl.factoryOf
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.bind
 import org.koin.dsl.module
 import org.igo.mycorc.domain.rep_interface.AuthRepository
 import org.igo.mycorc.data.remote.buildHttpClient
@@ -24,14 +27,17 @@ import org.igo.mycorc.data.repository.AuthRepositoryRestImpl
 import org.igo.mycorc.data.remote.firestore.FirestorePackagesApi
 import org.igo.mycorc.domain.rep_interface.NoteSyncRepository
 import org.igo.mycorc.data.repository.NoteSyncRepositoryImpl
+import org.igo.mycorc.core.time.TimeProvider
+import org.igo.mycorc.core.time.SystemTimeProvider
 
 val dataModule = module {
 
+    singleOf(::SystemTimeProvider) bind TimeProvider::class
     single { buildHttpClient() }
-    single { AuthStorage(get()) }
-    single<AuthRepository> { AuthRepositoryRestImpl(client = get(), storage = get()) }
+    singleOf(::AuthStorage)
+    singleOf(::AuthRepositoryRestImpl) bind AuthRepository::class
     single { FirestorePackagesApi(client = get(), projectId = "mycorc") }
-    single<NoteSyncRepository> { NoteSyncRepositoryImpl(db = get(), authRepository = get(), api = get()) }
+    singleOf(::NoteSyncRepositoryImpl) bind NoteSyncRepository::class
 
     // 1. Сама База Данных
     single<AppDatabase> {
@@ -65,16 +71,10 @@ val dataModule = module {
     }
 
     // 2. Репозиторий настроек
-    single<SettingsRepository> { SettingsRepositoryImpl(get()) }
+    singleOf(::SettingsRepositoryImpl) bind SettingsRepository::class
 
     // 3. 👇 НОВАЯ ЧАСТЬ: Подключаем работу с заметками
 
-    // Сначала учим Koin создавать Маппер (он нужен Репозиторию)
-    factory { NoteDbMapper() }
-
-    // Теперь создаем Репозиторий.
-    // get() -> AppDatabase
-    // get() -> NoteDbMapper
-    // get() -> AuthRepository (добавили третьим параметром для фильтрации по юзеру)
-    single<NoteRepository> { NoteRepositoryImpl(get(), get(), get()) }
+    factoryOf(::NoteDbMapper)
+    singleOf(::NoteRepositoryImpl) bind NoteRepository::class
 }

@@ -1,6 +1,6 @@
 package org.igo.mycorc.domain.model
 
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 import kotlin.time.ExperimentalTime
 
 

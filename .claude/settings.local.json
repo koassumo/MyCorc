@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xargs:*)",
+      "Bash(tree:*)",
+      "Bash(find:*)",
+      "Bash(./gradlew :composeApp:assembleDebug:*)",
+      "Bash(JAVA_HOME=\"/c/Program Files/Android/Android Studio/jbr\" ./gradlew:*)",
+      "Bash(.gradlew.bat :composeApp:run)",
+      "Bash(cmd /c \".\\\\gradlew.bat :composeApp:run\")",
+      "Bash(C:/android/MyCorc/gradlew.bat :composeApp:run)"
+    ]
+  }
+}
