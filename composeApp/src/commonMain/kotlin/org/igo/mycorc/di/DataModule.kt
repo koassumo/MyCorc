@@ -25,6 +25,7 @@ import org.igo.mycorc.data.remote.buildHttpClient
 import org.igo.mycorc.data.auth.AuthStorage
 import org.igo.mycorc.data.repository.AuthRepositoryRestImpl
 import org.igo.mycorc.data.remote.firestore.FirestorePackagesApi
+import org.igo.mycorc.data.remote.storage.FirebaseStorageApi
 import org.igo.mycorc.domain.rep_interface.NoteSyncRepository
 import org.igo.mycorc.data.repository.NoteSyncRepositoryImpl
 import org.igo.mycorc.core.time.TimeProvider
@@ -37,6 +38,7 @@ val dataModule = module {
     singleOf(::AuthStorage)
     singleOf(::AuthRepositoryRestImpl) bind AuthRepository::class
     single { FirestorePackagesApi(client = get(), projectId = "mycorc") }
+    single { FirebaseStorageApi(client = get(), bucketName = "mycorc.firebasestorage.app") }
     singleOf(::NoteSyncRepositoryImpl) bind NoteSyncRepository::class
 
     // 1. Сама База Данных

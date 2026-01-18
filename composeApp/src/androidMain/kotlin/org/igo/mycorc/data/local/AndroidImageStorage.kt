@@ -20,4 +20,9 @@ class AndroidImageStorage(private val context: Context) : ImageStorage {
             File(path).delete()
         }
     }
+
+    override suspend fun loadImage(path: String): ByteArray? = withContext(Dispatchers.IO) {
+        val file = File(path)
+        if (file.exists()) file.readBytes() else null
+    }
 }

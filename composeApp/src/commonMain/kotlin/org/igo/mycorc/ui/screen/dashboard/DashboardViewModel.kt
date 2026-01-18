@@ -69,7 +69,13 @@ class DashboardViewModel (
     @OptIn(ExperimentalTime::class)
     fun syncNote(note: Note) {
         viewModelScope.launch {
-            syncNoteUseCase(note)
+            val result = syncNoteUseCase(note)
+            result.onSuccess {
+                println("✅ Синхронизация успешна: noteId=${note.id}")
+            }.onFailure { error ->
+                println("❌ Ошибка синхронизации: ${error.message}")
+                error.printStackTrace()
+            }
         }
     }
 }

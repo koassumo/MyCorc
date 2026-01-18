@@ -65,9 +65,16 @@ class NoteRepositoryImpl(
         val currentUser = authRepository.currentUser.firstOrNull()
             ?: throw IllegalStateException("Попытка сохранить заметку без авторизации")
         val payload = NotePayload(
-            step = "BIOMASS", // Пример
+            step = "BIOMASS",
             locationComment = note.massDescription,
-            // ... заполнить остальные поля biomass/coal из note
+            biomass = org.igo.mycorc.domain.model.BiomassData(
+                weight = note.massWeight,
+                photoPath = note.photoPath ?: "",  // 👈 Сохраняем путь к фото
+                photoUrl = note.photoUrl ?: ""     // 👈 Сохраняем URL (пока пустой)
+            ),
+            coal = note.coalWeight?.let {
+                org.igo.mycorc.domain.model.CoalData(weight = it)
+            }
         )
 
         queries.insertNote(

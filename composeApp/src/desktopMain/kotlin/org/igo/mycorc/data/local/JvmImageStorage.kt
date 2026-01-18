@@ -17,4 +17,9 @@ class JvmImageStorage : ImageStorage {
     override suspend fun deleteImage(path: String) {
         File(path).delete()
     }
+
+    override suspend fun loadImage(path: String): ByteArray? {
+        val file = File(path)
+        return if (file.exists()) file.readBytes() else null
+    }
 }

@@ -12,16 +12,16 @@ import kotlinx.serialization.json.JsonObject
 class FirestorePackagesApi(
     private val client: HttpClient,
     private val projectId: String,
-    private val databaseId: String = "(default)",
-    private val collectionId: String = "packages"
+    private val databaseId: String = "(default)"
 ) {
     suspend fun upsertPackage(
+        userId: String,
         noteId: String,
         documentBody: JsonObject,
         idToken: String
     ) {
         val url =
-            "https://firestore.googleapis.com/v1/projects/$projectId/databases/$databaseId/documents/$collectionId/$noteId"
+            "https://firestore.googleapis.com/v1/projects/$projectId/databases/$databaseId/documents/users/$userId/packages/$noteId"
 
         client.patch(url) {
             header(HttpHeaders.Authorization, "Bearer $idToken")

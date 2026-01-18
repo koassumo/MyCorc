@@ -36,6 +36,13 @@ class IosImageStorage : ImageStorage {
     override suspend fun deleteImage(path: String) {
         NSFileManager.defaultManager.removeItemAtPath(path, null)
     }
+
+    @OptIn(ExperimentalForeignApi::class)
+    override suspend fun loadImage(path: String): ByteArray? {
+        val fileUrl = NSURL.fileURLWithPath(path)
+        val nsData = NSData.dataWithContentsOfURL(fileUrl) ?: return null
+        return nsData.toByteArray()
+    }
 }
 
 // Вспомогательная функция (расширение) должна быть вне класса или внутри companion object,

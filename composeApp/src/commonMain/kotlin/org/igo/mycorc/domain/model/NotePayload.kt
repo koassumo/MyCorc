@@ -14,7 +14,8 @@ data class NotePayload(
 @Serializable
 data class BiomassData(
     val weight: Double = 0.0,
-    val photoPath: String = ""
+    val photoPath: String = "",     // Локальный путь или путь в Storage
+    val photoUrl: String = ""       // Публичная ссылка с сервера
 )
 
 @Serializable

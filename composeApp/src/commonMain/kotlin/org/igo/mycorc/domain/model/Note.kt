@@ -21,7 +21,8 @@ data class Note @OptIn(ExperimentalTime::class) constructor(
     val coalWeight: Double? = null,
 
     // Фото
-    val photoPath: String? = null,
+    val photoPath: String? = null,    // Локальный путь на устройстве или путь в Storage ("users/123/packages/456/photo.jpg")
+    val photoUrl: String? = null,     // Публичная ссылка с сервера (для UI)
 
     // Технические поля
     val isSynced: Boolean = false

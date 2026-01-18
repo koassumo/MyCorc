@@ -26,7 +26,8 @@ class NoteDbMapper {
             // 👇 ВАЖНО: Мы раскомментировали эту строку.
             // Так как в SQLDelight у тебя "INTEGER AS Boolean", то entity.isSynced — это уже Boolean.
             isSynced = entity.isSynced,
-            photoPath = null // Путь к фото пока не храним в БД явно, или он внутри payload?
+            photoPath = payload.biomass?.photoPath?.takeIf { it.isNotEmpty() }, // Берем из payload
+            photoUrl = payload.biomass?.photoUrl?.takeIf { it.isNotEmpty() }    // Берем из payload
         )
     }
 }
