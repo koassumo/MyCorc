@@ -79,12 +79,16 @@ class CreateNoteViewModel(
         viewModelScope.launch {
             getNoteByIdUseCase(noteId).collect { note ->
                 if (note != null) {
-                    println("📝 Загружена запись для редактирования: ${note.id}, isSynced=${note.isSynced}")
+                    // Read-only только для отправленных на регистрацию (SENT, APPROVED, REJECTED)
+                    // DRAFT и READY_TO_SEND можно редактировать
+                    val isReadOnly = note.status !in listOf(NoteStatus.DRAFT, NoteStatus.READY_TO_SEND)
+
+                    println("📝 Загружена запись: id=${note.id}, status=${note.status}, isReadOnly=$isReadOnly")
                     _state.update {
                         it.copy(
                             editMode = true,
                             existingNote = note,
-                            isReadOnly = note.isSynced,
+                            isReadOnly = isReadOnly,
                             biomassWeight = note.massWeight,
                             coalWeight = note.coalWeight ?: 200.0,
                             description = note.massDescription,

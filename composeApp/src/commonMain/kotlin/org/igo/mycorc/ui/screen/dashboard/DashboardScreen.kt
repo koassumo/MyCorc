@@ -144,7 +144,7 @@ fun DashboardItem(
                         modifier = Modifier.align(Alignment.End)
                     ) {
                         Text(
-                            text = "Синхронизировано",
+                            text = "Отправлено на регистрацию",
                             style = MaterialTheme.typography.labelMedium,
                             color = Color.Gray
                         )

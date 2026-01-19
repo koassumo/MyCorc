@@ -37,7 +37,8 @@ class NoteSyncRepositoryImpl(
             val user = authRepository.currentUser.firstOrNull()
                 ?: error("Нет текущего пользователя (currentUser = null)")
 
-            println("👤 User ID: ${user.id}")
+            println("👤 User ID из authRepository: ${user.id}")
+            println("👤 User ID из note: ${note.userId}")
 
             val entity = db.noteQueries.getNoteById(note.id).executeAsOneOrNull()
                 ?: error("Запись не найдена в локальной БД: noteId=${note.id}")
@@ -69,10 +70,13 @@ class NoteSyncRepositoryImpl(
                 println("ℹ️ Фото отсутствует")
             }
 
+            // Определяем финальный статус для отправки на сервер
+            val finalStatus = if (markAsSent) NoteStatus.SENT else entity.status
+
             val fields = linkedMapOf(
                 "noteId" to FirestoreJson.string(note.id),
                 "userId" to FirestoreJson.string(user.id),
-                "status" to FirestoreJson.string(entity.status.name),
+                "status" to FirestoreJson.string(finalStatus.name),
 
                 "createdAtEpochMillis" to FirestoreJson.integer(note.createdAt.toEpochMilliseconds()),
                 "updatedAtEpochMillis" to FirestoreJson.integer(entity.updatedAt),
@@ -101,14 +105,23 @@ class NoteSyncRepositoryImpl(
             val nowMillis = timeProvider.nowEpochMillis()
 
             if (markAsSent) {
+                // Проверяем запись ДО обновления
+                val beforeUpdate = db.noteQueries.getNoteById(note.id).executeAsOneOrNull()
+                println("🔍 ДО обновления: status=${beforeUpdate?.status}, isSynced=${beforeUpdate?.isSynced}, userId=${beforeUpdate?.userId}")
+
                 // Финальная отправка - меняем статус на SENT
+                println("📝 Вызов markNoteSynced: noteId=${note.id}, userId=${user.id}, status=SENT")
                 db.noteQueries.markNoteSynced(
                     status = NoteStatus.SENT,
                     updatedAt = nowMillis,
                     id = note.id,
                     userId = user.id
                 )
-                println("✅ Финальная отправка: статус = SENT, isSynced = true")
+                println("✅ SQL-запрос markNoteSynced выполнен")
+
+                // Проверяем обновление ПОСЛЕ
+                val afterUpdate = db.noteQueries.getNoteById(note.id).executeAsOneOrNull()
+                println("🔍 ПОСЛЕ обновления: status=${afterUpdate?.status}, isSynced=${afterUpdate?.isSynced}, userId=${afterUpdate?.userId}")
             } else {
                 // Автосохранение черновика - только помечаем как синхронизированное
                 db.noteQueries.markNoteAsSynced(

@@ -57,7 +57,7 @@ fun CreateNoteScreen(
         Scaffold(
             topBar = {
                 val title = when {
-                    state.isReadOnly -> "Просмотр партии (синхронизировано)"
+                    state.isReadOnly -> "Просмотр партии (отправлено)"
                     state.editMode -> "Редактирование партии"
                     else -> "Новая партия"
                 }
