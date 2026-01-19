@@ -27,9 +27,9 @@ class NoteSyncRepositoryImpl(
     private val json = Json { encodeDefaults = true; ignoreUnknownKeys = true }
 
     @OptIn(ExperimentalTime::class)
-    override suspend fun syncNote(note: Note): Result<Unit> =
+    override suspend fun syncNote(note: Note, markAsSent: Boolean): Result<Unit> =
         runCatching {
-            println("🔄 Начало синхронизации: noteId=${note.id}")
+            println("🔄 Начало синхронизации: noteId=${note.id}, markAsSent=$markAsSent")
 
             val idToken = authRepository.getIdTokenOrNull()
                 ?: error("Нет idToken (пользователь не залогинен или токен недоступен)")
@@ -100,12 +100,24 @@ class NoteSyncRepositoryImpl(
 
             val nowMillis = timeProvider.nowEpochMillis()
 
-            db.noteQueries.markNoteSynced(
-                status = NoteStatus.SENT,
-                updatedAt = nowMillis,
-                id = note.id,
-                userId = user.id
-            )
+            if (markAsSent) {
+                // Финальная отправка - меняем статус на SENT
+                db.noteQueries.markNoteSynced(
+                    status = NoteStatus.SENT,
+                    updatedAt = nowMillis,
+                    id = note.id,
+                    userId = user.id
+                )
+                println("✅ Финальная отправка: статус = SENT, isSynced = true")
+            } else {
+                // Автосохранение черновика - только помечаем как синхронизированное
+                db.noteQueries.markNoteAsSynced(
+                    updatedAt = nowMillis,
+                    id = note.id,
+                    userId = user.id
+                )
+                println("✅ Черновик синхронизирован: статус не изменён, isSynced = true")
+            }
             println("✅ Синхронизация завершена успешно")
         }
 }

@@ -65,15 +65,16 @@ class DashboardViewModel (
         }
     }
 
-    // 👇 ФУНКЦИЯ "ОТПРАВКИ"
+    // 👇 ФУНКЦИЯ "ФИНАЛЬНОЙ ОТПРАВКИ"
     @OptIn(ExperimentalTime::class)
     fun syncNote(note: Note) {
         viewModelScope.launch {
-            val result = syncNoteUseCase(note)
+            // Финальная отправка - меняем статус на SENT
+            val result = syncNoteUseCase(note, markAsSent = true)
             result.onSuccess {
-                println("✅ Синхронизация успешна: noteId=${note.id}")
+                println("✅ Финальная отправка успешна: noteId=${note.id}, статус=SENT")
             }.onFailure { error ->
-                println("❌ Ошибка синхронизации: ${error.message}")
+                println("❌ Ошибка финальной отправки: ${error.message}")
                 error.printStackTrace()
             }
         }

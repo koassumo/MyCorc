@@ -43,7 +43,14 @@ DELETE FROM noteEntity WHERE userId = ?;
 deleteAll:
 DELETE FROM noteEntity;
 
--- запрос в firebase (только для конкретного юзера)
+-- Пометить как синхронизированное (автосохранение черновиков)
+markNoteAsSynced:
+UPDATE noteEntity
+SET isSynced = 1,
+    updatedAt = ?
+WHERE id = ? AND userId = ?;
+
+-- Финальная отправка на сервер (меняет статус на SENT)
 markNoteSynced:
 UPDATE noteEntity
 SET isSynced = 1,

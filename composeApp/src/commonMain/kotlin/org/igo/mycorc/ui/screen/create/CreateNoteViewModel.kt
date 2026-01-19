@@ -12,6 +12,7 @@ import org.igo.mycorc.domain.model.Note
 import org.igo.mycorc.domain.model.NoteStatus
 import org.igo.mycorc.domain.usecase.GetNoteByIdUseCase
 import org.igo.mycorc.domain.usecase.SaveNoteUseCase
+import org.igo.mycorc.domain.usecase.SyncNoteUseCase
 import kotlin.random.Random
 import kotlin.time.ExperimentalTime
 
@@ -31,6 +32,7 @@ data class CreateNoteState(
 class CreateNoteViewModel(
     private val saveNoteUseCase: SaveNoteUseCase,
     private val getNoteByIdUseCase: GetNoteByIdUseCase,
+    private val syncNoteUseCase: SyncNoteUseCase,
     private val imageStorage: ImageStorage,
     private val timeProvider: TimeProvider
 ) : ViewModel() {
@@ -150,6 +152,17 @@ class CreateNoteViewModel(
             }
 
             saveNoteUseCase(note)
+            println("💾 Запись сохранена локально")
+
+            // Автоматическая синхронизация на сервер (черновик, не меняем статус на SENT)
+            val syncResult = syncNoteUseCase(note, markAsSent = false)
+            syncResult.onSuccess {
+                println("☁️ Автосинхронизация успешна: запись отправлена на сервер")
+            }.onFailure { error ->
+                println("⚠️ Ошибка автосинхронизации: ${error.message}")
+                error.printStackTrace()
+                // Не блокируем сохранение, если синхронизация не удалась
+            }
 
             _state.update { it.copy(isSaved = true) }
         }
