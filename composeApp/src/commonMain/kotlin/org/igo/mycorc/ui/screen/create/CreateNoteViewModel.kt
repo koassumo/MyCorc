@@ -4,15 +4,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.igo.mycorc.data.local.ImageStorage
 import org.igo.mycorc.core.time.TimeProvider
 import org.igo.mycorc.domain.model.Note
 import org.igo.mycorc.domain.model.NoteStatus
+import org.igo.mycorc.domain.usecase.CheckServerStatusUseCase
 import org.igo.mycorc.domain.usecase.GetNoteByIdUseCase
 import org.igo.mycorc.domain.usecase.SaveNoteUseCase
 import org.igo.mycorc.domain.usecase.SyncNoteUseCase
+import org.igo.mycorc.domain.usecase.SyncSingleNoteUseCase
 import kotlin.random.Random
 import kotlin.time.ExperimentalTime
 
@@ -26,13 +29,16 @@ data class CreateNoteState(
     // Новые поля для режима редактирования
     val editMode: Boolean = false,
     val existingNote: Note? = null,
-    val isReadOnly: Boolean = false
+    val isReadOnly: Boolean = false,
+    val errorMessage: String? = null
 )
 
 class CreateNoteViewModel(
     private val saveNoteUseCase: SaveNoteUseCase,
     private val getNoteByIdUseCase: GetNoteByIdUseCase,
     private val syncNoteUseCase: SyncNoteUseCase,
+    private val checkServerStatusUseCase: CheckServerStatusUseCase,
+    private val syncSingleNoteUseCase: SyncSingleNoteUseCase,
     private val imageStorage: ImageStorage,
     private val timeProvider: TimeProvider
 ) : ViewModel() {
@@ -77,6 +83,45 @@ class CreateNoteViewModel(
     // Загрузить существующую запись для редактирования
     fun loadNote(noteId: String) {
         viewModelScope.launch {
+            // Сначала получаем локальный статус
+            val localNote = getNoteByIdUseCase(noteId).firstOrNull()
+
+            if (localNote != null) {
+                val localStatus = localNote.status
+                val lockedStatuses = setOf(NoteStatus.SENT, NoteStatus.APPROVED, NoteStatus.REJECTED)
+
+                // 🔒 ПРОВЕРКА 1: Проверяем статус на сервере при открытии карточки
+                val serverStatusResult = checkServerStatusUseCase(noteId)
+                serverStatusResult.onSuccess { serverStatus ->
+                    if (serverStatus != null && serverStatus in lockedStatuses) {
+                        println("🔍 Сервер: $serverStatus, Локально: $localStatus")
+
+                        // КОНФЛИКТ: сервер заблокирован, а локально еще редактируемый
+                        if (localStatus !in lockedStatuses) {
+                            println("⚠️ КОНФЛИКТ! Пакет заблокирован на сервере, но локально редактируемый")
+
+                            // 🔄 СИНХРОНИЗАЦИЯ: Обновляем локальную версию с сервера
+                            val syncResult = syncSingleNoteUseCase(noteId)
+                            syncResult.onSuccess {
+                                println("✅ Пакет синхронизирован с сервера, UI обновится автоматически")
+                            }.onFailure { error ->
+                                println("⚠️ Ошибка синхронизации: ${error.message}")
+                            }
+
+                            _state.update {
+                                it.copy(
+                                    errorMessage = "Этот пакет уже отправлен на регистрацию с другого устройства"
+                                )
+                            }
+                        } else {
+                            println("✓ Конфликта нет - оба заблокированы, открываем в режиме просмотра")
+                        }
+                    }
+                }.onFailure { error ->
+                    println("⚠️ Не удалось проверить статус на сервере: ${error.message}")
+                }
+            }
+
             getNoteByIdUseCase(noteId).collect { note ->
                 if (note != null) {
                     // Read-only только для отправленных на регистрацию (SENT, APPROVED, REJECTED)
@@ -106,6 +151,45 @@ class CreateNoteViewModel(
     fun saveNote() {
         viewModelScope.launch {
             val currentState = _state.value
+
+            // 🔒 ПРОВЕРКА 2: Проверяем статус на сервере перед сохранением
+            if (currentState.editMode && currentState.existingNote != null) {
+                val localStatus = currentState.existingNote.status
+                val lockedStatuses = setOf(NoteStatus.SENT, NoteStatus.APPROVED, NoteStatus.REJECTED)
+
+                val serverStatusResult = checkServerStatusUseCase(currentState.existingNote.id)
+                serverStatusResult.onSuccess { serverStatus ->
+                    if (serverStatus != null && serverStatus in lockedStatuses) {
+                        println("🔍 Сервер: $serverStatus, Локально: $localStatus")
+
+                        // КОНФЛИКТ: сервер заблокирован, а локально еще редактируемый
+                        if (localStatus !in lockedStatuses) {
+                            println("⚠️ КОНФЛИКТ! Пакет заблокирован на сервере, но локально редактируемый")
+
+                            // 🔄 СИНХРОНИЗАЦИЯ: Обновляем локальную версию с сервера
+                            val syncResult = syncSingleNoteUseCase(currentState.existingNote.id)
+                            syncResult.onSuccess {
+                                println("✅ Пакет синхронизирован с сервера, UI обновится автоматически")
+                            }.onFailure { error ->
+                                println("⚠️ Ошибка синхронизации: ${error.message}")
+                            }
+
+                            _state.update {
+                                it.copy(
+                                    errorMessage = "Невозможно сохранить: пакет уже отправлен на регистрацию с другого устройства"
+                                )
+                            }
+                            return@launch
+                        } else {
+                            println("✓ Конфликта нет - оба заблокированы, пропускаем сохранение")
+                            return@launch
+                        }
+                    }
+                }.onFailure { error ->
+                    println("⚠️ Не удалось проверить статус на сервере: ${error.message}")
+                    // Продолжаем сохранение, даже если проверка не удалась (может быть оффлайн)
+                }
+            }
 
             // Проверяем, заполнены ли ВСЕ обязательные поля
             val isComplete = currentState.biomassWeight > 0 &&
@@ -175,6 +259,11 @@ class CreateNoteViewModel(
     // Сбрасываем форму в исходное состояние
     fun resetState() {
         _state.update { CreateNoteState() }
+    }
+
+    // Очистить сообщение об ошибке
+    fun clearError() {
+        _state.update { it.copy(errorMessage = null) }
     }
 }
 

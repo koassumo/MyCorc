@@ -200,6 +200,26 @@ fun CreateNoteScreen(
                 }
             }
         }
+
+        // Диалог ошибки (пакет заблокирован на сервере)
+        if (state.errorMessage != null) {
+            AlertDialog(
+                onDismissRequest = {
+                    viewModel.clearError()
+                    onNavigateBack()
+                },
+                title = { Text("Невозможно редактировать") },
+                text = { Text(state.errorMessage ?: "") },
+                confirmButton = {
+                    TextButton(onClick = {
+                        viewModel.clearError()
+                        onNavigateBack()
+                    }) {
+                        Text("OK")
+                    }
+                }
+            )
+        }
     }
 }
 

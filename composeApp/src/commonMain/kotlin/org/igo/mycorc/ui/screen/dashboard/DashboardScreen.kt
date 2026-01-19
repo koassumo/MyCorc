@@ -10,10 +10,14 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import org.igo.mycorc.domain.model.Note
@@ -49,11 +53,21 @@ fun DashboardScreen(
 ) {
     val viewModel = koinViewModel<DashboardViewModel>()
     val state by viewModel.state.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    // Показываем Snackbar при ошибке
+    LaunchedEffect(state.errorMessage) {
+        state.errorMessage?.let { message ->
+            snackbarHostState.showSnackbar(message)
+            viewModel.clearError()
+        }
+    }
 
     // Используем Scaffold локально для FAB,
     // либо можно добавить FAB в общий Scaffold в MainScreen (если кнопка нужна везде).
     // Для теста добавим прямо здесь.
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             CommonTopBar(
                 title = "Dashboard",
@@ -140,7 +154,7 @@ fun DashboardItem(
                     )
                 }
                 org.igo.mycorc.domain.model.NoteStatus.READY_TO_SEND -> {
-                    // Все поля заполнены - показываем кнопку "Отправить"
+                    // Все поля заполнены - показываем кнопку "Отправить на регистрацию"
                     Button(
                         onClick = onSendClick,
                         modifier = Modifier.fillMaxWidth(),
@@ -151,7 +165,7 @@ fun DashboardItem(
                     ) {
                         Icon(Icons.Default.CloudUpload, contentDescription = null)
                         Spacer(Modifier.width(8.dp))
-                        Text("Отправить на сервер")
+                        Text("Отправить на регистрацию")
                     }
                 }
                 org.igo.mycorc.domain.model.NoteStatus.SENT -> {

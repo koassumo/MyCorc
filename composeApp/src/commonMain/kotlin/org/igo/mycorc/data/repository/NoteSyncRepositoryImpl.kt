@@ -264,4 +264,54 @@ class NoteSyncRepositoryImpl(
             userId = userId
         )
     }
+
+    override suspend fun syncSingleNoteFromServer(noteId: String): Result<Unit> =
+        runCatching {
+            println("🔄 Синхронизация одного пакета с сервера: $noteId")
+
+            val idToken = authRepository.getIdTokenOrNull()
+                ?: error("Нет idToken (пользователь не залогинен)")
+
+            val user = authRepository.currentUser.firstOrNull()
+                ?: error("Нет текущего пользователя")
+
+            val serverPackage = firestoreApi.getPackageById(user.id, noteId, idToken)
+
+            if (serverPackage == null) {
+                println("⚠️ Пакет $noteId не найден на сервере - пропускаем")
+                return@runCatching
+            }
+
+            val localNote = db.noteQueries.getNoteById(noteId).executeAsOneOrNull()
+
+            if (localNote == null) {
+                println("➕ Создаем пакет с сервера: $noteId")
+                createNoteFromServer(serverPackage, user.id)
+            } else {
+                println("🔄 Обновляем пакет с сервера: $noteId")
+                updateNoteFromServer(serverPackage, user.id)
+            }
+
+            println("✅ Пакет $noteId синхронизирован")
+        }
+
+    override suspend fun checkServerStatus(noteId: String): Result<NoteStatus?> =
+        runCatching {
+            val idToken = authRepository.getIdTokenOrNull()
+                ?: error("Нет idToken (пользователь не залогинен)")
+
+            val user = authRepository.currentUser.firstOrNull()
+                ?: error("Нет текущего пользователя")
+
+            val serverPackage = firestoreApi.getPackageById(user.id, noteId, idToken)
+
+            if (serverPackage == null) {
+                println("ℹ️ Пакет $noteId не найден на сервере")
+                return@runCatching null
+            }
+
+            val status = NoteStatus.valueOf(serverPackage["status"] as String)
+            println("🔍 Проверка статуса на сервере: noteId=$noteId, status=$status")
+            status
+        }
 }

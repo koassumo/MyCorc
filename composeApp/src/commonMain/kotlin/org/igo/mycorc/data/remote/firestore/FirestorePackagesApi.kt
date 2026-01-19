@@ -37,6 +37,34 @@ class FirestorePackagesApi(
     }
 
     /**
+     * Получить один пакет по ID
+     */
+    suspend fun getPackageById(
+        userId: String,
+        noteId: String,
+        idToken: String
+    ): Map<String, Any>? {
+        val url =
+            "https://firestore.googleapis.com/v1/projects/$projectId/databases/$databaseId/documents/users/$userId/packages/$noteId"
+
+        return try {
+            val response = client.get(url) {
+                header(HttpHeaders.Authorization, "Bearer $idToken")
+            }
+
+            val responseText = response.bodyAsText()
+            val json = Json { ignoreUnknownKeys = true }
+            val docObj = json.parseToJsonElement(responseText).jsonObject
+            val fields = docObj["fields"]?.jsonObject ?: return null
+
+            parseFirestoreFields(fields)
+        } catch (e: Exception) {
+            println("⚠️ Пакет не найден на сервере: $noteId")
+            null
+        }
+    }
+
+    /**
      * Получить все пакеты пользователя с сервера
      */
     suspend fun getAllPackages(

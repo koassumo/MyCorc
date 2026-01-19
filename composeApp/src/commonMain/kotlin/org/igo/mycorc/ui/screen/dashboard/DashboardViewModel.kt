@@ -9,9 +9,11 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.igo.mycorc.domain.model.Note
 import org.igo.mycorc.domain.model.NoteStatus
+import org.igo.mycorc.domain.usecase.CheckServerStatusUseCase
 import org.igo.mycorc.domain.usecase.GetNoteListUseCase
 import org.igo.mycorc.domain.usecase.SaveNoteUseCase
 import org.igo.mycorc.domain.usecase.SyncFromServerUseCase
+import org.igo.mycorc.domain.usecase.SyncSingleNoteUseCase
 import kotlin.random.Random
 import kotlin.time.ExperimentalTime
 import org.igo.mycorc.domain.usecase.SyncNoteUseCase
@@ -21,7 +23,9 @@ class DashboardViewModel (
     private val getNoteListUseCase: GetNoteListUseCase,
     private val saveNoteUseCase: SaveNoteUseCase,
     private val syncNoteUseCase: SyncNoteUseCase,
-    private val syncFromServerUseCase: SyncFromServerUseCase
+    private val syncFromServerUseCase: SyncFromServerUseCase,
+    private val checkServerStatusUseCase: CheckServerStatusUseCase,
+    private val syncSingleNoteUseCase: SyncSingleNoteUseCase
 ) : ViewModel() {
 
 
@@ -67,19 +71,58 @@ class DashboardViewModel (
         }
     }
 
-    // 👇 ФУНКЦИЯ "ФИНАЛЬНОЙ ОТПРАВКИ"
+    // 👇 ФУНКЦИЯ "ОТПРАВКИ НА РЕГИСТРАЦИЮ"
     @OptIn(ExperimentalTime::class)
     fun syncNote(note: Note) {
         viewModelScope.launch {
+            val localStatus = note.status
+            val lockedStatuses = setOf(NoteStatus.SENT, NoteStatus.APPROVED, NoteStatus.REJECTED)
+
+            // 🔒 ПРОВЕРКА 3: Проверяем статус на сервере перед отправкой на регистрацию
+            val serverStatusResult = checkServerStatusUseCase(note.id)
+            serverStatusResult.onSuccess { serverStatus ->
+                if (serverStatus != null && serverStatus in lockedStatuses) {
+                    println("🔍 Сервер: $serverStatus, Локально: $localStatus")
+
+                    // КОНФЛИКТ: сервер заблокирован, а локально еще редактируемый
+                    if (localStatus !in lockedStatuses) {
+                        println("⚠️ КОНФЛИКТ! Пакет заблокирован на сервере, но локально редактируемый")
+
+                        // 🔄 СИНХРОНИЗАЦИЯ: Обновляем локальную версию с сервера
+                        val syncResult = syncSingleNoteUseCase(note.id)
+                        syncResult.onSuccess {
+                            println("✅ Пакет синхронизирован с сервера, UI обновится автоматически")
+                        }.onFailure { error ->
+                            println("⚠️ Ошибка синхронизации: ${error.message}")
+                        }
+
+                        _state.update {
+                            it.copy(errorMessage = "Этот пакет уже отправлен на регистрацию с другого устройства")
+                        }
+                        return@launch
+                    } else {
+                        println("✓ Конфликта нет - уже заблокирован, пропускаем отправку")
+                        return@launch
+                    }
+                }
+            }.onFailure { error ->
+                println("⚠️ Не удалось проверить статус на сервере: ${error.message}")
+                // Продолжаем отправку, даже если проверка не удалась (может быть оффлайн)
+            }
+
             // Финальная отправка - меняем статус на SENT
             val result = syncNoteUseCase(note, markAsSent = true)
             result.onSuccess {
-                println("✅ Финальная отправка успешна: noteId=${note.id}, статус=SENT")
+                println("✅ Отправка на регистрацию успешна: noteId=${note.id}, статус=SENT")
             }.onFailure { error ->
-                println("❌ Ошибка финальной отправки: ${error.message}")
+                println("❌ Ошибка отправки на регистрацию: ${error.message}")
                 error.printStackTrace()
             }
         }
+    }
+
+    fun clearError() {
+        _state.update { it.copy(errorMessage = null) }
     }
 
     // 👇 ФУНКЦИЯ "СИНХРОНИЗАЦИЯ С СЕРВЕРА"
