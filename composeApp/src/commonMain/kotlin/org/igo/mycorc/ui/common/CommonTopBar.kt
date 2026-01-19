@@ -19,7 +19,8 @@ fun CommonTopBar(
     title: String,
     canNavigateBack: Boolean = false,
     navigateUp: () -> Unit = {},
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    actions: @Composable () -> Unit = {}
 ) {
     CenterAlignedTopAppBar(
         title = {
@@ -38,6 +39,7 @@ fun CommonTopBar(
                 }
             }
         },
+        actions = { actions() },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             // 1. В спокойном состоянии — полностью прозрачный.
             // Мы видим цвет Surface, который лежит под ним (и он уже правильный).

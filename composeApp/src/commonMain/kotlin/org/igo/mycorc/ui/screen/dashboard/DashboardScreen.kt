@@ -22,6 +22,7 @@ import org.igo.mycorc.ui.common.CommonTopBar
 import org.koin.compose.viewmodel.koinViewModel // 👈 Обязательный импорт для Koin
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Icon
 
 import androidx.compose.foundation.layout.Row
@@ -34,6 +35,7 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.CloudUpload
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.IconButton
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
@@ -52,7 +54,22 @@ fun DashboardScreen(
     // либо можно добавить FAB в общий Scaffold в MainScreen (если кнопка нужна везде).
     // Для теста добавим прямо здесь.
     Scaffold(
-        topBar = { CommonTopBar(title = "Dashboard") },
+        topBar = {
+            CommonTopBar(
+                title = "Dashboard",
+                actions = {
+                    IconButton(
+                        onClick = { viewModel.syncFromServer() },
+                        enabled = !state.isSyncing
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Refresh,
+                            contentDescription = "Синхронизировать с сервером"
+                        )
+                    }
+                }
+            )
+        },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = onNavigateToCreate,

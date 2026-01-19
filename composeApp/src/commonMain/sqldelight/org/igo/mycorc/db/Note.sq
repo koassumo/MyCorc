@@ -57,3 +57,22 @@ SET isSynced = 1,
     status = ?,
     updatedAt = ?
 WHERE id = ? AND userId = ?;
+
+-- Удалить одну запись (для синхронизации с сервера)
+deleteNote:
+DELETE FROM noteEntity
+WHERE id = ? AND userId = ?;
+
+-- Вставить новую запись с сервера (всегда синхронизированная)
+insertNoteFromServer:
+INSERT OR REPLACE INTO noteEntity(id, userId, status, updatedAt, isSynced, payload)
+VALUES (?, ?, ?, ?, 1, ?);
+
+-- Обновить существующую запись данными с сервера
+updateNoteFromServer:
+UPDATE noteEntity
+SET status = ?,
+    updatedAt = ?,
+    isSynced = 1,
+    payload = ?
+WHERE id = ? AND userId = ?;

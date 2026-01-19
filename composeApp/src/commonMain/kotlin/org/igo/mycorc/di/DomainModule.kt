@@ -5,6 +5,7 @@ package org.igo.mycorc.di
 import org.igo.mycorc.domain.usecase.GetNoteByIdUseCase
 import org.igo.mycorc.domain.usecase.GetNoteListUseCase
 import org.igo.mycorc.domain.usecase.SaveNoteUseCase
+import org.igo.mycorc.domain.usecase.SyncFromServerUseCase
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.module
 import org.igo.mycorc.domain.usecase.SyncNoteUseCase
@@ -15,4 +16,5 @@ val domainModule = module {
     factoryOf(::GetNoteByIdUseCase)
     factoryOf(::SaveNoteUseCase)
     factoryOf(::SyncNoteUseCase)
+    factoryOf(::SyncFromServerUseCase)
 }

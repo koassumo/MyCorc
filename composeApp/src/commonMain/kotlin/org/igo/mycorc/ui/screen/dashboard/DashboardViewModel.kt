@@ -11,6 +11,7 @@ import org.igo.mycorc.domain.model.Note
 import org.igo.mycorc.domain.model.NoteStatus
 import org.igo.mycorc.domain.usecase.GetNoteListUseCase
 import org.igo.mycorc.domain.usecase.SaveNoteUseCase
+import org.igo.mycorc.domain.usecase.SyncFromServerUseCase
 import kotlin.random.Random
 import kotlin.time.ExperimentalTime
 import org.igo.mycorc.domain.usecase.SyncNoteUseCase
@@ -19,7 +20,8 @@ import org.igo.mycorc.domain.usecase.SyncNoteUseCase
 class DashboardViewModel (
     private val getNoteListUseCase: GetNoteListUseCase,
     private val saveNoteUseCase: SaveNoteUseCase,
-    private val syncNoteUseCase: SyncNoteUseCase
+    private val syncNoteUseCase: SyncNoteUseCase,
+    private val syncFromServerUseCase: SyncFromServerUseCase
 ) : ViewModel() {
 
 
@@ -76,6 +78,22 @@ class DashboardViewModel (
             }.onFailure { error ->
                 println("❌ Ошибка финальной отправки: ${error.message}")
                 error.printStackTrace()
+            }
+        }
+    }
+
+    // 👇 ФУНКЦИЯ "СИНХРОНИЗАЦИЯ С СЕРВЕРА"
+    fun syncFromServer() {
+        viewModelScope.launch {
+            _state.update { it.copy(isSyncing = true) }
+            val result = syncFromServerUseCase()
+            result.onSuccess {
+                println("✅ Синхронизация с сервера завершена успешно")
+                _state.update { it.copy(isSyncing = false) }
+            }.onFailure { error ->
+                println("❌ Ошибка синхронизации с сервера: ${error.message}")
+                error.printStackTrace()
+                _state.update { it.copy(isSyncing = false) }
             }
         }
     }

@@ -17,12 +17,14 @@ import org.igo.mycorc.domain.model.Note
 import org.igo.mycorc.domain.model.NotePayload
 import org.igo.mycorc.domain.rep_interface.AuthRepository
 import org.igo.mycorc.domain.rep_interface.NoteRepository
+import org.igo.mycorc.core.time.TimeProvider
 import kotlin.time.ExperimentalTime
 
 class NoteRepositoryImpl(
     private val db: AppDatabase,
     private val mapper: NoteDbMapper, // 👇 Нам понадобится маппер
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val timeProvider: TimeProvider
 ) : NoteRepository {
 
     private val queries = db.noteQueries
@@ -90,7 +92,7 @@ class NoteRepositoryImpl(
             id = note.id,
             userId = currentUser.id, // <-- БЕРЕМ РЕАЛЬНЫЙ ID ЮЗЕРА
             status = note.status,
-            updatedAt = note.createdAt.toEpochMilliseconds(),
+            updatedAt = timeProvider.nowEpochMillis(), // <-- ИСПОЛЬЗУЕМ ТЕКУЩЕЕ ВРЕМЯ
 
             // 👇 ИСПРАВЛЕНИЕ: Берем значение из самой заметки!
             // Если мы нажали "Отправить", тут прилетит true.

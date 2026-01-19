@@ -133,4 +133,135 @@ class NoteSyncRepositoryImpl(
             }
             println("✅ Синхронизация завершена успешно")
         }
+
+    override suspend fun syncFromServer(): Result<Unit> =
+        runCatching {
+            println("🔄 Начало синхронизации с сервера")
+
+            val idToken = authRepository.getIdTokenOrNull()
+                ?: error("Нет idToken (пользователь не залогинен)")
+
+            val user = authRepository.currentUser.firstOrNull()
+                ?: error("Нет текущего пользователя")
+
+            println("👤 Синхронизация для пользователя: ${user.id}")
+
+            // 1. Загрузить все пакеты с сервера
+            val serverPackages = firestoreApi.getAllPackages(user.id, idToken)
+            println("📥 Получено ${serverPackages.size} пакетов с сервера")
+
+            // 2. Загрузить все локальные записи
+            val localNotes = db.noteQueries.getAllNotes(user.id).executeAsList()
+            println("💾 Локально: ${localNotes.size} записей")
+
+            // 3. УДАЛЕНИЕ: Локальные записи, которых нет на сервере
+            val serverIds = serverPackages.map { it["noteId"] as String }.toSet()
+            localNotes.filter { it.id !in serverIds }.forEach { localNote ->
+                if (!localNote.isSynced) {
+                    println("⚠️ Пропускаем удаление ${localNote.id}: есть несинхронизированные изменения")
+                } else {
+                    println("🗑️ Удаляем локальную запись: ${localNote.id}")
+                    // Удаляем фото (если есть в biomass)
+                    val entity = db.noteQueries.getNoteById(localNote.id).executeAsOneOrNull()
+                    entity?.payload?.biomass?.photoPath?.let { photoPath ->
+                        if (photoPath.isNotEmpty()) {
+                            imageStorage.deleteImage(photoPath)
+                        }
+                    }
+                    // Удаляем из БД
+                    db.noteQueries.deleteNote(localNote.id, user.id)
+                }
+            }
+
+            // 4. ОБНОВЛЕНИЕ/СОЗДАНИЕ из серверных данных
+            serverPackages.forEach { serverPackage ->
+                val noteId = serverPackage["noteId"] as String
+                val localNote = localNotes.find { it.id == noteId }
+
+                if (localNote == null) {
+                    println("➕ Создаем новый пакет: $noteId")
+                    createNoteFromServer(serverPackage, user.id)
+                } else if (shouldUpdateFromServer(serverPackage, localNote)) {
+                    println("🔄 Обновляем пакет: $noteId")
+                    updateNoteFromServer(serverPackage, user.id)
+                } else {
+                    println("✓ Пакет актуален: $noteId")
+                }
+            }
+
+            println("✅ Синхронизация с сервера завершена")
+        }
+
+    /**
+     * Проверяет, нужно ли обновить локальную запись данными с сервера
+     */
+    private fun shouldUpdateFromServer(
+        serverPackage: Map<String, Any>,
+        localNote: org.igo.mycorc.db.NoteEntity
+    ): Boolean {
+        val serverStatus = NoteStatus.valueOf(serverPackage["status"] as String)
+        val localStatus = localNote.status
+
+        // ПРАВИЛО 1: Если на сервере "отправлено на регистрацию" - это истина
+        val lockedStatuses = setOf(NoteStatus.SENT, NoteStatus.APPROVED, NoteStatus.REJECTED)
+
+        if (serverStatus in lockedStatuses) {
+            println("  ↳ Сервер заблокирован ($serverStatus) - обновляем локально")
+            return true
+        }
+
+        // ПРАВИЛО 2: Сравниваем по времени обновления
+        val serverUpdatedAt = (serverPackage["updatedAtEpochMillis"] as? Long) ?: 0L
+        val localUpdatedAt = localNote.updatedAt
+
+        if (serverUpdatedAt > localUpdatedAt) {
+            println("  ↳ Сервер новее: $serverUpdatedAt > $localUpdatedAt")
+            return true
+        }
+
+        println("  ↳ Локально актуально: $localUpdatedAt >= $serverUpdatedAt")
+        return false
+    }
+
+    /**
+     * Создает новую запись из серверных данных
+     */
+    private fun createNoteFromServer(serverPackage: Map<String, Any>, userId: String) {
+        val noteId = serverPackage["noteId"] as String
+        val status = NoteStatus.valueOf(serverPackage["status"] as String)
+        val updatedAt = (serverPackage["updatedAtEpochMillis"] as? Long) ?: 0L
+
+        // Парсим payloadJson обратно в NotePayload
+        val payloadJson = (serverPackage["payloadJson"] as? String) ?: "{}"
+        val payload = json.decodeFromString<org.igo.mycorc.domain.model.NotePayload>(payloadJson)
+
+        db.noteQueries.insertNoteFromServer(
+            id = noteId,
+            userId = userId,
+            status = status,
+            updatedAt = updatedAt,
+            payload = payload
+        )
+    }
+
+    /**
+     * Обновляет существующую запись данными с сервера
+     */
+    private fun updateNoteFromServer(serverPackage: Map<String, Any>, userId: String) {
+        val noteId = serverPackage["noteId"] as String
+        val status = NoteStatus.valueOf(serverPackage["status"] as String)
+        val updatedAt = (serverPackage["updatedAtEpochMillis"] as? Long) ?: 0L
+
+        // Парсим payloadJson обратно в NotePayload
+        val payloadJson = (serverPackage["payloadJson"] as? String) ?: "{}"
+        val payload = json.decodeFromString<org.igo.mycorc.domain.model.NotePayload>(payloadJson)
+
+        db.noteQueries.updateNoteFromServer(
+            status = status,
+            updatedAt = updatedAt,
+            payload = payload,
+            id = noteId,
+            userId = userId
+        )
+    }
 }
