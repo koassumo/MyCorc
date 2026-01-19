@@ -26,10 +26,18 @@ import coil3.compose.AsyncImage
 
 @Composable
 fun CreateNoteScreen(
+    noteId: String? = null,
     onNavigateBack: () -> Unit
 ) {
     val viewModel = koinViewModel<CreateNoteViewModel>()
     val state by viewModel.state.collectAsState()
+
+    // Загружаем запись при входе в режим редактирования
+    LaunchedEffect(noteId) {
+        if (noteId != null) {
+            viewModel.loadNote(noteId)
+        }
+    }
 
     // Чистим состояние, когда экран УНИЧТОЖАЕТСЯ (при выходе)
     DisposableEffect(Unit) {
@@ -48,21 +56,29 @@ fun CreateNoteScreen(
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
             topBar = {
+                val title = when {
+                    state.isReadOnly -> "Просмотр партии (синхронизировано)"
+                    state.editMode -> "Редактирование партии"
+                    else -> "Новая партия"
+                }
                 CommonTopBar(
-                    title = "Новая партия",
+                    title = title,
                     canNavigateBack = true,
                     navigateUp = onNavigateBack
                 )
             },
             bottomBar = {
-                Button(
-                    onClick = { viewModel.saveNote() },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                        .height(50.dp)
-                ) {
-                    Text("Сохранить партию")
+                // Кнопка "Сохранить" всегда доступна (кроме read-only режима)
+                if (!state.isReadOnly) {
+                    Button(
+                        onClick = { viewModel.saveNote() },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                            .height(50.dp)
+                    ) {
+                        Text(if (state.editMode) "Сохранить изменения" else "Сохранить партию")
+                    }
                 }
             }
         ) { innerPadding ->
@@ -78,10 +94,26 @@ fun CreateNoteScreen(
                 title = "Вес Биомассы (кг)",
                 value = state.biomassWeight,
                 onValueChange = { viewModel.updateBiomass(it) },
-                range = 0f..2000f
+                range = 0f..2000f,
+                enabled = !state.isReadOnly
             )
 
-            // 2. Блок Фото
+            // 2. Блок Описания
+            CommonCard {
+                Text(text = "Описание партии", style = MaterialTheme.typography.titleMedium)
+                Spacer(Modifier.height(16.dp))
+                OutlinedTextField(
+                    value = state.description,
+                    onValueChange = { if (!state.isReadOnly) viewModel.updateDescription(it) },
+                    readOnly = state.isReadOnly,
+                    modifier = Modifier.fillMaxWidth(),
+                    placeholder = { Text("Введите описание партии") },
+                    minLines = 2,
+                    maxLines = 4
+                )
+            }
+
+            // 3. Блок Фото
             CommonCard {
                 Text(text = "Фотография", style = MaterialTheme.typography.titleMedium)
                 Spacer(Modifier.height(16.dp))
@@ -89,9 +121,13 @@ fun CreateNoteScreen(
                 val photoPath = state.photoPath
 
                 if (photoPath == null) {
-                    // Если фото нет — показываем кнопку камеры
-                    AppImagePicker { bytes ->
-                        viewModel.onPhotoPicked(bytes)
+                    // Если фото нет — показываем кнопку камеры (если не read-only)
+                    if (!state.isReadOnly) {
+                        AppImagePicker { bytes ->
+                            viewModel.onPhotoPicked(bytes)
+                        }
+                    } else {
+                        Text("Фото отсутствует", style = MaterialTheme.typography.bodyMedium)
                     }
                 } else {
                     // Если фото есть — показываем превью
@@ -113,21 +149,24 @@ fun CreateNoteScreen(
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.weight(1f)
                             )
-                            IconButton(onClick = { viewModel.clearPhoto() }) {
-                                Icon(Icons.Default.Delete, contentDescription = "Удалить")
+                            if (!state.isReadOnly) {
+                                IconButton(onClick = { viewModel.clearPhoto() }) {
+                                    Icon(Icons.Default.Delete, contentDescription = "Удалить")
+                                }
                             }
                         }
                     }
                 }
             }
 
-            // 3. Блок Угля
+            // 4. Блок Угля
             SmartInputCard(
                 title = "Вес Угля (кг)",
                 value = state.coalWeight,
                 onValueChange = { viewModel.updateCoal(it) },
                 range = 0f..1000f,
-                accent = true
+                accent = true,
+                enabled = !state.isReadOnly
             )
         }
         }
@@ -171,7 +210,8 @@ fun SmartInputCard(
     value: Double,
     onValueChange: (Double) -> Unit,
     range: ClosedFloatingPointRange<Float>,
-    accent: Boolean = false
+    accent: Boolean = false,
+    enabled: Boolean = true
 ) {
     val color = if (accent) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary
 
@@ -184,11 +224,15 @@ fun SmartInputCard(
             OutlinedTextField(
                 value = value.toString(),
                 onValueChange = { str ->
-                    val num = str.toDoubleOrNull()
-                    if (num != null) onValueChange(num)
+                    if (enabled) {
+                        val num = str.toDoubleOrNull()
+                        if (num != null) onValueChange(num)
+                    }
                 },
+                readOnly = !enabled,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                enabled = enabled
             )
         }
 
@@ -196,12 +240,13 @@ fun SmartInputCard(
 
         Slider(
             value = value.toFloat(),
-            onValueChange = { onValueChange(it.toDouble().roundTo(1)) },
+            onValueChange = { if (enabled) onValueChange(it.toDouble().roundTo(1)) },
             valueRange = range,
             colors = SliderDefaults.colors(
                 thumbColor = color,
                 activeTrackColor = color
-            )
+            ),
+            enabled = enabled
         )
     }
 }

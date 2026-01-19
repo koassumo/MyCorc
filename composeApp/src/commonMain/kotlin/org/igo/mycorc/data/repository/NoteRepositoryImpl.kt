@@ -2,6 +2,7 @@ package org.igo.mycorc.data.repository
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
+import app.cash.sqldelight.coroutines.mapToOneOrNull
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
@@ -51,7 +52,15 @@ class NoteRepositoryImpl(
         }
     }
 
-
+    // 1.1 Получить заметку по ID (Flow, чтобы UI обновлялся автоматически)
+    override fun getNoteById(noteId: String): Flow<Note?> {
+        return queries.getNoteById(noteId)
+            .asFlow()
+            .mapToOneOrNull(Dispatchers.Default)
+            .map { entity ->
+                entity?.let { mapper.map(it) }
+            }
+    }
 
     // 2. Создать или обновить заметку
     @OptIn(ExperimentalTime::class)

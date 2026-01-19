@@ -51,6 +51,8 @@ fun MainScreen() {
 fun AuthorizedAppContent() {
     // Храним текущий экран в переменной
     var currentRoute by remember { mutableStateOf(Destinations.DASHBOARD) }
+    // Храним ID выбранной записи для редактирования (null = создание новой)
+    var selectedNoteId by remember { mutableStateOf<String?>(null) }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -72,13 +74,24 @@ fun AuthorizedAppContent() {
         ) {
             when (currentRoute) {
                 Destinations.DASHBOARD -> DashboardScreen(
-                    onNavigateToCreate = { currentRoute = Destinations.CREATE_NOTE }
+                    onNavigateToCreate = {
+                        selectedNoteId = null  // Сброс для создания новой записи
+                        currentRoute = Destinations.CREATE_NOTE
+                    },
+                    onNavigateToEdit = { noteId ->
+                        selectedNoteId = noteId  // Сохраняем ID для редактирования
+                        currentRoute = Destinations.CREATE_NOTE
+                    }
                 )
                 Destinations.FACILITIES -> PlaceholderScreen("Раздел Заводы")
                 Destinations.SETTINGS -> SettingsScreen()
                 Destinations.PROFILE -> ProfileScreen()
                 Destinations.CREATE_NOTE -> CreateNoteScreen(
-                    onNavigateBack = { currentRoute = Destinations.DASHBOARD }
+                    noteId = selectedNoteId,
+                    onNavigateBack = {
+                        selectedNoteId = null  // Сброс ID при выходе
+                        currentRoute = Destinations.DASHBOARD
+                    }
                 )
             }
         }

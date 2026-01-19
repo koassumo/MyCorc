@@ -8,7 +8,11 @@
       "Bash(JAVA_HOME=\"/c/Program Files/Android/Android Studio/jbr\" ./gradlew:*)",
       "Bash(.gradlew.bat :composeApp:run)",
       "Bash(cmd /c \".\\\\gradlew.bat :composeApp:run\")",
-      "Bash(C:/android/MyCorc/gradlew.bat :composeApp:run)"
+      "Bash(C:/android/MyCorc/gradlew.bat :composeApp:run)",
+      "Bash(dir:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push)"
     ]
   }
 }

@@ -42,7 +42,8 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun DashboardScreen(
-    onNavigateToCreate: () -> Unit // 👈 Принимаем колбэк навигации
+    onNavigateToCreate: () -> Unit, // Создание новой записи
+    onNavigateToEdit: (String) -> Unit = {} // Редактирование существующей (noteId)
 ) {
     val viewModel = koinViewModel<DashboardViewModel>()
     val state by viewModel.state.collectAsState()
@@ -77,8 +78,8 @@ fun DashboardScreen(
                     items(state.notes) { note ->
                         DashboardItem(
                             note = note,
-                            // 👇 Прокидываем действие нажатия на кнопку "Отправить"
-                            onSendClick = { viewModel.syncNote(note) }
+                            onClick = { onNavigateToEdit(note.id) }, // 👈 Клик по карточке → редактирование
+                            onSendClick = { viewModel.syncNote(note) } // Кнопка "Отправить"
                         )
                     }
                 }
@@ -90,10 +91,11 @@ fun DashboardScreen(
 @Composable
 fun DashboardItem(
     note: Note,
-    onSendClick: () -> Unit // Колбэк для кнопки
+    onClick: () -> Unit = {}, // Клик по всей карточке
+    onSendClick: () -> Unit // Кнопка "Отправить"
 ) {
     CommonCard(
-        onClick = { println("Нажали на ${note.id}") }
+        onClick = onClick
     ) {
         Column(Modifier.fillMaxWidth()) {
             // --- Основная инфа ---
@@ -110,38 +112,83 @@ fun DashboardItem(
             Spacer(modifier = Modifier.height(12.dp))
 
             // --- Блок синхронизации ---
-            if (!note.isSynced) {
-                // ВАРИАНТ 1: Если НЕ отправлено — показываем большую кнопку
-                Button(
-                    onClick = onSendClick,
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.errorContainer, // Красный/Оранжевый оттенок для внимания
-                        contentColor = MaterialTheme.colorScheme.onErrorContainer
-                    )
-                ) {
-                    Icon(Icons.Default.CloudUpload, contentDescription = null)
-                    Spacer(Modifier.width(8.dp))
-                    Text("Отправить на сервер")
-                }
-            } else {
-                // ВАРИАНТ 2: Если отправлено — показываем статус
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.align(Alignment.End) // Прижимаем вправо
-                ) {
+            // Проверяем статус карточки
+            when (note.status) {
+                org.igo.mycorc.domain.model.NoteStatus.DRAFT -> {
+                    // Не все поля заполнены - показываем подсказку
                     Text(
-                        text = "Синхронизировано",
+                        text = "⚠️ Заполните все поля для отправки",
                         style = MaterialTheme.typography.labelMedium,
-                        color = Color.Gray
+                        color = MaterialTheme.colorScheme.error
                     )
-                    Spacer(Modifier.width(4.dp))
-                    Icon(
-                        imageVector = Icons.Default.CheckCircle,
-                        contentDescription = "Ok",
-                        tint = Color(0xFF4CAF50), // Зеленый цвет
-                        modifier = Modifier.size(20.dp)
-                    )
+                }
+                org.igo.mycorc.domain.model.NoteStatus.READY_TO_SEND -> {
+                    // Все поля заполнены - показываем кнопку "Отправить"
+                    Button(
+                        onClick = onSendClick,
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.errorContainer,
+                            contentColor = MaterialTheme.colorScheme.onErrorContainer
+                        )
+                    ) {
+                        Icon(Icons.Default.CloudUpload, contentDescription = null)
+                        Spacer(Modifier.width(8.dp))
+                        Text("Отправить на сервер")
+                    }
+                }
+                org.igo.mycorc.domain.model.NoteStatus.SENT -> {
+                    // Отправлено на сервер - показываем статус
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.align(Alignment.End)
+                    ) {
+                        Text(
+                            text = "Синхронизировано",
+                            style = MaterialTheme.typography.labelMedium,
+                            color = Color.Gray
+                        )
+                        Spacer(Modifier.width(4.dp))
+                        Icon(
+                            imageVector = Icons.Default.CheckCircle,
+                            contentDescription = "Ok",
+                            tint = Color(0xFF4CAF50),
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                }
+                org.igo.mycorc.domain.model.NoteStatus.APPROVED -> {
+                    // Одобрено
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.align(Alignment.End)
+                    ) {
+                        Text(
+                            text = "Одобрено",
+                            style = MaterialTheme.typography.labelMedium,
+                            color = Color(0xFF4CAF50)
+                        )
+                        Spacer(Modifier.width(4.dp))
+                        Icon(
+                            imageVector = Icons.Default.CheckCircle,
+                            contentDescription = "Approved",
+                            tint = Color(0xFF4CAF50),
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                }
+                org.igo.mycorc.domain.model.NoteStatus.REJECTED -> {
+                    // Отклонено
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.align(Alignment.End)
+                    ) {
+                        Text(
+                            text = "Отклонено",
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
                 }
             }
         }
