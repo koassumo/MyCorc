@@ -233,7 +233,23 @@ class NoteSyncRepositoryImpl(
 
         // Парсим payloadJson обратно в NotePayload
         val payloadJson = (serverPackage["payloadJson"] as? String) ?: "{}"
-        val payload = json.decodeFromString<org.igo.mycorc.domain.model.NotePayload>(payloadJson)
+        var payload = json.decodeFromString<org.igo.mycorc.domain.model.NotePayload>(payloadJson)
+
+        // Извлекаем photoUrl и photoPath из серверных данных (они хранятся отдельно от payloadJson)
+        val serverPhotoUrl = serverPackage["photoUrl"] as? String
+        val serverPhotoPath = serverPackage["photoPath"] as? String
+
+        // Обновляем payload.biomass с серверными данными фото
+        if (serverPhotoUrl != null || serverPhotoPath != null) {
+            val currentBiomass = payload.biomass ?: org.igo.mycorc.domain.model.BiomassData()
+            payload = payload.copy(
+                biomass = currentBiomass.copy(
+                    photoPath = serverPhotoPath ?: currentBiomass.photoPath,
+                    photoUrl = serverPhotoUrl ?: currentBiomass.photoUrl
+                )
+            )
+            println("  [+] photoUrl=$serverPhotoUrl, photoPath=$serverPhotoPath")
+        }
 
         db.noteQueries.insertNoteFromServer(
             id = noteId,
@@ -254,7 +270,23 @@ class NoteSyncRepositoryImpl(
 
         // Парсим payloadJson обратно в NotePayload
         val payloadJson = (serverPackage["payloadJson"] as? String) ?: "{}"
-        val payload = json.decodeFromString<org.igo.mycorc.domain.model.NotePayload>(payloadJson)
+        var payload = json.decodeFromString<org.igo.mycorc.domain.model.NotePayload>(payloadJson)
+
+        // Извлекаем photoUrl и photoPath из серверных данных (они хранятся отдельно от payloadJson)
+        val serverPhotoUrl = serverPackage["photoUrl"] as? String
+        val serverPhotoPath = serverPackage["photoPath"] as? String
+
+        // Обновляем payload.biomass с серверными данными фото
+        if (serverPhotoUrl != null || serverPhotoPath != null) {
+            val currentBiomass = payload.biomass ?: org.igo.mycorc.domain.model.BiomassData()
+            payload = payload.copy(
+                biomass = currentBiomass.copy(
+                    photoPath = serverPhotoPath ?: currentBiomass.photoPath,
+                    photoUrl = serverPhotoUrl ?: currentBiomass.photoUrl
+                )
+            )
+            println("  [~] photoUrl=$serverPhotoUrl, photoPath=$serverPhotoPath")
+        }
 
         db.noteQueries.updateNoteFromServer(
             status = status,

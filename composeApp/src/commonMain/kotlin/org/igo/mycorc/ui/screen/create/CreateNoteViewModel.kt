@@ -20,11 +20,13 @@ import kotlin.random.Random
 import kotlin.time.ExperimentalTime
 
 data class CreateNoteState(
-    val biomassWeight: Double = 500.0,
-    val coalWeight: Double = 200.0,
+    val isLoading: Boolean = false,
+    val biomassWeight: Double = 0.0,
+    val coalWeight: Double = 0.0,
     val description: String = "",
     val isSaved: Boolean = false,
     val photoPath: String? = null,
+    val photoUrl: String? = null,
     val showFullscreenPhoto: Boolean = false,
     // Новые поля для режима редактирования
     val editMode: Boolean = false,
@@ -83,6 +85,9 @@ class CreateNoteViewModel(
     // Загрузить существующую запись для редактирования
     fun loadNote(noteId: String) {
         viewModelScope.launch {
+            // Сбрасываем старое состояние и показываем загрузку
+            _state.update { CreateNoteState(isLoading = true, editMode = true) }
+
             // Сначала получаем локальный статус
             val localNote = getNoteByIdUseCase(noteId).firstOrNull()
 
@@ -122,27 +127,32 @@ class CreateNoteViewModel(
                 }
             }
 
-            getNoteByIdUseCase(noteId).collect { note ->
-                if (note != null) {
-                    // Read-only только для отправленных на регистрацию (SENT, APPROVED, REJECTED)
-                    // DRAFT и READY_TO_SEND можно редактировать
-                    val isReadOnly = note.status !in listOf(NoteStatus.DRAFT, NoteStatus.READY_TO_SEND)
+            // Загружаем данные ОДИН РАЗ (не подписываемся на изменения)
+            val note = getNoteByIdUseCase(noteId).firstOrNull()
 
-                    println("📝 Загружена запись: id=${note.id}, status=${note.status}, isReadOnly=$isReadOnly")
-                    _state.update {
-                        it.copy(
-                            editMode = true,
-                            existingNote = note,
-                            isReadOnly = isReadOnly,
-                            biomassWeight = note.massWeight,
-                            coalWeight = note.coalWeight ?: 200.0,
-                            description = note.massDescription,
-                            photoPath = note.photoPath
-                        )
-                    }
-                } else {
-                    println("⚠️ Запись с id=$noteId не найдена")
+            if (note != null) {
+                // Read-only только для отправленных на регистрацию (SENT, APPROVED, REJECTED)
+                // DRAFT и READY_TO_SEND можно редактировать
+                val isReadOnly = note.status !in listOf(NoteStatus.DRAFT, NoteStatus.READY_TO_SEND)
+
+                println("📝 Загружена запись: id=${note.id}, status=${note.status}, isReadOnly=$isReadOnly")
+                println("📷 Фото: photoPath=${note.photoPath}, photoUrl=${note.photoUrl}")
+                _state.update {
+                    it.copy(
+                        isLoading = false,
+                        editMode = true,
+                        existingNote = note,
+                        isReadOnly = isReadOnly,
+                        biomassWeight = note.massWeight,
+                        coalWeight = note.coalWeight ?: 0.0,
+                        description = note.massDescription,
+                        photoPath = note.photoPath,
+                        photoUrl = note.photoUrl
+                    )
                 }
+            } else {
+                println("⚠️ Запись с id=$noteId не найдена")
+                _state.update { it.copy(isLoading = false) }
             }
         }
     }
@@ -150,6 +160,9 @@ class CreateNoteViewModel(
     @OptIn(ExperimentalTime::class)
     fun saveNote() {
         viewModelScope.launch {
+            // Показываем индикатор загрузки во время сохранения
+            _state.update { it.copy(isLoading = true) }
+
             val currentState = _state.value
 
             // 🔒 ПРОВЕРКА 2: Проверяем статус на сервере перед сохранением
@@ -176,12 +189,14 @@ class CreateNoteViewModel(
 
                             _state.update {
                                 it.copy(
+                                    isLoading = false,
                                     errorMessage = "Невозможно сохранить: пакет уже отправлен на регистрацию с другого устройства"
                                 )
                             }
                             return@launch
                         } else {
                             println("✓ Конфликта нет - оба заблокированы, пропускаем сохранение")
+                            _state.update { it.copy(isLoading = false) }
                             return@launch
                         }
                     }

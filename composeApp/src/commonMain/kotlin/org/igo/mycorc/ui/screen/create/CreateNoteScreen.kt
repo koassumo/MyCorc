@@ -12,6 +12,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import org.igo.mycorc.ui.common.CommonCard
 import org.igo.mycorc.ui.common.CommonTopBar
+import org.igo.mycorc.ui.common.LoadingContent
 import org.koin.compose.viewmodel.koinViewModel
 import kotlin.math.roundToInt
 import org.igo.mycorc.ui.common.AppImagePicker
@@ -54,6 +55,7 @@ fun CreateNoteScreen(
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
+        LoadingContent(isLoading = state.isLoading) {
         Scaffold(
             topBar = {
                 val title = when {
@@ -119,6 +121,7 @@ fun CreateNoteScreen(
                 Spacer(Modifier.height(16.dp))
 
                 val photoPath = state.photoPath
+                val photoUrl = state.photoUrl
 
                 if (photoPath == null) {
                     // Если фото нет — показываем кнопку камеры (если не read-only)
@@ -130,10 +133,22 @@ fun CreateNoteScreen(
                         Text("Фото отсутствует", style = MaterialTheme.typography.bodyMedium)
                     }
                 } else {
+                    // Определяем источник фото: локальный файл или URL с сервера
+                    val photoSource = when {
+                        photoUrl != null -> {
+                            println("🖼️ Используем серверный URL: $photoUrl")
+                            photoUrl // Серверный URL (приоритет)
+                        }
+                        else -> {
+                            println("🖼️ Используем локальный файл: file://$photoPath")
+                            "file://$photoPath" // Локальный файл
+                        }
+                    }
+
                     // Если фото есть — показываем превью
                     Column {
                         AsyncImage(
-                            model = "file://$photoPath",
+                            model = photoSource,
                             contentDescription = "Превью фото",
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -170,16 +185,26 @@ fun CreateNoteScreen(
             )
         }
         }
+        }
 
-        // Полноэкранный просмотр фото
-        if (state.showFullscreenPhoto && state.photoPath != null) {
+        // Полноэкранный просмотр фото (поверх всего)
+        state.photoPath?.let { photoPath ->
+            if (state.showFullscreenPhoto) {
+                val photoUrl = state.photoUrl
+
+                // Определяем источник фото: локальный файл или URL с сервера
+                val photoSource = when {
+                    photoUrl != null -> photoUrl // Серверный URL (приоритет)
+                    else -> "file://$photoPath" // Локальный файл
+                }
+
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(Color.Black)
             ) {
                 AsyncImage(
-                    model = "file://${state.photoPath}",
+                    model = photoSource,
                     contentDescription = "Полноэкранное фото",
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Fit
@@ -198,6 +223,7 @@ fun CreateNoteScreen(
                         tint = Color.White
                     )
                 }
+            }
             }
         }
 
