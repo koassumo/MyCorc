@@ -158,6 +158,34 @@ Security rules are defined in `FIREBASE_SECURITY_RULES.md`. Key points:
 - Auth check: `request.auth.uid == userId`
 - Applied in Firebase Console (Firestore Rules + Storage Rules)
 
+## Recent Fixes (Commit 4daf20a)
+
+### Photo Display Across Platforms
+
+**Problem:** Photos taken on Android were not displaying on Desktop after server sync because `photoUrl` from Firebase wasn't being saved to local database.
+
+**Solution:**
+- `NoteSyncRepositoryImpl.createNoteFromServer()` and `updateNoteFromServer()` now extract `photoUrl` and `photoPath` from Firestore and properly update `payload.biomass`
+- `CreateNoteScreen` uses smart logic to display photos:
+  - If `photoUrl != null` → use HTTPS URL from Firebase Storage
+  - Otherwise → use local file path with `file://` protocol
+
+**CreateNoteScreen photo source selection:**
+```kotlin
+val photoSource = when {
+    photoUrl != null -> photoUrl // Server URL (HTTPS)
+    else -> "file://$photoPath"  // Local file
+}
+```
+
+**Important Note:** Older records (synced before this fix) may have `photoUrl=null` in the database. To fix them, re-save those records on the Android device to upload photos with the new code and generate proper `photoUrl` values.
+
+### Loading Indicators & UI Polish
+
+- Created reusable `LoadingContent` component in `ui/common/LoadingContent.kt` with semi-transparent overlay
+- Fixed smart cast issues with nullable `photoPath` in Compose state by using `.let {}` blocks
+- State no longer shows old data when opening cards (changed to one-time load instead of continuous Flow subscription)
+
 ## Note Status Flow
 
 ```
