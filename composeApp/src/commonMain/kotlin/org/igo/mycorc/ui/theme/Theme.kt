@@ -5,6 +5,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 
 // Настройка для СВЕТЛОЙ темы
 private val LightColors = lightColorScheme(
@@ -50,9 +51,12 @@ fun MyAppTheme(
     content: @Composable () -> Unit
 ) {
     val colors = if (useDarkTheme) DarkColors else LightColors
+    val appStrings = rememberAppStrings()
 
-    MaterialTheme(
-        colorScheme = colors,
-        content = content
-    )
+    CompositionLocalProvider(LocalAppStrings provides appStrings) {
+        MaterialTheme(
+            colorScheme = colors,
+            content = content
+        )
+    }
 }

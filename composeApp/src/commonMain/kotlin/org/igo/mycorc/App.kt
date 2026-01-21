@@ -10,8 +10,6 @@ import org.igo.mycorc.domain.rep_interface.SettingsRepository
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.igo.mycorc.ui.screen.main.MainScreen
 import org.igo.mycorc.ui.theme.MyAppTheme
-import org.igo.mycorc.ui.theme.LocalAppStrings
-import org.igo.mycorc.ui.theme.rememberAppStrings
 import org.igo.mycorc.ui.screen.settings.AppThemeConfig // И наш конфиг
 import org.koin.compose.koinInject
 
@@ -20,7 +18,6 @@ import org.koin.compose.koinInject
 fun App() {
     val repository = koinInject<SettingsRepository>() //да прибудет с тобою koin
     val themeConfig by repository.themeState.collectAsState()
-    val appStrings = rememberAppStrings()
 
     val useDarkTheme = when (themeConfig) {
         AppThemeConfig.SYSTEM -> isSystemInDarkTheme()
@@ -29,14 +26,12 @@ fun App() {
     }
 
     MyAppTheme(useDarkTheme = useDarkTheme) {
-        CompositionLocalProvider(LocalAppStrings provides appStrings) {
-            // Surface перекрывает фон окна правильным цветом темы (чтоб исключить моргание)
-            Surface(
-                modifier = Modifier.fillMaxSize(),
-                color = MaterialTheme.colorScheme.background
-            ) {
-                MainScreen()
-            }
+        // Surface перекрывает фон окна правильным цветом темы (чтоб исключить моргание)
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            MainScreen()
         }
     }
 }
