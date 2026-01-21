@@ -17,13 +17,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import org.igo.mycorc.ui.common.CommonBottomBar
 import org.igo.mycorc.ui.navigation.Destinations
-import org.igo.mycorc.ui.navigation.bottomNavItems
+import org.igo.mycorc.ui.navigation.rememberBottomNavItems
 import org.igo.mycorc.ui.screen.auth.LoginScreen
 import org.igo.mycorc.ui.screen.create.CreateNoteScreen
 import org.igo.mycorc.ui.screen.dashboard.DashboardScreen
 import org.igo.mycorc.ui.screen.settings.SettingsScreen
 import org.koin.compose.viewmodel.koinViewModel
 import org.igo.mycorc.ui.screen.profile.ProfileScreen
+import org.igo.mycorc.ui.theme.LocalAppStrings
 
 @Composable
 fun MainScreen() {
@@ -49,6 +50,8 @@ fun MainScreen() {
 
 @Composable
 fun AuthorizedAppContent() {
+    val strings = LocalAppStrings.current
+    val bottomNavItems = rememberBottomNavItems()
     // Храним текущий экран в переменной
     var currentRoute by remember { mutableStateOf(Destinations.DASHBOARD) }
     // Храним ID выбранной записи для редактирования (null = создание новой)
@@ -83,7 +86,7 @@ fun AuthorizedAppContent() {
                         currentRoute = Destinations.CREATE_NOTE
                     }
                 )
-                Destinations.FACILITIES -> PlaceholderScreen("Раздел Заводы")
+                Destinations.FACILITIES -> PlaceholderScreen(strings.facilitiesSection)
                 Destinations.SETTINGS -> SettingsScreen()
                 Destinations.PROFILE -> ProfileScreen()
                 Destinations.CREATE_NOTE -> CreateNoteScreen(

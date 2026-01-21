@@ -24,6 +24,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import coil3.compose.AsyncImage
+import org.igo.mycorc.ui.theme.LocalAppStrings
 
 @Composable
 fun CreateNoteScreen(
@@ -32,6 +33,7 @@ fun CreateNoteScreen(
 ) {
     val viewModel = koinViewModel<CreateNoteViewModel>()
     val state by viewModel.state.collectAsState()
+    val strings = LocalAppStrings.current
 
     // Загружаем запись при входе в режим редактирования
     LaunchedEffect(noteId) {
@@ -59,14 +61,15 @@ fun CreateNoteScreen(
         Scaffold(
             topBar = {
                 val title = when {
-                    state.isReadOnly -> "Просмотр партии (отправлено)"
-                    state.editMode -> "Редактирование партии"
-                    else -> "Новая партия"
+                    state.isReadOnly -> strings.readOnlyTitle
+                    state.editMode -> strings.editTitle
+                    else -> strings.createNewTitle
                 }
                 CommonTopBar(
                     title = title,
                     canNavigateBack = true,
-                    navigateUp = onNavigateBack
+                    navigateUp = onNavigateBack,
+                    backButtonDescription = strings.backButtonTooltip
                 )
             },
             bottomBar = {
@@ -79,7 +82,7 @@ fun CreateNoteScreen(
                             .padding(16.dp)
                             .height(50.dp)
                     ) {
-                        Text(if (state.editMode) "Сохранить изменения" else "Сохранить партию")
+                        Text(if (state.editMode) strings.saveChanges else strings.saveNote)
                     }
                 }
             }
@@ -93,7 +96,7 @@ fun CreateNoteScreen(
 
             // 1. Блок Биомассы
             SmartInputCard(
-                title = "Вес Биомассы (кг)",
+                title = strings.biomassWeightLabel,
                 value = state.biomassWeight,
                 onValueChange = { viewModel.updateBiomass(it) },
                 range = 0f..2000f,
@@ -102,14 +105,14 @@ fun CreateNoteScreen(
 
             // 2. Блок Описания
             CommonCard {
-                Text(text = "Описание партии", style = MaterialTheme.typography.titleMedium)
+                Text(text = strings.descriptionSection, style = MaterialTheme.typography.titleMedium)
                 Spacer(Modifier.height(16.dp))
                 OutlinedTextField(
                     value = state.description,
                     onValueChange = { if (!state.isReadOnly) viewModel.updateDescription(it) },
                     readOnly = state.isReadOnly,
                     modifier = Modifier.fillMaxWidth(),
-                    placeholder = { Text("Введите описание партии") },
+                    placeholder = { Text(strings.enterDescription) },
                     minLines = 2,
                     maxLines = 4
                 )
@@ -117,7 +120,7 @@ fun CreateNoteScreen(
 
             // 3. Блок Фото
             CommonCard {
-                Text(text = "Фотография", style = MaterialTheme.typography.titleMedium)
+                Text(text = strings.photoSection, style = MaterialTheme.typography.titleMedium)
                 Spacer(Modifier.height(16.dp))
 
                 val photoPath = state.photoPath
@@ -130,26 +133,20 @@ fun CreateNoteScreen(
                             viewModel.onPhotoPicked(bytes)
                         }
                     } else {
-                        Text("Фото отсутствует", style = MaterialTheme.typography.bodyMedium)
+                        Text(strings.noPhotoPlaceholder, style = MaterialTheme.typography.bodyMedium)
                     }
                 } else {
                     // Определяем источник фото: локальный файл или URL с сервера
                     val photoSource = when {
-                        photoUrl != null -> {
-                            println("🖼️ Используем серверный URL: $photoUrl")
-                            photoUrl // Серверный URL (приоритет)
-                        }
-                        else -> {
-                            println("🖼️ Используем локальный файл: file://$photoPath")
-                            "file://$photoPath" // Локальный файл
-                        }
+                        photoUrl != null -> photoUrl // Серверный URL (приоритет)
+                        else -> "file://$photoPath" // Локальный файл
                     }
 
                     // Если фото есть — показываем превью
                     Column {
                         AsyncImage(
                             model = photoSource,
-                            contentDescription = "Превью фото",
+                            contentDescription = "Photo preview",
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(200.dp)
@@ -159,14 +156,14 @@ fun CreateNoteScreen(
                         Spacer(Modifier.height(8.dp))
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
-                                text = "Фото сохранено",
+                                text = strings.photoSaved,
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.weight(1f)
                             )
                             if (!state.isReadOnly) {
                                 IconButton(onClick = { viewModel.clearPhoto() }) {
-                                    Icon(Icons.Default.Delete, contentDescription = "Удалить")
+                                    Icon(Icons.Default.Delete, contentDescription = "Delete")
                                 }
                             }
                         }
@@ -176,7 +173,7 @@ fun CreateNoteScreen(
 
             // 4. Блок Угля
             SmartInputCard(
-                title = "Вес Угля (кг)",
+                title = strings.coalWeightLabel,
                 value = state.coalWeight,
                 onValueChange = { viewModel.updateCoal(it) },
                 range = 0f..1000f,
@@ -234,7 +231,7 @@ fun CreateNoteScreen(
                     viewModel.clearError()
                     onNavigateBack()
                 },
-                title = { Text("Невозможно редактировать") },
+                title = { Text(strings.cannotEditError) },
                 text = { Text(state.errorMessage ?: "") },
                 confirmButton = {
                     TextButton(onClick = {

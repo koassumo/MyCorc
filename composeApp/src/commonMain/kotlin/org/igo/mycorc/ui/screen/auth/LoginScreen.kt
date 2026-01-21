@@ -10,18 +10,20 @@ import androidx.compose.ui.unit.dp
 import org.igo.mycorc.ui.common.CommonCard
 import org.igo.mycorc.ui.common.CommonTopBar
 import org.koin.compose.viewmodel.koinViewModel
+import org.igo.mycorc.ui.theme.LocalAppStrings
 
 @Composable
 fun LoginScreen() {
     val viewModel = koinViewModel<LoginViewModel>()
     val isLoading by viewModel.isLoading.collectAsState()
     val error by viewModel.error.collectAsState()
+    val strings = LocalAppStrings.current
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
     Scaffold(
-        topBar = { CommonTopBar(title = "Вход в систему") }
+        topBar = { CommonTopBar(title = strings.loginTitle) }
     ) { padding ->
         Box(
             modifier = Modifier.fillMaxSize().padding(padding),
@@ -33,12 +35,12 @@ fun LoginScreen() {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    Text("Авторизация", style = MaterialTheme.typography.titleLarge)
+                    Text(strings.authCardTitle, style = MaterialTheme.typography.titleLarge)
 
                     OutlinedTextField(
                         value = email,
                         onValueChange = { email = it },
-                        label = { Text("Email") },
+                        label = { Text(strings.emailLabel) },
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -46,7 +48,7 @@ fun LoginScreen() {
                     OutlinedTextField(
                         value = password,
                         onValueChange = { password = it },
-                        label = { Text("Пароль") },
+                        label = { Text(strings.passwordLabel) },
                         visualTransformation = PasswordVisualTransformation(),
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth()
@@ -70,12 +72,12 @@ fun LoginScreen() {
                                 color = MaterialTheme.colorScheme.onPrimary
                             )
                         } else {
-                            Text("Войти")
+                            Text(strings.loginButton)
                         }
                     }
-                    
+
                     TextButton(onClick = { viewModel.register(email, password) }) {
-                        Text("Нет аккаунта? Зарегистрироваться")
+                        Text(strings.noAccountText + " " + strings.registerLink)
                     }
                 }
             }

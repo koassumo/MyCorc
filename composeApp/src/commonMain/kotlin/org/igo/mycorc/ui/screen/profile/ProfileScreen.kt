@@ -11,14 +11,16 @@ import androidx.compose.ui.unit.dp
 import org.igo.mycorc.ui.common.CommonCard
 import org.igo.mycorc.ui.common.CommonTopBar
 import org.koin.compose.viewmodel.koinViewModel
+import org.igo.mycorc.ui.theme.LocalAppStrings
 
 @Composable
 fun ProfileScreen() {
     val viewModel = koinViewModel<ProfileViewModel>()
     val user by viewModel.currentUser.collectAsState(initial = null)
+    val strings = LocalAppStrings.current
 
     Scaffold(
-        topBar = { CommonTopBar(title = "Профиль") }
+        topBar = { CommonTopBar(title = strings.profileTitle) }
     ) { padding ->
         Box(
             modifier = Modifier.fillMaxSize().padding(padding),
@@ -31,18 +33,18 @@ fun ProfileScreen() {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Вы вошли как:",
+                        text = strings.loggedInAs,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    
+
                     Text(
-                        text = user?.email ?: "Загрузка...",
+                        text = user?.email ?: strings.loading,
                         style = MaterialTheme.typography.titleLarge
                     )
 
                     Spacer(modifier = Modifier.height(8.dp))
-                    
+
                     HorizontalDivider()
 
                     Spacer(modifier = Modifier.height(8.dp))
@@ -54,7 +56,7 @@ fun ProfileScreen() {
                         ),
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text("Выйти из аккаунта")
+                        Text(strings.logoutButton)
                     }
                 }
             }

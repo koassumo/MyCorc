@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Auth Screen -->
+    <string name="login_title">Login</string>
+    <string name="auth_card_title">Authorization</string>
+    <string name="email_label">Email</string>
+    <string name="password_label">Password</string>
+    <string name="login_button">Login</string>
+    <string name="no_account_text">No account?</string>
+    <string name="register_link">Register</string>
+
+    <!-- Dashboard Screen -->
+    <string name="dashboard_title">Dashboard</string>
+    <string name="sync_with_server">Sync with server</string>
+    <string name="add_button_tooltip">Add</string>
+    <string name="no_records_message">No records. Tap +</string>
+    <string name="weight_label">Weight</string>
+    <string name="coal_label">🏁 Coal</string>
+    <string name="fill_all_fields_warning">⚠️ Fill all fields to send</string>
+    <string name="send_to_registration">Send to registration</string>
+    <string name="sent_to_registration">Sent to registration</string>
+    <string name="approved">Approved</string>
+    <string name="rejected">Rejected</string>
+
+    <!-- Create Note Screen -->
+    <string name="readonly_title">View package (sent)</string>
+    <string name="edit_title">Edit package</string>
+    <string name="create_new_title">New package</string>
+    <string name="biomass_weight_label">Biomass weight (kg)</string>
+    <string name="coal_weight_label">Coal weight (kg)</string>
+    <string name="description_section">Package description</string>
+    <string name="enter_description">Enter package description</string>
+    <string name="photo_section">Photo</string>
+    <string name="no_photo_placeholder">No photo</string>
+    <string name="save_changes">Save changes</string>
+    <string name="save_note">Save package</string>
+    <string name="photo_saved">Photo saved</string>
+    <string name="cannot_edit_error">Cannot edit</string>
+    <string name="already_sent_error">This package has already been sent for registration from another device</string>
+    <string name="already_sent_conflict_error">This package has already been sent for registration from another device</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_title">Settings</string>
+    <string name="theme_section">Theme</string>
+    <string name="system_theme">System</string>
+    <string name="light_theme">Light</string>
+    <string name="dark_theme">Dark</string>
+
+    <!-- Profile Screen -->
+    <string name="profile_title">Profile</string>
+    <string name="logged_in_as">You are logged in as:</string>
+    <string name="loading">Loading...</string>
+    <string name="logout_button">Logout</string>
+
+    <!-- Navigation -->
+    <string name="packages_nav">Packages</string>
+    <string name="facilities_nav">Facilities</string>
+    <string name="settings_nav">Settings</string>
+    <string name="profile_nav">Profile</string>
+
+    <!-- Common -->
+    <string name="back_button_tooltip">Back</string>
+    <string name="facilities_section">Facilities section</string>
+</resources>

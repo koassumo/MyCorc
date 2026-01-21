@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Auth Screen -->
+    <string name="login_title">Вход в систему</string>
+    <string name="auth_card_title">Авторизация</string>
+    <string name="email_label">Email</string>
+    <string name="password_label">Пароль</string>
+    <string name="login_button">Войти</string>
+    <string name="no_account_text">Нет аккаунта?</string>
+    <string name="register_link">Зарегистрироваться</string>
+
+    <!-- Dashboard Screen -->
+    <string name="dashboard_title">Dashboard</string>
+    <string name="sync_with_server">Синхронизировать с сервером</string>
+    <string name="add_button_tooltip">Добавить</string>
+    <string name="no_records_message">Нет записей. Нажми +</string>
+    <string name="weight_label">Вес</string>
+    <string name="coal_label">🏁 Уголь</string>
+    <string name="fill_all_fields_warning">⚠️ Заполните все поля для отправки</string>
+    <string name="send_to_registration">Отправить на регистрацию</string>
+    <string name="sent_to_registration">Отправлено на регистрацию</string>
+    <string name="approved">Одобрено</string>
+    <string name="rejected">Отклонено</string>
+
+    <!-- Create Note Screen -->
+    <string name="readonly_title">Просмотр партии (отправлено)</string>
+    <string name="edit_title">Редактирование партии</string>
+    <string name="create_new_title">Новая партия</string>
+    <string name="biomass_weight_label">Вес Биомассы (кг)</string>
+    <string name="coal_weight_label">Вес Угля (кг)</string>
+    <string name="description_section">Описание партии</string>
+    <string name="enter_description">Введите описание партии</string>
+    <string name="photo_section">Фотография</string>
+    <string name="no_photo_placeholder">Фото отсутствует</string>
+    <string name="save_changes">Сохранить изменения</string>
+    <string name="save_note">Сохранить партию</string>
+    <string name="photo_saved">Фото сохранено</string>
+    <string name="cannot_edit_error">Невозможно редактировать</string>
+    <string name="already_sent_error">Этот пакет уже отправлен на регистрацию с другого устройства</string>
+    <string name="already_sent_conflict_error">Этот пакет уже отправлен на регистрацию с другого устройства</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_title">Настройки</string>
+    <string name="theme_section">Тема оформления</string>
+    <string name="system_theme">Как в системе</string>
+    <string name="light_theme">Светлая</string>
+    <string name="dark_theme">Тёмная</string>
+
+    <!-- Profile Screen -->
+    <string name="profile_title">Профиль</string>
+    <string name="logged_in_as">Вы вошли как:</string>
+    <string name="loading">Загрузка...</string>
+    <string name="logout_button">Выйти из аккаунта</string>
+
+    <!-- Navigation -->
+    <string name="packages_nav">Партии</string>
+    <string name="facilities_nav">Заводы</string>
+    <string name="settings_nav">Настройки</string>
+    <string name="profile_nav">Профиль</string>
+
+    <!-- Common -->
+    <string name="back_button_tooltip">Назад</string>
+    <string name="facilities_section">Раздел Заводы</string>
+</resources>

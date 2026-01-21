@@ -20,6 +20,7 @@ fun CommonTopBar(
     canNavigateBack: Boolean = false,
     navigateUp: () -> Unit = {},
     modifier: Modifier = Modifier,
+    backButtonDescription: String = "Back",
     actions: @Composable () -> Unit = {}
 ) {
     CenterAlignedTopAppBar(
@@ -34,7 +35,7 @@ fun CommonTopBar(
                 IconButton(onClick = navigateUp) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Назад"
+                        contentDescription = backButtonDescription
                     )
                 }
             }

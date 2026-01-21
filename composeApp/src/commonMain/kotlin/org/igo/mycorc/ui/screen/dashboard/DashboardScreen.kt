@@ -42,6 +42,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.IconButton
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import org.igo.mycorc.ui.theme.LocalAppStrings
 
 
 
@@ -53,6 +54,7 @@ fun DashboardScreen(
 ) {
     val viewModel = koinViewModel<DashboardViewModel>()
     val state by viewModel.state.collectAsState()
+    val strings = LocalAppStrings.current
     val snackbarHostState = remember { SnackbarHostState() }
 
     // Показываем Snackbar при ошибке
@@ -70,7 +72,7 @@ fun DashboardScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             CommonTopBar(
-                title = "Dashboard",
+                title = strings.dashboardTitle,
                 actions = {
                     IconButton(
                         onClick = { viewModel.syncFromServer() },
@@ -78,7 +80,7 @@ fun DashboardScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Refresh,
-                            contentDescription = "Синхронизировать с сервером"
+                            contentDescription = strings.syncWithServer
                         )
                     }
                 }
@@ -89,7 +91,7 @@ fun DashboardScreen(
                 onClick = onNavigateToCreate,
                 containerColor = MaterialTheme.colorScheme.primary
             ) {
-                Icon(Icons.Default.Add, contentDescription = "Добавить")
+                Icon(Icons.Default.Add, contentDescription = strings.addButtonTooltip)
             }
         }
     ) { innerPadding ->
@@ -102,7 +104,7 @@ fun DashboardScreen(
             } else if (state.notes.isEmpty()) {
                 // Заглушка, если список пуст
                 Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text("Нет записей. Нажми +", style = MaterialTheme.typography.bodyLarge)
+                    Text(strings.noRecordsMessage, style = MaterialTheme.typography.bodyLarge)
                 }
             } else {
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
@@ -125,17 +127,18 @@ fun DashboardItem(
     onClick: () -> Unit = {}, // Клик по всей карточке
     onSendClick: () -> Unit // Кнопка "Отправить"
 ) {
+    val strings = LocalAppStrings.current
     CommonCard(
         onClick = onClick
     ) {
         Column(Modifier.fillMaxWidth()) {
             // --- Основная инфа ---
             Text(text = note.massDescription, style = MaterialTheme.typography.titleLarge)
-            Text(text = "Вес: ${note.massWeight} кг")
+            Text(text = "${strings.weightLabel}: ${note.massWeight} кг")
 
             if (note.coalWeight != null) {
                 Text(
-                    text = "🏁 Уголь: ${note.coalWeight} кг",
+                    text = "${strings.coalLabel}: ${note.coalWeight} кг",
                     color = MaterialTheme.colorScheme.primary
                 )
             }
@@ -148,7 +151,7 @@ fun DashboardItem(
                 org.igo.mycorc.domain.model.NoteStatus.DRAFT -> {
                     // Не все поля заполнены - показываем подсказку
                     Text(
-                        text = "⚠️ Заполните все поля для отправки",
+                        text = strings.fillAllFieldsWarning,
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.error
                     )
@@ -165,7 +168,7 @@ fun DashboardItem(
                     ) {
                         Icon(Icons.Default.CloudUpload, contentDescription = null)
                         Spacer(Modifier.width(8.dp))
-                        Text("Отправить на регистрацию")
+                        Text(strings.sendToRegistration)
                     }
                 }
                 org.igo.mycorc.domain.model.NoteStatus.SENT -> {
@@ -175,7 +178,7 @@ fun DashboardItem(
                         modifier = Modifier.align(Alignment.End)
                     ) {
                         Text(
-                            text = "Отправлено на регистрацию",
+                            text = strings.sentToRegistration,
                             style = MaterialTheme.typography.labelMedium,
                             color = Color.Gray
                         )
@@ -195,7 +198,7 @@ fun DashboardItem(
                         modifier = Modifier.align(Alignment.End)
                     ) {
                         Text(
-                            text = "Одобрено",
+                            text = strings.approved,
                             style = MaterialTheme.typography.labelMedium,
                             color = Color(0xFF4CAF50)
                         )
@@ -215,7 +218,7 @@ fun DashboardItem(
                         modifier = Modifier.align(Alignment.End)
                     ) {
                         Text(
-                            text = "Отклонено",
+                            text = strings.rejected,
                             style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.error
                         )

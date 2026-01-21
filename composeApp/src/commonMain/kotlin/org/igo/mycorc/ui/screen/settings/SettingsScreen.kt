@@ -12,6 +12,7 @@ import org.igo.mycorc.ui.common.CommonCard
 import org.igo.mycorc.ui.common.CommonTopBar
 import org.igo.mycorc.ui.common.Dimens
 import org.koin.compose.viewmodel.koinViewModel
+import org.igo.mycorc.ui.theme.LocalAppStrings
 
 @Composable
 fun SettingsScreen() {
@@ -22,9 +23,10 @@ fun SettingsScreen() {
 
     // 2. Подписываемся на состояние
     val state by viewModel.state.collectAsState()
+    val strings = LocalAppStrings.current
 
     Column(Modifier.fillMaxSize()) {
-        CommonTopBar(title = "Настройки")
+        CommonTopBar(title = strings.settingsTitle)
 
         Column(
             modifier = Modifier
@@ -32,28 +34,28 @@ fun SettingsScreen() {
                 .padding(horizontal = Dimens.ScreenPaddingSides)
         ) {
             Text(
-                text = "Тема оформления",
+                text = strings.themeSection,
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.padding(vertical = 16.dp)
             )
 
             // Вариант: Системная
             ThemeSelectionItem(
-                label = "Как в системе",
+                label = strings.systemTheme,
                 isSelected = state.selectedTheme == AppThemeConfig.SYSTEM,
                 onSelect = { viewModel.updateTheme(AppThemeConfig.SYSTEM) }
             )
 
             // Вариант: Светлая
             ThemeSelectionItem(
-                label = "Светлая",
+                label = strings.lightTheme,
                 isSelected = state.selectedTheme == AppThemeConfig.LIGHT,
                 onSelect = { viewModel.updateTheme(AppThemeConfig.LIGHT) }
             )
 
             // Вариант: Тёмная
             ThemeSelectionItem(
-                label = "Тёмная",
+                label = strings.darkTheme,
                 isSelected = state.selectedTheme == AppThemeConfig.DARK,
                 onSelect = { viewModel.updateTheme(AppThemeConfig.DARK) }
             )

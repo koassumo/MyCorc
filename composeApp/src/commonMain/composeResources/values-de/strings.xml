@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Auth Screen -->
+    <string name="login_title">Anmeldung</string>
+    <string name="auth_card_title">Autorisierung</string>
+    <string name="email_label">E-Mail</string>
+    <string name="password_label">Passwort</string>
+    <string name="login_button">Anmelden</string>
+    <string name="no_account_text">Kein Konto?</string>
+    <string name="register_link">Registrieren</string>
+
+    <!-- Dashboard Screen -->
+    <string name="dashboard_title">Dashboard</string>
+    <string name="sync_with_server">Mit Server synchronisieren</string>
+    <string name="add_button_tooltip">Hinzufügen</string>
+    <string name="no_records_message">Keine Einträge. Tap +</string>
+    <string name="weight_label">Gewicht</string>
+    <string name="coal_label">🏁 Kohle</string>
+    <string name="fill_all_fields_warning">⚠️ Füllen Sie alle Felder aus, um zu senden</string>
+    <string name="send_to_registration">Zur Registrierung senden</string>
+    <string name="sent_to_registration">Zur Registrierung gesendet</string>
+    <string name="approved">Genehmigt</string>
+    <string name="rejected">Abgelehnt</string>
+
+    <!-- Create Note Screen -->
+    <string name="readonly_title">Paket anzeigen (gesendet)</string>
+    <string name="edit_title">Paket bearbeiten</string>
+    <string name="create_new_title">Neues Paket</string>
+    <string name="biomass_weight_label">Biomasse-Gewicht (kg)</string>
+    <string name="coal_weight_label">Kohlegewicht (kg)</string>
+    <string name="description_section">Paketbeschreibung</string>
+    <string name="enter_description">Paketbeschreibung eingeben</string>
+    <string name="photo_section">Foto</string>
+    <string name="no_photo_placeholder">Kein Foto</string>
+    <string name="save_changes">Änderungen speichern</string>
+    <string name="save_note">Paket speichern</string>
+    <string name="photo_saved">Foto gespeichert</string>
+    <string name="cannot_edit_error">Kann nicht bearbeitet werden</string>
+    <string name="already_sent_error">Dieses Paket wurde bereits von einem anderen Gerät zur Registrierung gesendet</string>
+    <string name="already_sent_conflict_error">Dieses Paket wurde bereits von einem anderen Gerät zur Registrierung gesendet</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_title">Einstellungen</string>
+    <string name="theme_section">Design</string>
+    <string name="system_theme">System</string>
+    <string name="light_theme">Hell</string>
+    <string name="dark_theme">Dunkel</string>
+
+    <!-- Profile Screen -->
+    <string name="profile_title">Profil</string>
+    <string name="logged_in_as">Sie sind angemeldet als:</string>
+    <string name="loading">Wird geladen...</string>
+    <string name="logout_button">Abmelden</string>
+
+    <!-- Navigation -->
+    <string name="packages_nav">Pakete</string>
+    <string name="facilities_nav">Anlagen</string>
+    <string name="settings_nav">Einstellungen</string>
+    <string name="profile_nav">Profil</string>
+
+    <!-- Common -->
+    <string name="back_button_tooltip">Zurück</string>
+    <string name="facilities_section">Anlagenbereich</string>
+</resources>
