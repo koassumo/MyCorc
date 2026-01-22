@@ -1,14 +1,15 @@
 package org.igo.mycorc.ui.screen.auth
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import org.igo.mycorc.ui.common.CommonCard
 import org.igo.mycorc.ui.common.CommonTopBar
+import org.igo.mycorc.ui.common.Dimens
 import org.koin.compose.viewmodel.koinViewModel
 import org.igo.mycorc.ui.theme.LocalAppStrings
 
@@ -26,23 +27,40 @@ fun LoginScreen() {
         topBar = { CommonTopBar(title = strings.loginTitle) }
     ) { padding ->
         Box(
-            modifier = Modifier.fillMaxSize().padding(padding),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding),
             contentAlignment = Alignment.Center
         ) {
-            CommonCard(modifier = Modifier.padding(16.dp)) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth(0.9f)
+                    .padding(Dimens.SpaceMedium),
+                shape = RoundedCornerShape(Dimens.CardCornerRadius),
+                elevation = CardDefaults.cardElevation(defaultElevation = Dimens.CardElevation),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surface
+                )
+            ) {
                 Column(
-                    modifier = Modifier.padding(16.dp),
+                    modifier = Modifier
+                        .padding(Dimens.SpaceLarge)
+                        .fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                    verticalArrangement = Arrangement.spacedBy(Dimens.SpaceMedium)
                 ) {
-                    Text(strings.authCardTitle, style = MaterialTheme.typography.titleLarge)
+                    Text(
+                        strings.authCardTitle,
+                        style = MaterialTheme.typography.headlineSmall
+                    )
 
                     OutlinedTextField(
                         value = email,
                         onValueChange = { email = it },
                         label = { Text(strings.emailLabel) },
                         singleLine = true,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(8.dp)
                     )
 
                     OutlinedTextField(
@@ -51,20 +69,32 @@ fun LoginScreen() {
                         label = { Text(strings.passwordLabel) },
                         visualTransformation = PasswordVisualTransformation(),
                         singleLine = true,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(8.dp)
                     )
 
                     if (error != null) {
-                        Text(
-                            text = error ?: "",
-                            color = MaterialTheme.colorScheme.error
-                        )
+                        Surface(
+                            color = MaterialTheme.colorScheme.errorContainer,
+                            shape = RoundedCornerShape(8.dp),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                text = error ?: "",
+                                color = MaterialTheme.colorScheme.onErrorContainer,
+                                style = MaterialTheme.typography.bodySmall,
+                                modifier = Modifier.padding(Dimens.SpaceMedium)
+                            )
+                        }
                     }
 
                     Button(
                         onClick = { viewModel.login(email, password) },
                         enabled = !isLoading && email.isNotBlank() && password.isNotBlank(),
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(Dimens.ButtonHeight),
+                        shape = RoundedCornerShape(8.dp)
                     ) {
                         if (isLoading) {
                             CircularProgressIndicator(
@@ -76,7 +106,10 @@ fun LoginScreen() {
                         }
                     }
 
-                    TextButton(onClick = { viewModel.register(email, password) }) {
+                    TextButton(
+                        onClick = { viewModel.register(email, password) },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
                         Text(strings.noAccountText + " " + strings.registerLink)
                     }
                 }

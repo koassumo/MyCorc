@@ -4,15 +4,17 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.clip
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import org.igo.mycorc.ui.common.CommonCard
-import org.igo.mycorc.ui.common.CommonTopBar
 import org.igo.mycorc.ui.common.LoadingContent
+import org.igo.mycorc.ui.common.CommonTopBar
+import org.igo.mycorc.ui.common.Dimens
 import org.koin.compose.viewmodel.koinViewModel
 import kotlin.math.roundToInt
 import org.igo.mycorc.ui.common.AppImagePicker
@@ -73,14 +75,14 @@ fun CreateNoteScreen(
                 )
             },
             bottomBar = {
-                // Кнопка "Сохранить" всегда доступна (кроме read-only режима)
                 if (!state.isReadOnly) {
                     Button(
                         onClick = { viewModel.saveNote() },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(16.dp)
-                            .height(50.dp)
+                            .padding(Dimens.SpaceMedium)
+                            .height(Dimens.ButtonHeight),
+                        shape = RoundedCornerShape(8.dp)
                     ) {
                         Text(if (state.editMode) strings.saveChanges else strings.saveNote)
                     }
@@ -91,7 +93,9 @@ fun CreateNoteScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .verticalScroll(rememberScrollState())
+                .padding(horizontal = Dimens.ScreenPaddingSides)
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(Dimens.CardItemSpacing)
         ) {
 
             // 1. Блок Биомассы
@@ -104,66 +108,90 @@ fun CreateNoteScreen(
             )
 
             // 2. Блок Описания
-            CommonCard {
-                Text(text = strings.descriptionSection, style = MaterialTheme.typography.titleMedium)
-                Spacer(Modifier.height(16.dp))
-                OutlinedTextField(
-                    value = state.description,
-                    onValueChange = { if (!state.isReadOnly) viewModel.updateDescription(it) },
-                    readOnly = state.isReadOnly,
-                    modifier = Modifier.fillMaxWidth(),
-                    placeholder = { Text(strings.enterDescription) },
-                    minLines = 2,
-                    maxLines = 4
-                )
+            Card(
+                shape = RoundedCornerShape(Dimens.CardCornerRadius),
+                elevation = CardDefaults.cardElevation(defaultElevation = Dimens.CardElevation),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surface
+                ),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(
+                    modifier = Modifier.padding(Dimens.CardPadding)
+                ) {
+                    Text(text = strings.descriptionSection, style = MaterialTheme.typography.titleMedium)
+                    Spacer(Modifier.height(Dimens.SpaceMedium))
+                    OutlinedTextField(
+                        value = state.description,
+                        onValueChange = { if (!state.isReadOnly) viewModel.updateDescription(it) },
+                        readOnly = state.isReadOnly,
+                        modifier = Modifier.fillMaxWidth(),
+                        placeholder = { Text(strings.enterDescription) },
+                        minLines = 2,
+                        maxLines = 4,
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                }
             }
 
             // 3. Блок Фото
-            CommonCard {
-                Text(text = strings.photoSection, style = MaterialTheme.typography.titleMedium)
-                Spacer(Modifier.height(16.dp))
+            Card(
+                shape = RoundedCornerShape(Dimens.CardCornerRadius),
+                elevation = CardDefaults.cardElevation(defaultElevation = Dimens.CardElevation),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surface
+                ),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(
+                    modifier = Modifier.padding(Dimens.CardPadding)
+                ) {
+                    Text(text = strings.photoSection, style = MaterialTheme.typography.titleMedium)
+                    Spacer(Modifier.height(Dimens.SpaceMedium))
 
-                val photoPath = state.photoPath
-                val photoUrl = state.photoUrl
+                    val photoPath = state.photoPath
+                    val photoUrl = state.photoUrl
 
-                if (photoPath == null) {
-                    // Если фото нет — показываем кнопку камеры (если не read-only)
-                    if (!state.isReadOnly) {
-                        AppImagePicker { bytes ->
-                            viewModel.onPhotoPicked(bytes)
+                    if (photoPath == null) {
+                        if (!state.isReadOnly) {
+                            AppImagePicker { bytes ->
+                                viewModel.onPhotoPicked(bytes)
+                            }
+                        } else {
+                            Text(strings.noPhotoPlaceholder, style = MaterialTheme.typography.bodyMedium)
                         }
                     } else {
-                        Text(strings.noPhotoPlaceholder, style = MaterialTheme.typography.bodyMedium)
-                    }
-                } else {
-                    // Определяем источник фото: локальный файл или URL с сервера
-                    val photoSource = when {
-                        photoUrl != null -> photoUrl // Серверный URL (приоритет)
-                        else -> "file://$photoPath" // Локальный файл
-                    }
+                        val photoSource = when {
+                            photoUrl != null -> photoUrl
+                            else -> "file://$photoPath"
+                        }
 
-                    // Если фото есть — показываем превью
-                    Column {
-                        AsyncImage(
-                            model = photoSource,
-                            contentDescription = "Photo preview",
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(200.dp)
-                                .clickable { viewModel.openFullscreenPhoto() },
-                            contentScale = ContentScale.Crop
-                        )
-                        Spacer(Modifier.height(8.dp))
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(
-                                text = strings.photoSaved,
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.weight(1f)
+                        Column {
+                            AsyncImage(
+                                model = photoSource,
+                                contentDescription = "Photo preview",
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(200.dp)
+                                    .clip(RoundedCornerShape(8.dp))
+                                    .clickable { viewModel.openFullscreenPhoto() },
+                                contentScale = ContentScale.Crop
                             )
-                            if (!state.isReadOnly) {
-                                IconButton(onClick = { viewModel.clearPhoto() }) {
-                                    Icon(Icons.Default.Delete, contentDescription = "Delete")
+                            Spacer(Modifier.height(Dimens.SpaceSmall))
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text(
+                                    text = strings.photoSaved,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.weight(1f)
+                                )
+                                if (!state.isReadOnly) {
+                                    IconButton(onClick = { viewModel.clearPhoto() }) {
+                                        Icon(Icons.Default.Delete, contentDescription = "Delete")
+                                    }
                                 }
                             }
                         }
@@ -246,7 +274,6 @@ fun CreateNoteScreen(
     }
 }
 
-// 👇 Вспомогательные функции вынесены из тела CreateNoteScreen
 @Composable
 fun SmartInputCard(
     title: String,
@@ -258,12 +285,21 @@ fun SmartInputCard(
 ) {
     val color = if (accent) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary
 
-    CommonCard {
-        Text(text = title, style = MaterialTheme.typography.titleMedium)
+    Card(
+        shape = RoundedCornerShape(Dimens.CardCornerRadius),
+        elevation = CardDefaults.cardElevation(defaultElevation = Dimens.CardElevation),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(
+            modifier = Modifier.padding(Dimens.CardPadding)
+        ) {
+            Text(text = title, style = MaterialTheme.typography.titleMedium)
 
-        Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(Dimens.SpaceMedium))
 
-        Row(verticalAlignment = Alignment.CenterVertically) {
             OutlinedTextField(
                 value = value.toString(),
                 onValueChange = { str ->
@@ -274,23 +310,25 @@ fun SmartInputCard(
                 },
                 readOnly = !enabled,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                modifier = Modifier.weight(1f),
-                enabled = enabled
+                modifier = Modifier.fillMaxWidth(),
+                enabled = enabled,
+                shape = RoundedCornerShape(8.dp)
+            )
+
+            Spacer(Modifier.height(Dimens.SpaceMedium))
+
+            Slider(
+                value = value.toFloat(),
+                onValueChange = { if (enabled) onValueChange(it.toDouble().roundTo(1)) },
+                valueRange = range,
+                colors = SliderDefaults.colors(
+                    thumbColor = color,
+                    activeTrackColor = color
+                ),
+                enabled = enabled,
+                modifier = Modifier.fillMaxWidth()
             )
         }
-
-        Spacer(Modifier.height(8.dp))
-
-        Slider(
-            value = value.toFloat(),
-            onValueChange = { if (enabled) onValueChange(it.toDouble().roundTo(1)) },
-            valueRange = range,
-            colors = SliderDefaults.colors(
-                thumbColor = color,
-                activeTrackColor = color
-            ),
-            enabled = enabled
-        )
     }
 }
 

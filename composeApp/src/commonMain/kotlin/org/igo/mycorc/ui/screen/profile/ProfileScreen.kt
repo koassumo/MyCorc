@@ -1,6 +1,7 @@
 package org.igo.mycorc.ui.screen.profile
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -8,8 +9,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import org.igo.mycorc.ui.common.CommonCard
 import org.igo.mycorc.ui.common.CommonTopBar
+import org.igo.mycorc.ui.common.Dimens
 import org.koin.compose.viewmodel.koinViewModel
 import org.igo.mycorc.ui.theme.LocalAppStrings
 
@@ -23,13 +24,26 @@ fun ProfileScreen() {
         topBar = { CommonTopBar(title = strings.profileTitle) }
     ) { padding ->
         Box(
-            modifier = Modifier.fillMaxSize().padding(padding),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding),
             contentAlignment = Alignment.TopCenter
         ) {
-            CommonCard(modifier = Modifier.padding(16.dp)) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth(0.9f)
+                    .padding(Dimens.SpaceLarge),
+                shape = RoundedCornerShape(Dimens.CardCornerRadius),
+                elevation = CardDefaults.cardElevation(defaultElevation = Dimens.CardElevation),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surface
+                )
+            ) {
                 Column(
-                    modifier = Modifier.padding(16.dp).fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    modifier = Modifier
+                        .padding(Dimens.SpaceLarge)
+                        .fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(Dimens.SpaceMedium),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
@@ -40,21 +54,24 @@ fun ProfileScreen() {
 
                     Text(
                         text = user?.email ?: strings.loading,
-                        style = MaterialTheme.typography.titleLarge
+                        style = MaterialTheme.typography.headlineSmall
                     )
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(Dimens.SpaceSmall))
 
                     HorizontalDivider()
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(Dimens.SpaceSmall))
 
                     Button(
                         onClick = { viewModel.logout() },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.error
                         ),
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(Dimens.ButtonHeight),
+                        shape = RoundedCornerShape(8.dp)
                     ) {
                         Text(strings.logoutButton)
                     }

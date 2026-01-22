@@ -1,6 +1,8 @@
 package org.igo.mycorc.ui.screen.settings
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -8,7 +10,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import org.igo.mycorc.ui.common.CommonCard
 import org.igo.mycorc.ui.common.CommonTopBar
 import org.igo.mycorc.ui.common.Dimens
 import org.koin.compose.viewmodel.koinViewModel
@@ -36,7 +37,7 @@ fun SettingsScreen() {
             Text(
                 text = strings.themeSection,
                 style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(vertical = 16.dp)
+                modifier = Modifier.padding(vertical = Dimens.SpaceLarge)
             )
 
             // Вариант: Системная
@@ -46,12 +47,16 @@ fun SettingsScreen() {
                 onSelect = { viewModel.updateTheme(AppThemeConfig.SYSTEM) }
             )
 
+            Spacer(modifier = Modifier.height(Dimens.CardItemSpacing))
+
             // Вариант: Светлая
             ThemeSelectionItem(
                 label = strings.lightTheme,
                 isSelected = state.selectedTheme == AppThemeConfig.LIGHT,
                 onSelect = { viewModel.updateTheme(AppThemeConfig.LIGHT) }
             )
+
+            Spacer(modifier = Modifier.height(Dimens.CardItemSpacing))
 
             // Вариант: Тёмная
             ThemeSelectionItem(
@@ -69,17 +74,25 @@ fun ThemeSelectionItem(
     isSelected: Boolean,
     onSelect: () -> Unit
 ) {
-    // Используем твой универсальный CommonCard
-    CommonCard(
-        onClick = onSelect,
-        // Если выбрано — подсвечиваем карточку цветом PrimaryContainer
-        containerColor = if (isSelected)
-            MaterialTheme.colorScheme.primaryContainer
-        else
-            MaterialTheme.colorScheme.surfaceVariant
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onSelect() },
+        shape = RoundedCornerShape(Dimens.CardCornerRadius),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = if (isSelected) Dimens.CardElevation * 2 else Dimens.CardElevation
+        ),
+        colors = CardDefaults.cardColors(
+            containerColor = if (isSelected)
+                MaterialTheme.colorScheme.primaryContainer
+            else
+                MaterialTheme.colorScheme.surface
+        )
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(Dimens.CardPadding),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -90,7 +103,7 @@ fun ThemeSelectionItem(
 
             RadioButton(
                 selected = isSelected,
-                onClick = null // Клик обрабатывается всей карточкой (CommonCard)
+                onClick = null
             )
         }
     }
