@@ -21,6 +21,22 @@ object Dimens {
     val CommonCardBorderWidth = 0.dp
 
 
+    // Spacing
+    val SpaceSmall = 8.dp
+    val SpaceMedium = 16.dp
+    val SpaceLarge = 24.dp
+    val SpaceExtraLarge = 32.dp
+
+    // Cards
+    val CardCornerRadius = 16.dp
+    val CardElevation = 2.dp
+    val CardPadding = 16.dp
+    val CardItemSpacing = 12.dp
+
+    // Buttons & Components
+    val ButtonHeight = 50.dp
+    val ChipHeight = 40.dp
+
     // Шрифты
     val TextSizeTitle = 20.sp
     val TextSizeBody = 16.sp

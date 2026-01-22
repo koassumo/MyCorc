@@ -1,47 +1,35 @@
 package org.igo.mycorc.ui.screen.dashboard
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.style.TextAlign
 import org.igo.mycorc.domain.model.Note
 import org.igo.mycorc.ui.common.CommonCard
-import org.igo.mycorc.ui.common.CommonTopBar
-import org.koin.compose.viewmodel.koinViewModel // 👈 Обязательный импорт для Koin
+import org.igo.mycorc.ui.common.Dimens
+import org.koin.compose.viewmodel.koinViewModel
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material3.Icon
-
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.CloudUpload
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.IconButton
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
+import androidx.compose.material.icons.filled.ChevronRight
 import org.igo.mycorc.ui.theme.LocalAppStrings
 
 
@@ -49,15 +37,15 @@ import org.igo.mycorc.ui.theme.LocalAppStrings
 
 @Composable
 fun DashboardScreen(
-    onNavigateToCreate: () -> Unit, // Создание новой записи
-    onNavigateToEdit: (String) -> Unit = {} // Редактирование существующей (noteId)
+    onNavigateToCreate: () -> Unit,
+    onNavigateToEdit: (String) -> Unit = {}
 ) {
     val viewModel = koinViewModel<DashboardViewModel>()
     val state by viewModel.state.collectAsState()
     val strings = LocalAppStrings.current
     val snackbarHostState = remember { SnackbarHostState() }
+    var selectedFilter by remember { mutableStateOf(0) }
 
-    // Показываем Snackbar при ошибке
     LaunchedEffect(state.errorMessage) {
         state.errorMessage?.let { message ->
             snackbarHostState.showSnackbar(message)
@@ -65,25 +53,13 @@ fun DashboardScreen(
         }
     }
 
-    // Используем Scaffold локально для FAB,
-    // либо можно добавить FAB в общий Scaffold в MainScreen (если кнопка нужна везде).
-    // Для теста добавим прямо здесь.
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
-            CommonTopBar(
-                title = strings.dashboardTitle,
-                actions = {
-                    IconButton(
-                        onClick = { viewModel.syncFromServer() },
-                        enabled = !state.isSyncing
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Refresh,
-                            contentDescription = strings.syncWithServer
-                        )
-                    }
-                }
+            DashboardTopBar(
+                onNotificationClick = {},
+                onSyncClick = { viewModel.syncFromServer() },
+                isSyncing = state.isSyncing
             )
         },
         floatingActionButton = {
@@ -95,28 +71,108 @@ fun DashboardScreen(
             }
         }
     ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
+            // Filter Row
+            DashboardFilterRow(
+                selectedFilter = selectedFilter,
+                onFilterSelect = { selectedFilter = it }
+            )
 
-        Box(Modifier.fillMaxSize().padding(innerPadding)) {
-            if (state.isLoading) {
-                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
-                }
-            } else if (state.notes.isEmpty()) {
-                // Заглушка, если список пуст
-                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(strings.noRecordsMessage, style = MaterialTheme.typography.bodyLarge)
-                }
-            } else {
-                LazyColumn(modifier = Modifier.fillMaxSize()) {
-                    items(state.notes) { note ->
-                        DashboardItem(
-                            note = note,
-                            onClick = { onNavigateToEdit(note.id) }, // 👈 Клик по карточке → редактирование
-                            onSendClick = { viewModel.syncNote(note) } // Кнопка "Отправить"
-                        )
+            Spacer(modifier = Modifier.height(Dimens.SpaceMedium))
+
+            // Content
+            Box(Modifier.fillMaxSize()) {
+                if (state.isLoading) {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
+                } else if (state.notes.isEmpty()) {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Text(strings.noRecordsMessage, style = MaterialTheme.typography.bodyLarge)
+                    }
+                } else {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = Dimens.ScreenPaddingSides),
+                        verticalArrangement = Arrangement.spacedBy(Dimens.CardItemSpacing)
+                    ) {
+                        items(state.notes) { note ->
+                            DashboardItem(
+                                note = note,
+                                onClick = { onNavigateToEdit(note.id) },
+                                onSendClick = { viewModel.syncNote(note) }
+                            )
+                        }
                     }
                 }
             }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DashboardTopBar(
+    onNotificationClick: () -> Unit,
+    onSyncClick: () -> Unit,
+    isSyncing: Boolean = false
+) {
+    val strings = LocalAppStrings.current
+
+    CenterAlignedTopAppBar(
+        title = {
+            Text(
+                text = "My Carbon Packages",
+                style = MaterialTheme.typography.headlineSmall,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Start
+            )
+        },
+        actions = {
+            IconButton(onClick = onNotificationClick) {
+                Icon(
+                    imageVector = Icons.Default.Notifications,
+                    contentDescription = "Notifications"
+                )
+            }
+            IconButton(
+                onClick = onSyncClick,
+                enabled = !isSyncing
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Refresh,
+                    contentDescription = "Sync"
+                )
+            }
+        }
+    )
+}
+
+@Composable
+fun DashboardFilterRow(
+    selectedFilter: Int = 0,
+    onFilterSelect: (Int) -> Unit = {}
+) {
+    val filters = listOf("All", "Pending", "Verified", "Sent")
+
+    LazyRow(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = Dimens.ScreenPaddingSides),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        items(filters.size) { index ->
+            FilterChip(
+                selected = selectedFilter == index,
+                onClick = { onFilterSelect(index) },
+                label = { Text(filters[index]) },
+                modifier = Modifier.height(Dimens.ChipHeight)
+            )
         }
     }
 }
@@ -124,46 +180,70 @@ fun DashboardScreen(
 @Composable
 fun DashboardItem(
     note: Note,
-    onClick: () -> Unit = {}, // Клик по всей карточке
-    onSendClick: () -> Unit // Кнопка "Отправить"
+    onClick: () -> Unit = {},
+    onSendClick: () -> Unit = {}
 ) {
     val strings = LocalAppStrings.current
-    CommonCard(
-        onClick = onClick
-    ) {
-        Column(Modifier.fillMaxWidth()) {
-            // --- Основная инфа ---
-            Text(text = note.massDescription, style = MaterialTheme.typography.titleLarge)
-            Text(text = "${strings.weightLabel}: ${note.massWeight} кг")
 
-            if (note.coalWeight != null) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
+        shape = RoundedCornerShape(Dimens.CardCornerRadius),
+        elevation = CardDefaults.cardElevation(defaultElevation = Dimens.CardElevation),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        )
+    ) {
+        Column(
+            modifier = Modifier.padding(Dimens.CardPadding)
+        ) {
+            // Header Row: Title + Chevron
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
                 Text(
-                    text = "${strings.coalLabel}: ${note.coalWeight} кг",
-                    color = MaterialTheme.colorScheme.primary
+                    text = note.massDescription.ifEmpty { "Package #${note.id.take(4)}" },
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.weight(1f)
+                )
+                Icon(
+                    imageVector = Icons.Default.ChevronRight,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(Dimens.SpaceSmall))
 
-            // --- Блок синхронизации ---
-            // Проверяем статус карточки
-            when (note.status) {
-                org.igo.mycorc.domain.model.NoteStatus.DRAFT -> {
-                    // Не все поля заполнены - показываем подсказку
-                    Text(
-                        text = strings.fillAllFieldsWarning,
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.error
-                    )
+            // Status Badge
+            StatusBadge(status = note.status, strings = strings)
+
+            Spacer(modifier = Modifier.height(Dimens.SpaceMedium))
+
+            // Info Row: Weight + Coal
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(Dimens.SpaceSmall)
+            ) {
+                InfoText("${strings.weightLabel}: ${note.massWeight} кг")
+
+                if (note.coalWeight != null && note.coalWeight!! > 0) {
+                    InfoText("${strings.coalLabel}: ${note.coalWeight} кг")
                 }
+            }
+
+            // Action based on status
+            when (note.status) {
                 org.igo.mycorc.domain.model.NoteStatus.READY_TO_SEND -> {
-                    // Все поля заполнены - показываем кнопку "Отправить на регистрацию"
+                    Spacer(modifier = Modifier.height(Dimens.SpaceMedium))
                     Button(
                         onClick = onSendClick,
                         modifier = Modifier.fillMaxWidth(),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.errorContainer,
-                            contentColor = MaterialTheme.colorScheme.onErrorContainer
+                            containerColor = MaterialTheme.colorScheme.primary
                         )
                     ) {
                         Icon(Icons.Default.CloudUpload, contentDescription = null)
@@ -171,61 +251,52 @@ fun DashboardItem(
                         Text(strings.sendToRegistration)
                     }
                 }
-                org.igo.mycorc.domain.model.NoteStatus.SENT -> {
-                    // Отправлено на сервер - показываем статус
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.align(Alignment.End)
-                    ) {
-                        Text(
-                            text = strings.sentToRegistration,
-                            style = MaterialTheme.typography.labelMedium,
-                            color = Color.Gray
-                        )
-                        Spacer(Modifier.width(4.dp))
-                        Icon(
-                            imageVector = Icons.Default.CheckCircle,
-                            contentDescription = "Ok",
-                            tint = Color(0xFF4CAF50),
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
-                }
-                org.igo.mycorc.domain.model.NoteStatus.APPROVED -> {
-                    // Одобрено
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.align(Alignment.End)
-                    ) {
-                        Text(
-                            text = strings.approved,
-                            style = MaterialTheme.typography.labelMedium,
-                            color = Color(0xFF4CAF50)
-                        )
-                        Spacer(Modifier.width(4.dp))
-                        Icon(
-                            imageVector = Icons.Default.CheckCircle,
-                            contentDescription = "Approved",
-                            tint = Color(0xFF4CAF50),
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
-                }
-                org.igo.mycorc.domain.model.NoteStatus.REJECTED -> {
-                    // Отклонено
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.align(Alignment.End)
-                    ) {
-                        Text(
-                            text = strings.rejected,
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.error
-                        )
-                    }
-                }
+                else -> {}
             }
         }
     }
 }
-               // Используем цвет из нашей новой темы (Theme.kt)
+
+@Composable
+private fun StatusBadge(
+    status: org.igo.mycorc.domain.model.NoteStatus,
+    strings: org.igo.mycorc.domain.strings.AppStrings
+) {
+    val (badgeText, badgeColor, textColor) = when (status) {
+        org.igo.mycorc.domain.model.NoteStatus.DRAFT ->
+            Triple("Pending", Color(0xFFFFF3E0), Color(0xFFE65100))
+
+        org.igo.mycorc.domain.model.NoteStatus.READY_TO_SEND ->
+            Triple("Ready", Color(0xFFF0F4FF), Color(0xFF1565C0))
+
+        org.igo.mycorc.domain.model.NoteStatus.SENT ->
+            Triple("Sent", Color(0xFFE0F2F1), Color(0xFF00695C))
+
+        org.igo.mycorc.domain.model.NoteStatus.APPROVED ->
+            Triple("Approved", Color(0xFFC8E6C9), Color(0xFF2E7D32))
+
+        org.igo.mycorc.domain.model.NoteStatus.REJECTED ->
+            Triple("Rejected", Color(0xFFFFCDD2), Color(0xFFC62828))
+    }
+
+    Surface(
+        color = badgeColor,
+        shape = RoundedCornerShape(8.dp)
+    ) {
+        Text(
+            text = badgeText,
+            color = textColor,
+            style = MaterialTheme.typography.labelSmall,
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+        )
+    }
+}
+
+@Composable
+private fun InfoText(text: String) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant
+    )
+}
