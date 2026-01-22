@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import org.igo.mycorc.domain.rep_interface.SettingsRepository
 import org.igo.mycorc.ui.screen.settings.AppThemeConfig
+import org.igo.mycorc.ui.screen.settings.AppLanguageConfig
 
 // 1. Koin сам подаст сюда объект settings, который мы определили выше
 class SettingsRepositoryImpl(
@@ -15,11 +16,19 @@ class SettingsRepositoryImpl(
     private val _themeState = MutableStateFlow(getCurrentTheme())
     override val themeState: StateFlow<AppThemeConfig> = _themeState.asStateFlow()
 
+    private val _languageState = MutableStateFlow(getCurrentLanguage())
+    override val languageState: StateFlow<AppLanguageConfig> = _languageState.asStateFlow()
+
     override fun setTheme(theme: AppThemeConfig) {
         // 2. Сохраняем строку (название Enum) в настройки
         settings.putString(KEY_THEME, theme.name)
         // 3. Обновляем Flow
         _themeState.value = theme
+    }
+
+    override fun setLanguage(language: AppLanguageConfig) {
+        settings.putString(KEY_LANGUAGE, language.name)
+        _languageState.value = language
     }
 
     // Вспомогательная функция для чтения при старте
@@ -33,7 +42,17 @@ class SettingsRepositoryImpl(
         }
     }
 
+    private fun getCurrentLanguage(): AppLanguageConfig {
+        val savedName = settings.getString(KEY_LANGUAGE, AppLanguageConfig.SYSTEM.name)
+        return try {
+            AppLanguageConfig.valueOf(savedName)
+        } catch (e: Exception) {
+            AppLanguageConfig.SYSTEM
+        }
+    }
+
     companion object {
         private const val KEY_THEME = "app_theme_key"
+        private const val KEY_LANGUAGE = "app_language_key"
     }
 }

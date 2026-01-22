@@ -2,6 +2,8 @@ package org.igo.mycorc.ui.screen.settings
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -34,6 +36,7 @@ fun SettingsScreen() {
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .verticalScroll(rememberScrollState())
                 .padding(padding)
                 .padding(horizontal = Dimens.ScreenPaddingSides)
         ) {
@@ -66,6 +69,47 @@ fun SettingsScreen() {
                 label = strings.darkTheme,
                 isSelected = state.selectedTheme == AppThemeConfig.DARK,
                 onSelect = { viewModel.updateTheme(AppThemeConfig.DARK) }
+            )
+
+            // Раздел: Язык
+            Text(
+                text = strings.languageSection,
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.padding(vertical = Dimens.SpaceLarge)
+            )
+
+            // Вариант: Системный
+            ThemeSelectionItem(
+                label = strings.systemTheme,
+                isSelected = state.selectedLanguage == AppLanguageConfig.SYSTEM,
+                onSelect = { viewModel.updateLanguage(AppLanguageConfig.SYSTEM) }
+            )
+
+            Spacer(modifier = Modifier.height(Dimens.CardItemSpacing))
+
+            // Вариант: Английский
+            ThemeSelectionItem(
+                label = strings.languageEn,
+                isSelected = state.selectedLanguage == AppLanguageConfig.EN,
+                onSelect = { viewModel.updateLanguage(AppLanguageConfig.EN) }
+            )
+
+            Spacer(modifier = Modifier.height(Dimens.CardItemSpacing))
+
+            // Вариант: Русский
+            ThemeSelectionItem(
+                label = strings.languageRu,
+                isSelected = state.selectedLanguage == AppLanguageConfig.RU,
+                onSelect = { viewModel.updateLanguage(AppLanguageConfig.RU) }
+            )
+
+            Spacer(modifier = Modifier.height(Dimens.CardItemSpacing))
+
+            // Вариант: Немецкий
+            ThemeSelectionItem(
+                label = strings.languageDe,
+                isSelected = state.selectedLanguage == AppLanguageConfig.DE,
+                onSelect = { viewModel.updateLanguage(AppLanguageConfig.DE) }
             )
         }
     }

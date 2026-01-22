@@ -25,6 +25,12 @@ class SettingsViewModel(
                 _state.update { it.copy(selectedTheme = newTheme) }
             }
         }
+
+        viewModelScope.launch {
+            repository.languageState.collect { newLanguage ->
+                _state.update { it.copy(selectedLanguage = newLanguage) }
+            }
+        }
     }
 
     // 3. Действие пользователя
@@ -32,6 +38,10 @@ class SettingsViewModel(
         // Просто говорим репозиторию сохранить новое значение.
         // А блок init выше сам "услышит" это изменение и обновит экран.
         repository.setTheme(newTheme)
+    }
+
+    fun updateLanguage(newLanguage: AppLanguageConfig) {
+        repository.setLanguage(newLanguage)
     }
 }
 

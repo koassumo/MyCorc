@@ -7,8 +7,16 @@ enum class AppThemeConfig {
     DARK    // Всегда темная
 }
 
+// Перечисление языков
+enum class AppLanguageConfig {
+    SYSTEM, // Как в системе (по умолчанию)
+    EN,     // Английский
+    RU,     // Русский
+    DE      // Немецкий
+}
+
 // 2. Состояние экрана.
-// Пока храним только выбранную тему. Позже сюда добавятся уведомления, язык и т.д.
 data class SettingsState(
-    val selectedTheme: AppThemeConfig = AppThemeConfig.SYSTEM
+    val selectedTheme: AppThemeConfig = AppThemeConfig.SYSTEM,
+    val selectedLanguage: AppLanguageConfig = AppLanguageConfig.SYSTEM
 )

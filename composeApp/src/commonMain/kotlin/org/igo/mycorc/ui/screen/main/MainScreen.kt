@@ -10,9 +10,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import org.igo.mycorc.ui.common.CommonBottomBar
@@ -44,19 +41,18 @@ fun MainScreen() {
             LoginScreen()
         }
         MainState.Authorized -> {
-            AuthorizedAppContent()
+            AuthorizedAppContent(viewModel)
         }
     }
 }
 
 @Composable
-fun AuthorizedAppContent() {
+fun AuthorizedAppContent(viewModel: MainViewModel) {
     val strings = LocalAppStrings.current
     val bottomNavItems = rememberBottomNavItems()
-    // Храним текущий экран в переменной
-    var currentRoute by remember { mutableStateOf(Destinations.DASHBOARD) }
-    // Храним ID выбранной записи для редактирования (null = создание новой)
-    var selectedNoteId by remember { mutableStateOf<String?>(null) }
+    // Навигационное состояние из ViewModel (сохраняется при смене языка)
+    val currentRoute by viewModel.currentRoute.collectAsState()
+    val selectedNoteId by viewModel.selectedNoteId.collectAsState()
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -66,7 +62,7 @@ fun AuthorizedAppContent() {
                 CommonBottomBar(
                     items = bottomNavItems,
                     currentRoute = currentRoute,
-                    onNavigate = { route -> currentRoute = route }
+                    onNavigate = { route -> viewModel.navigateTo(route) }
                 )
             }
         }
@@ -78,24 +74,15 @@ fun AuthorizedAppContent() {
         ) {
             when (currentRoute) {
                 Destinations.DASHBOARD -> DashboardScreen(
-                    onNavigateToCreate = {
-                        selectedNoteId = null  // Сброс для создания новой записи
-                        currentRoute = Destinations.CREATE_NOTE
-                    },
-                    onNavigateToEdit = { noteId ->
-                        selectedNoteId = noteId  // Сохраняем ID для редактирования
-                        currentRoute = Destinations.CREATE_NOTE
-                    }
+                    onNavigateToCreate = { viewModel.navigateToCreate() },
+                    onNavigateToEdit = { noteId -> viewModel.navigateToEdit(noteId) }
                 )
                 Destinations.FACILITIES -> PlaceholderScreen(strings.facilitiesSection)
                 Destinations.SETTINGS -> SettingsScreen()
                 Destinations.PROFILE -> ProfileScreen()
                 Destinations.CREATE_NOTE -> CreateNoteScreen(
                     noteId = selectedNoteId,
-                    onNavigateBack = {
-                        selectedNoteId = null  // Сброс ID при выходе
-                        currentRoute = Destinations.DASHBOARD
-                    }
+                    onNavigateBack = { viewModel.navigateBack() }
                 )
             }
         }

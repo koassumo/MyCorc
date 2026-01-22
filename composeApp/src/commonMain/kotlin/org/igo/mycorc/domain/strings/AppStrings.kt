@@ -46,6 +46,10 @@ interface AppStrings {
     val systemTheme: String
     val lightTheme: String
     val darkTheme: String
+    val languageSection: String
+    val languageEn: String
+    val languageRu: String
+    val languageDe: String
 
     // Profile Screen
     val profileTitle: String

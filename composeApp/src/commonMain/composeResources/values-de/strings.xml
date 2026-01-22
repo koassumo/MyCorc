@@ -45,6 +45,10 @@
     <string name="system_theme">System</string>
     <string name="light_theme">Hell</string>
     <string name="dark_theme">Dunkel</string>
+    <string name="language_section">Sprache</string>
+    <string name="language_en">Englisch</string>
+    <string name="language_ru">Russisch</string>
+    <string name="language_de">Deutsch</string>
 
     <!-- Profile Screen -->
     <string name="profile_title">Profil</string>

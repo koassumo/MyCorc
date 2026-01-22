@@ -45,6 +45,10 @@
     <string name="system_theme">Как в системе</string>
     <string name="light_theme">Светлая</string>
     <string name="dark_theme">Тёмная</string>
+    <string name="language_section">Язык</string>
+    <string name="language_en">Английский</string>
+    <string name="language_ru">Русский</string>
+    <string name="language_de">Немецкий</string>
 
     <!-- Profile Screen -->
     <string name="profile_title">Профиль</string>

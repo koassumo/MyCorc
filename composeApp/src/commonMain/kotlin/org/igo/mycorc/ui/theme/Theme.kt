@@ -56,10 +56,11 @@ private val DarkColors = darkColorScheme(
 @Composable
 fun MyAppTheme(
     useDarkTheme: Boolean = isSystemInDarkTheme(),
+    languageConfig: org.igo.mycorc.ui.screen.settings.AppLanguageConfig,
     content: @Composable () -> Unit
 ) {
     val colors = if (useDarkTheme) DarkColors else LightColors
-    val appStrings = rememberAppStrings()
+    val appStrings = rememberAppStrings(languageConfig)
 
     CompositionLocalProvider(LocalAppStrings provides appStrings) {
         MaterialTheme(

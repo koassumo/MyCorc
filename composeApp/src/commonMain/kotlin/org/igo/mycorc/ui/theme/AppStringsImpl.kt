@@ -46,6 +46,10 @@ data class AppStringsImpl(
     override val systemTheme: String,
     override val lightTheme: String,
     override val darkTheme: String,
+    override val languageSection: String,
+    override val languageEn: String,
+    override val languageRu: String,
+    override val languageDe: String,
     override val profileTitle: String,
     override val loggedInAs: String,
     override val loading: String,
@@ -63,7 +67,10 @@ val LocalAppStrings = compositionLocalOf<AppStrings> {
 }
 
 @Composable
-fun rememberAppStrings(): AppStrings {
+fun rememberAppStrings(languageConfig: org.igo.mycorc.ui.screen.settings.AppLanguageConfig): AppStrings {
+    // Локаль устанавливается в UpdateAppLanguage() перед вызовом этой функции
+    // languageConfig используется для принудительной рекомпозиции при смене языка
+
     return AppStringsImpl(
         loginTitle = stringResource(Res.string.login_title),
         authCardTitle = stringResource(Res.string.auth_card_title),
@@ -103,6 +110,10 @@ fun rememberAppStrings(): AppStrings {
         systemTheme = stringResource(Res.string.system_theme),
         lightTheme = stringResource(Res.string.light_theme),
         darkTheme = stringResource(Res.string.dark_theme),
+        languageSection = stringResource(Res.string.language_section),
+        languageEn = stringResource(Res.string.language_en),
+        languageRu = stringResource(Res.string.language_ru),
+        languageDe = stringResource(Res.string.language_de),
         profileTitle = stringResource(Res.string.profile_title),
         loggedInAs = stringResource(Res.string.logged_in_as),
         loading = stringResource(Res.string.loading),
