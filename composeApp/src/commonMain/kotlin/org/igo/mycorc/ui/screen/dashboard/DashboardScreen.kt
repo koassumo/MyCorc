@@ -31,6 +31,8 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.CloudUpload
 import org.igo.mycorc.ui.theme.LocalAppStrings
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 
 
 
@@ -241,6 +243,19 @@ fun DashboardFilterRow(
     }
 }
 
+@kotlin.time.ExperimentalTime
+private fun formatNoteTitle(note: Note): String {
+    val localDateTime = note.createdAt.toLocalDateTime(TimeZone.currentSystemDefault())
+    val year = localDateTime.year
+    val month = localDateTime.monthNumber.toString().padStart(2, '0')
+    val day = localDateTime.dayOfMonth.toString().padStart(2, '0')
+    val hour = localDateTime.hour.toString().padStart(2, '0')
+    val minute = localDateTime.minute.toString().padStart(2, '0')
+    val second = localDateTime.second.toString().padStart(2, '0')
+    return "$year$month$day-$hour:$minute:$second"
+}
+
+@OptIn(kotlin.time.ExperimentalTime::class)
 @Composable
 fun DashboardItem(
     note: Note,
@@ -271,7 +286,7 @@ fun DashboardItem(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = note.massDescription.ifEmpty { "Package #${note.id.take(4)}" },
+                    text = formatNoteTitle(note),
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.weight(1f).padding(end = Dimens.SpaceSmall)
                 )
