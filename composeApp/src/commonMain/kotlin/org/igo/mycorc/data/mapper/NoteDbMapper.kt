@@ -15,7 +15,7 @@ class NoteDbMapper {
         return Note(
             id = entity.id,
             userId = entity.userId, // <-- Пробрасываем ID владельца
-            createdAt = Instant.fromEpochMilliseconds(entity.updatedAt), // Конвертируем Long в дату
+            createdAt = Instant.fromEpochMilliseconds(entity.createdAt), // Конвертируем Long в дату
             // Берем бизнес-данные из JSON-контейнера
             massWeight = payload.biomass?.weight ?: 0.0,
             massValue = 0.0, // Этого поля нет в payload, возможно расчетное или заглушка

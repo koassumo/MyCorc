@@ -229,6 +229,7 @@ class NoteSyncRepositoryImpl(
     private fun createNoteFromServer(serverPackage: Map<String, Any>, userId: String) {
         val noteId = serverPackage["noteId"] as String
         val status = NoteStatus.valueOf(serverPackage["status"] as String)
+        val createdAt = (serverPackage["createdAtEpochMillis"] as? Long) ?: 0L
         val updatedAt = (serverPackage["updatedAtEpochMillis"] as? Long) ?: 0L
 
         // Парсим payloadJson обратно в NotePayload
@@ -255,6 +256,7 @@ class NoteSyncRepositoryImpl(
             id = noteId,
             userId = userId,
             status = status,
+            createdAt = createdAt,
             updatedAt = updatedAt,
             payload = payload
         )

@@ -8,6 +8,7 @@ CREATE TABLE noteEntity (
     id TEXT NOT NULL PRIMARY KEY,
     userId TEXT NOT NULL,
     status TEXT AS NoteStatus NOT NULL,
+    createdAt INTEGER NOT NULL,
     updatedAt INTEGER NOT NULL,
     isSynced INTEGER AS Boolean NOT NULL DEFAULT 0,
     payload TEXT AS NotePayload NOT NULL
@@ -19,7 +20,7 @@ CREATE TABLE noteEntity (
 getAllNotes:
 SELECT * FROM noteEntity
 WHERE userId = ?
-ORDER BY updatedAt DESC;
+ORDER BY createdAt DESC;
 
 -- Для Синхронизации: найти готовые к отправке (только для конкретного юзера)
 getUnsyncedNotes:
@@ -28,8 +29,8 @@ WHERE userId = ? AND isSynced = 0 AND status = 'READY_TO_SEND';
 
 -- Вставка или обновление (тут все ок)
 insertNote:
-INSERT OR REPLACE INTO noteEntity(id, userId, status, updatedAt, isSynced, payload)
-VALUES (?, ?, ?, ?, ?, ?);
+INSERT OR REPLACE INTO noteEntity(id, userId, status, createdAt, updatedAt, isSynced, payload)
+VALUES (?, ?, ?, ?, ?, ?, ?);
 
 -- Получить одну запись
 getNoteById:
@@ -65,8 +66,8 @@ WHERE id = ? AND userId = ?;
 
 -- Вставить новую запись с сервера (всегда синхронизированная)
 insertNoteFromServer:
-INSERT OR REPLACE INTO noteEntity(id, userId, status, updatedAt, isSynced, payload)
-VALUES (?, ?, ?, ?, 1, ?);
+INSERT OR REPLACE INTO noteEntity(id, userId, status, createdAt, updatedAt, isSynced, payload)
+VALUES (?, ?, ?, ?, ?, 1, ?);
 
 -- Обновить существующую запись данными с сервера
 updateNoteFromServer:

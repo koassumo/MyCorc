@@ -92,6 +92,7 @@ class NoteRepositoryImpl(
             id = note.id,
             userId = currentUser.id, // <-- БЕРЕМ РЕАЛЬНЫЙ ID ЮЗЕРА
             status = note.status,
+            createdAt = note.createdAt.toEpochMilliseconds(), // <-- СОХРАНЯЕМ ДАТУ СОЗДАНИЯ
             updatedAt = timeProvider.nowEpochMillis(), // <-- ИСПОЛЬЗУЕМ ТЕКУЩЕЕ ВРЕМЯ
 
             // 👇 ИСПРАВЛЕНИЕ: Берем значение из самой заметки!
