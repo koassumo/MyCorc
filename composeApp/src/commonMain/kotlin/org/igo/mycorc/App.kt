@@ -26,6 +26,9 @@ fun App() {
     }
 
     MyAppTheme(useDarkTheme = useDarkTheme) {
+        // Обновляем цвет иконок статус-бара при смене темы
+        UpdateSystemBarsTheme(useDarkTheme)
+
         // Surface перекрывает фон окна правильным цветом темы (чтоб исключить моргание)
         Surface(
             modifier = Modifier.fillMaxSize(),
@@ -35,3 +38,6 @@ fun App() {
         }
     }
 }
+
+@Composable
+expect fun UpdateSystemBarsTheme(isDark: Boolean)

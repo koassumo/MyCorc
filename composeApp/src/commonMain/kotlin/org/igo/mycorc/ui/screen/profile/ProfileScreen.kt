@@ -1,5 +1,6 @@
 package org.igo.mycorc.ui.screen.profile
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -21,7 +22,8 @@ fun ProfileScreen() {
     val strings = LocalAppStrings.current
 
     Scaffold(
-        topBar = { CommonTopBar(title = strings.profileTitle) }
+        topBar = { CommonTopBar(title = strings.profileTitle) },
+        containerColor = MaterialTheme.colorScheme.background
     ) { padding ->
         Box(
             modifier = Modifier
@@ -34,7 +36,8 @@ fun ProfileScreen() {
                     .fillMaxWidth(0.9f)
                     .padding(Dimens.SpaceLarge),
                 shape = RoundedCornerShape(Dimens.CardCornerRadius),
-                elevation = CardDefaults.cardElevation(defaultElevation = Dimens.CardElevation),
+                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.surface
                 )

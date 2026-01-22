@@ -1,5 +1,6 @@
 package org.igo.mycorc.ui.screen.create
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -110,7 +111,8 @@ fun CreateNoteScreen(
             // 2. Блок Описания
             Card(
                 shape = RoundedCornerShape(Dimens.CardCornerRadius),
-                elevation = CardDefaults.cardElevation(defaultElevation = Dimens.CardElevation),
+                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.surface
                 ),
@@ -137,7 +139,8 @@ fun CreateNoteScreen(
             // 3. Блок Фото
             Card(
                 shape = RoundedCornerShape(Dimens.CardCornerRadius),
-                elevation = CardDefaults.cardElevation(defaultElevation = Dimens.CardElevation),
+                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.surface
                 ),
@@ -287,7 +290,8 @@ fun SmartInputCard(
 
     Card(
         shape = RoundedCornerShape(Dimens.CardCornerRadius),
-        elevation = CardDefaults.cardElevation(defaultElevation = Dimens.CardElevation),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),

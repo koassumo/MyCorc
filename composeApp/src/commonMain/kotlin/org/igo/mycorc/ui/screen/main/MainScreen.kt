@@ -16,6 +16,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import org.igo.mycorc.ui.common.CommonBottomBar
+import org.igo.mycorc.ui.common.CommonTopBar
 import org.igo.mycorc.ui.navigation.Destinations
 import org.igo.mycorc.ui.navigation.rememberBottomNavItems
 import org.igo.mycorc.ui.screen.auth.LoginScreen
@@ -59,7 +60,7 @@ fun AuthorizedAppContent() {
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        containerColor = MaterialTheme.colorScheme.surface,
+        containerColor = MaterialTheme.colorScheme.surfaceContainer,
         bottomBar = {
             if (currentRoute != Destinations.CREATE_NOTE) {
                 CommonBottomBar(
@@ -103,7 +104,17 @@ fun AuthorizedAppContent() {
 
 @Composable
 fun PlaceholderScreen(title: String) {
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(title, style = MaterialTheme.typography.headlineMedium)
+    Scaffold(
+        topBar = { CommonTopBar(title = title) },
+        containerColor = MaterialTheme.colorScheme.background
+    ) { padding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(title, style = MaterialTheme.typography.headlineMedium)
+        }
     }
 }

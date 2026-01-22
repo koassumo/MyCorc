@@ -317,10 +317,22 @@ val BrandDark = Red700       // Темный оттенок
 val AccentKey = BlueGrey500       // Коричневый
 
 // 3. Базовые (Нейтральные)
-val GrayLight = Green100        // Светло-серый фон
-val GrayDark = Green900         // Темно-серый фон
+val GrayLight = Grey100        // Светло-серый фон
+val GrayDark = Grey900         // Темно-серый фон
 
-// 4. Ошибки
+// 4. Цвета для тёмной темы (иерархия)
+val DarkBackground = Color(0xFF0A0A0A)     // Самый тёмный - фон экрана
+val DarkSurfaceBar = Grey900               // Средний - бары (чуть светлее фона)
+val DarkSurfaceCard = Grey800              // Светлее - карточки
+val DarkCardBorder = Color(0xFF2A2A2A)     // Обводка карточек (чуть светлее фона)
+
+// 5. Цвета для светлой темы (иерархия)
+val LightBackground = Color(0xFFEEE9F5)    // Фон экрана с легким фиолетовым оттенком (чуть темнее)
+val LightSurfaceBar = White                // Средний - бары
+val LightSurfaceCard = White               // Карточки
+val LightCardBorder = Color(0xFFDDD5E8)    // Обводка карточек (чуть темнее фона)
+
+// 6. Ошибки
 val ErrorRed = Red700
 
 

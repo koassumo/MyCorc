@@ -18,7 +18,7 @@ fun CommonBottomBar(
 ) {
     NavigationBar(
         modifier = modifier,
-        containerColor = MaterialTheme.colorScheme.surface,
+        containerColor = MaterialTheme.colorScheme.surfaceContainer,
     ) {
         items.forEach { item ->
             NavigationBarItem(

@@ -1,5 +1,6 @@
 package org.igo.mycorc.ui.screen.auth
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -24,7 +25,8 @@ fun LoginScreen() {
     var password by remember { mutableStateOf("") }
 
     Scaffold(
-        topBar = { CommonTopBar(title = strings.loginTitle) }
+        topBar = { CommonTopBar(title = strings.loginTitle) },
+        containerColor = MaterialTheme.colorScheme.background
     ) { padding ->
         Box(
             modifier = Modifier
@@ -37,7 +39,8 @@ fun LoginScreen() {
                     .fillMaxWidth(0.9f)
                     .padding(Dimens.SpaceMedium),
                 shape = RoundedCornerShape(Dimens.CardCornerRadius),
-                elevation = CardDefaults.cardElevation(defaultElevation = Dimens.CardElevation),
+                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.surface
                 )

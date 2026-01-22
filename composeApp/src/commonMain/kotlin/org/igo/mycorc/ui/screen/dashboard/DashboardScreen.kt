@@ -1,5 +1,6 @@
 package org.igo.mycorc.ui.screen.dashboard
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -68,42 +69,52 @@ fun DashboardScreen(
             }
         }
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-        ) {
-            // Filter Row
-            DashboardFilterRow(
-                selectedFilter = selectedFilter,
-                onFilterSelect = { selectedFilter = it }
-            )
-
-            Spacer(modifier = Modifier.height(Dimens.SpaceMedium))
-
-            // Content
-            Box(Modifier.fillMaxSize()) {
-                if (state.isLoading) {
-                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator()
+        Box(Modifier.fillMaxSize()) {
+            if (state.isLoading) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            } else if (state.notes.isEmpty()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(strings.noRecordsMessage, style = MaterialTheme.typography.bodyLarge)
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = innerPadding
+                ) {
+                    // Фильтры как первый элемент списка
+                    item {
+                        Column {
+                            Spacer(modifier = Modifier.height(Dimens.SpaceMedium))
+                            DashboardFilterRow(
+                                selectedFilter = selectedFilter,
+                                onFilterSelect = { selectedFilter = it }
+                            )
+                            Spacer(modifier = Modifier.height(Dimens.SpaceMedium))
+                        }
                     }
-                } else if (state.notes.isEmpty()) {
-                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text(strings.noRecordsMessage, style = MaterialTheme.typography.bodyLarge)
-                    }
-                } else {
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(horizontal = Dimens.ScreenPaddingSides),
-                        verticalArrangement = Arrangement.spacedBy(Dimens.CardItemSpacing)
-                    ) {
-                        items(state.notes) { note ->
+
+                    // Список пакетов
+                    items(state.notes) { note ->
+                        Column {
                             DashboardItem(
                                 note = note,
                                 onClick = { onNavigateToEdit(note.id) },
-                                onSendClick = { viewModel.syncNote(note) }
+                                onSendClick = { viewModel.syncNote(note) },
+                                modifier = Modifier.padding(horizontal = Dimens.ScreenPaddingSides)
                             )
+                            Spacer(modifier = Modifier.height(Dimens.CardItemSpacing))
                         }
                     }
                 }
@@ -125,8 +136,10 @@ fun DashboardTopBar(
         title = {
             Text(
                 text = "My Carbon Packages",
-                style = MaterialTheme.typography.headlineSmall,
-                modifier = Modifier.fillMaxWidth(),
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = Dimens.ScreenPaddingSides),
                 textAlign = TextAlign.Start
             )
         },
@@ -148,12 +161,13 @@ fun DashboardTopBar(
             }
         },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-            scrolledContainerColor = MaterialTheme.colorScheme.surface,
+            containerColor = MaterialTheme.colorScheme.surfaceContainer,
+            scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainer,
             titleContentColor = MaterialTheme.colorScheme.onSurface,
             navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
             actionIconContentColor = MaterialTheme.colorScheme.onSurface
-        )
+        ),
+        windowInsets = WindowInsets(0.dp)
     )
 }
 
@@ -185,16 +199,18 @@ fun DashboardFilterRow(
 fun DashboardItem(
     note: Note,
     onClick: () -> Unit = {},
-    onSendClick: () -> Unit = {}
+    onSendClick: () -> Unit = {},
+    modifier: Modifier = Modifier
 ) {
     val strings = LocalAppStrings.current
 
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .clickable { onClick() },
         shape = RoundedCornerShape(Dimens.CardCornerRadius),
-        elevation = CardDefaults.cardElevation(defaultElevation = Dimens.CardElevation),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         )

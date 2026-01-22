@@ -1,5 +1,6 @@
 package org.igo.mycorc.ui.screen.settings
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -26,12 +27,14 @@ fun SettingsScreen() {
     val state by viewModel.state.collectAsState()
     val strings = LocalAppStrings.current
 
-    Column(Modifier.fillMaxSize()) {
-        CommonTopBar(title = strings.settingsTitle)
-
+    Scaffold(
+        topBar = { CommonTopBar(title = strings.settingsTitle) },
+        containerColor = MaterialTheme.colorScheme.background
+    ) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .padding(padding)
                 .padding(horizontal = Dimens.ScreenPaddingSides)
         ) {
             Text(
@@ -79,9 +82,8 @@ fun ThemeSelectionItem(
             .fillMaxWidth()
             .clickable { onSelect() },
         shape = RoundedCornerShape(Dimens.CardCornerRadius),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = if (isSelected) Dimens.CardElevation * 2 else Dimens.CardElevation
-        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
         colors = CardDefaults.cardColors(
             containerColor = if (isSelected)
                 MaterialTheme.colorScheme.primaryContainer

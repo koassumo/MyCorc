@@ -17,11 +17,15 @@ private val LightColors = lightColorScheme(
     secondary = AccentKey,
     onSecondary = White,
 
-    background = GrayLight,
+    background = LightBackground,  // Светло-фиолетовый фон
     onBackground = Black,
 
     surface = White,
     onSurface = Black,
+
+    surfaceContainer = White, // Бары такого же цвета как surface
+
+    outline = LightCardBorder, // Обводка карточек
 
     error = ErrorRed
 )
@@ -36,11 +40,15 @@ private val DarkColors = darkColorScheme(
     secondary = AccentKey,
     onSecondary = White,
 
-    background = GrayDark,
+    background = DarkBackground,        // Самый тёмный - фон экрана
     onBackground = White,
 
-    surface = Black,
+    surface = DarkSurfaceCard,          // Карточки (светлее баров)
     onSurface = White,
+
+    surfaceContainer = DarkSurfaceBar,  // Бары (чуть светлее фона, темнее карточек)
+
+    outline = DarkCardBorder,           // Обводка карточек
 
     error = ErrorRed
 )
