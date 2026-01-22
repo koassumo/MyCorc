@@ -20,16 +20,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.style.TextAlign
 import org.igo.mycorc.domain.model.Note
-import org.igo.mycorc.ui.common.CommonCard
 import org.igo.mycorc.ui.common.Dimens
 import org.koin.compose.viewmodel.koinViewModel
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.CloudUpload
-import androidx.compose.material.icons.filled.ChevronRight
 import org.igo.mycorc.ui.theme.LocalAppStrings
 
 
@@ -205,7 +202,7 @@ fun DashboardItem(
         Column(
             modifier = Modifier.padding(Dimens.CardPadding)
         ) {
-            // Header Row: Title + Chevron
+            // Header Row: Title + Status Badge
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -214,19 +211,10 @@ fun DashboardItem(
                 Text(
                     text = note.massDescription.ifEmpty { "Package #${note.id.take(4)}" },
                     style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f).padding(end = Dimens.SpaceSmall)
                 )
-                Icon(
-                    imageVector = Icons.Default.ChevronRight,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                StatusBadge(status = note.status, strings = strings)
             }
-
-            Spacer(modifier = Modifier.height(Dimens.SpaceSmall))
-
-            // Status Badge
-            StatusBadge(status = note.status, strings = strings)
 
             Spacer(modifier = Modifier.height(Dimens.SpaceMedium))
 
