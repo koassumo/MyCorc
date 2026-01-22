@@ -59,7 +59,7 @@ fun AuthorizedAppContent() {
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        containerColor = MaterialTheme.colorScheme.background,
+        containerColor = MaterialTheme.colorScheme.surface,
         bottomBar = {
             if (currentRoute != Destinations.CREATE_NOTE) {
                 CommonBottomBar(

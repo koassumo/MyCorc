@@ -42,14 +42,8 @@ fun CommonTopBar(
         },
         actions = { actions() },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            // 1. В спокойном состоянии — полностью прозрачный.
-            // Мы видим цвет Surface, который лежит под ним (и он уже правильный).
-            containerColor = Color.Transparent,
-
-            // 2. Если начнем скроллить список под баром — он станет цвета Surface (чуть отличный от фона)
+            containerColor = MaterialTheme.colorScheme.surface,
             scrolledContainerColor = MaterialTheme.colorScheme.surface,
-
-            // 3. Цвета иконок и текста
             titleContentColor = MaterialTheme.colorScheme.onSurface,
             navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
             actionIconContentColor = MaterialTheme.colorScheme.onSurface
