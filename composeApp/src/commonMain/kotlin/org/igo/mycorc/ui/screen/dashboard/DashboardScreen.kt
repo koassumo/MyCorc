@@ -21,7 +21,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.style.TextAlign
 import org.igo.mycorc.domain.model.Note
+import org.igo.mycorc.domain.model.NoteStatus
 import org.igo.mycorc.ui.common.Dimens
+import org.igo.mycorc.ui.common.LoadingContent
 import org.koin.compose.viewmodel.koinViewModel
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -42,7 +44,12 @@ fun DashboardScreen(
     val state by viewModel.state.collectAsState()
     val strings = LocalAppStrings.current
     val snackbarHostState = remember { SnackbarHostState() }
-    var selectedFilter by remember { mutableStateOf(0) }
+    var selectedFilters by remember { mutableStateOf<Set<NoteStatus>>(emptySet()) }
+
+    // Автоматическая синхронизация при открытии экрана
+    LaunchedEffect(Unit) {
+        viewModel.syncFromServer()
+    }
 
     LaunchedEffect(state.errorMessage) {
         state.errorMessage?.let { message ->
@@ -51,25 +58,26 @@ fun DashboardScreen(
         }
     }
 
-    Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) },
-        topBar = {
-            DashboardTopBar(
-                onNotificationClick = {},
-                onSyncClick = { viewModel.syncFromServer() },
-                isSyncing = state.isSyncing
-            )
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = onNavigateToCreate,
-                containerColor = MaterialTheme.colorScheme.primary
-            ) {
-                Icon(Icons.Default.Add, contentDescription = strings.addButtonTooltip)
+    LoadingContent(isLoading = state.isSyncing) {
+        Scaffold(
+            snackbarHost = { SnackbarHost(snackbarHostState) },
+            topBar = {
+                DashboardTopBar(
+                    onNotificationClick = {},
+                    onSyncClick = { viewModel.syncFromServer() },
+                    isSyncing = state.isSyncing
+                )
+            },
+            floatingActionButton = {
+                FloatingActionButton(
+                    onClick = onNavigateToCreate,
+                    containerColor = MaterialTheme.colorScheme.primary
+                ) {
+                    Icon(Icons.Default.Add, contentDescription = strings.addButtonTooltip)
+                }
             }
-        }
-    ) { innerPadding ->
-        Box(Modifier.fillMaxSize()) {
+        ) { innerPadding ->
+            Box(Modifier.fillMaxSize()) {
             if (state.isLoading) {
                 Box(
                     modifier = Modifier
@@ -89,6 +97,13 @@ fun DashboardScreen(
                     Text(strings.noRecordsMessage, style = MaterialTheme.typography.bodyLarge)
                 }
             } else {
+                // Фильтрация списка
+                val filteredNotes = if (selectedFilters.isEmpty()) {
+                    state.notes // Показываем все, если фильтры не выбраны (как "All")
+                } else {
+                    state.notes.filter { note -> note.status in selectedFilters }
+                }
+
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = innerPadding
@@ -98,15 +113,26 @@ fun DashboardScreen(
                         Column {
                             Spacer(modifier = Modifier.height(Dimens.SpaceMedium))
                             DashboardFilterRow(
-                                selectedFilter = selectedFilter,
-                                onFilterSelect = { selectedFilter = it }
+                                selectedFilters = selectedFilters,
+                                onFilterToggle = { status ->
+                                    selectedFilters = if (status == null) {
+                                        // "All" button clicked - clear all filters
+                                        emptySet()
+                                    } else if (status in selectedFilters) {
+                                        // Deselect filter
+                                        selectedFilters - status
+                                    } else {
+                                        // Select filter
+                                        selectedFilters + status
+                                    }
+                                }
                             )
                             Spacer(modifier = Modifier.height(Dimens.SpaceMedium))
                         }
                     }
 
                     // Список пакетов
-                    items(state.notes) { note ->
+                    items(filteredNotes) { note ->
                         Column {
                             DashboardItem(
                                 note = note,
@@ -119,6 +145,7 @@ fun DashboardScreen(
                     }
                 }
             }
+        }
         }
     }
 }
@@ -171,12 +198,24 @@ fun DashboardTopBar(
     )
 }
 
+data class FilterItem(
+    val label: String,
+    val status: NoteStatus? // null for "All"
+)
+
 @Composable
 fun DashboardFilterRow(
-    selectedFilter: Int = 0,
-    onFilterSelect: (Int) -> Unit = {}
+    selectedFilters: Set<NoteStatus> = emptySet(),
+    onFilterToggle: (NoteStatus?) -> Unit = {}
 ) {
-    val filters = listOf("All", "Pending", "Verified", "Sent")
+    val filters = listOf(
+        FilterItem("All", null),
+        FilterItem("Pending", NoteStatus.DRAFT),
+        FilterItem("Ready", NoteStatus.READY_TO_SEND),
+        FilterItem("Sent", NoteStatus.SENT),
+        FilterItem("Approved", NoteStatus.APPROVED),
+        FilterItem("Rejected", NoteStatus.REJECTED)
+    )
 
     LazyRow(
         modifier = Modifier
@@ -184,11 +223,18 @@ fun DashboardFilterRow(
             .padding(horizontal = Dimens.ScreenPaddingSides),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        items(filters.size) { index ->
+        items(filters) { filter ->
+            val isSelected = if (filter.status == null) {
+                // "All" is selected when no specific filters are active
+                selectedFilters.isEmpty()
+            } else {
+                filter.status in selectedFilters
+            }
+
             FilterChip(
-                selected = selectedFilter == index,
-                onClick = { onFilterSelect(index) },
-                label = { Text(filters[index]) },
+                selected = isSelected,
+                onClick = { onFilterToggle(filter.status) },
+                label = { Text(filter.label) },
                 modifier = Modifier.height(Dimens.ChipHeight)
             )
         }
