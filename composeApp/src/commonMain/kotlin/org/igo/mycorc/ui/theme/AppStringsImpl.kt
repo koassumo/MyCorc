@@ -60,6 +60,13 @@ data class AppStringsImpl(
     override val profileNav: String,
     override val backButtonTooltip: String,
     override val facilitiesSection: String,
+    override val sectionBiomass: String,
+    override val sectionPyrolysis: String,
+    override val sectionBiochar: String,
+    override val sectionDelivery: String,
+    override val transportDistanceLabel: String,
+    override val pyrolysisDurationLabel: String,
+    override val pyrolysisTemperatureLabel: String,
 ) : AppStrings
 
 val LocalAppStrings = compositionLocalOf<AppStrings> {
@@ -124,5 +131,12 @@ fun rememberAppStrings(languageConfig: org.igo.mycorc.ui.screen.settings.AppLang
         profileNav = stringResource(Res.string.profile_nav),
         backButtonTooltip = stringResource(Res.string.back_button_tooltip),
         facilitiesSection = stringResource(Res.string.facilities_section),
+        sectionBiomass = stringResource(Res.string.section_biomass),
+        sectionPyrolysis = stringResource(Res.string.section_pyrolysis),
+        sectionBiochar = stringResource(Res.string.section_biochar),
+        sectionDelivery = stringResource(Res.string.section_delivery),
+        transportDistanceLabel = stringResource(Res.string.transport_distance_label),
+        pyrolysisDurationLabel = stringResource(Res.string.pyrolysis_duration_label),
+        pyrolysisTemperatureLabel = stringResource(Res.string.pyrolysis_temperature_label),
     )
 }

@@ -40,6 +40,19 @@ interface AppStrings {
     val alreadySentError: String
     val alreadySentConflictError: String
 
+    // Section Headers
+    val sectionBiomass: String
+    val sectionPyrolysis: String
+    val sectionBiochar: String
+    val sectionDelivery: String
+
+    // Biomass Section Fields
+    val transportDistanceLabel: String
+
+    // Pyrolysis Section Fields
+    val pyrolysisDurationLabel: String
+    val pyrolysisTemperatureLabel: String
+
     // Settings Screen
     val settingsTitle: String
     val themeSection: String

@@ -39,6 +39,19 @@
     <string name="already_sent_error">This package has already been sent for registration from another device</string>
     <string name="already_sent_conflict_error">This package has already been sent for registration from another device</string>
 
+    <!-- Section Headers -->
+    <string name="section_biomass">Biomass</string>
+    <string name="section_pyrolysis">Pyrolysis</string>
+    <string name="section_biochar">Biochar</string>
+    <string name="section_delivery">Delivery</string>
+
+    <!-- Biomass Section Fields -->
+    <string name="transport_distance_label">Transport distance (km)</string>
+
+    <!-- Pyrolysis Section Fields -->
+    <string name="pyrolysis_duration_label">Duration</string>
+    <string name="pyrolysis_temperature_label">Temperature (°C)</string>
+
     <!-- Settings Screen -->
     <string name="settings_title">Settings</string>
     <string name="theme_section">Theme</string>

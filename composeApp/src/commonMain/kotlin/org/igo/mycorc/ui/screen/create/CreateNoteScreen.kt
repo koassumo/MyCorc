@@ -15,13 +15,19 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import org.igo.mycorc.ui.common.LoadingContent
 import org.igo.mycorc.ui.common.CommonTopBar
+import org.igo.mycorc.ui.common.CommonCard
 import org.igo.mycorc.ui.common.Dimens
+import org.igo.mycorc.ui.common.formatNoteTitle
 import org.koin.compose.viewmodel.koinViewModel
 import kotlin.math.roundToInt
 import org.igo.mycorc.ui.common.AppImagePicker
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Eco
+import androidx.compose.material.icons.filled.Whatshot
+import androidx.compose.material.icons.filled.Science
+import androidx.compose.material.icons.filled.LocalShipping
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.ui.graphics.Color
@@ -29,6 +35,21 @@ import androidx.compose.ui.layout.ContentScale
 import coil3.compose.AsyncImage
 import org.igo.mycorc.ui.theme.LocalAppStrings
 
+/**
+ * Formats duration in minutes to "Xh Ym" format
+ * Examples: 90 -> "1h 30m", 45 -> "45m", 120 -> "2h"
+ */
+private fun formatDuration(minutes: Int): String {
+    val hours = minutes / 60
+    val mins = minutes % 60
+    return when {
+        hours > 0 && mins > 0 -> "${hours}h ${mins}m"
+        hours > 0 -> "${hours}h"
+        else -> "${mins}m"
+    }
+}
+
+@OptIn(kotlin.time.ExperimentalTime::class)
 @Composable
 fun CreateNoteScreen(
     noteId: String? = null,
@@ -37,6 +58,11 @@ fun CreateNoteScreen(
     val viewModel = koinViewModel<CreateNoteViewModel>()
     val state by viewModel.state.collectAsState()
     val strings = LocalAppStrings.current
+
+    // Local state for new fields (not yet connected to ViewModel/DB)
+    var transportDistance by remember { mutableStateOf(0.0) }
+    var pyrolysisDuration by remember { mutableStateOf(0) }
+    var pyrolysisTemperature by remember { mutableStateOf(0.0) }
 
     // Загружаем запись при входе в режим редактирования
     LaunchedEffect(noteId) {
@@ -63,11 +89,10 @@ fun CreateNoteScreen(
         LoadingContent(isLoading = state.isLoading) {
         Scaffold(
             topBar = {
-                val title = when {
-                    state.isReadOnly -> strings.readOnlyTitle
-                    state.editMode -> strings.editTitle
-                    else -> strings.createNewTitle
-                }
+                val title = state.existingNote?.let { note ->
+                    formatNoteTitle(note)
+                } ?: strings.createNewTitle
+
                 CommonTopBar(
                     title = title,
                     canNavigateBack = true,
@@ -94,35 +119,90 @@ fun CreateNoteScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(horizontal = Dimens.ScreenPaddingSides)
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(Dimens.CardItemSpacing)
         ) {
 
-            // 1. Блок Биомассы
-            SmartInputCard(
-                title = strings.biomassWeightLabel,
-                value = state.biomassWeight,
-                onValueChange = { viewModel.updateBiomass(it) },
-                range = 0f..2000f,
-                enabled = !state.isReadOnly
-            )
-
-            // 2. Блок Описания
-            Card(
-                shape = RoundedCornerShape(Dimens.CardCornerRadius),
-                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                ),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Column(
-                    modifier = Modifier.padding(Dimens.CardPadding)
+            // ═══════════════════════════════════════════════
+            // SECTION 1: BIOMASS
+            // ═══════════════════════════════════════════════
+            CommonCard {
+                // Section Header with Icon
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            start = Dimens.ScreenPaddingSides,
+                            end = Dimens.ScreenPaddingSides,
+                            top = Dimens.SpaceSmall
+                        ),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(Dimens.SpaceSmall)
                 ) {
-                    Text(text = strings.descriptionSection, style = MaterialTheme.typography.titleMedium)
-                    Spacer(Modifier.height(Dimens.SpaceMedium))
+                    Icon(
+                        imageVector = Icons.Default.Eco,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(28.dp)
+                    )
+                    Text(
+                        text = strings.sectionBiomass,
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                }
+
+                Spacer(Modifier.height(Dimens.SpaceMedium))
+
+                // Biomass Weight
+                Column(modifier = Modifier.padding(horizontal = Dimens.ScreenPaddingSides)) {
+                    Text(text = strings.biomassWeightLabel, style = MaterialTheme.typography.labelMedium)
+                    Spacer(Modifier.height(Dimens.SpaceSmall))
+                    OutlinedTextField(
+                        value = state.biomassWeight.toString(),
+                        onValueChange = { str ->
+                            if (!state.isReadOnly) {
+                                val num = str.toDoubleOrNull()
+                                if (num != null) viewModel.updateBiomass(num)
+                            }
+                        },
+                        readOnly = state.isReadOnly,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        modifier = Modifier.fillMaxWidth(),
+                        enabled = !state.isReadOnly,
+                        shape = RoundedCornerShape(8.dp),
+                        singleLine = true
+                    )
+                }
+
+                Spacer(Modifier.height(Dimens.SpaceMedium))
+
+                // Transport Distance
+                Column(modifier = Modifier.padding(horizontal = Dimens.ScreenPaddingSides)) {
+                    Text(text = strings.transportDistanceLabel, style = MaterialTheme.typography.labelMedium)
+                    Spacer(Modifier.height(Dimens.SpaceSmall))
+                    OutlinedTextField(
+                        value = transportDistance.toString(),
+                        onValueChange = { str ->
+                            if (!state.isReadOnly) {
+                                val num = str.toDoubleOrNull()
+                                if (num != null) transportDistance = num
+                            }
+                        },
+                        readOnly = state.isReadOnly,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        modifier = Modifier.fillMaxWidth(),
+                        enabled = !state.isReadOnly,
+                        shape = RoundedCornerShape(8.dp),
+                        singleLine = true
+                    )
+                }
+
+                Spacer(Modifier.height(Dimens.SpaceMedium))
+
+                // Description
+                Column(modifier = Modifier.padding(horizontal = Dimens.ScreenPaddingSides)) {
+                    Text(text = strings.descriptionSection, style = MaterialTheme.typography.labelMedium)
+                    Spacer(Modifier.height(Dimens.SpaceSmall))
                     OutlinedTextField(
                         value = state.description,
                         onValueChange = { if (!state.isReadOnly) viewModel.updateDescription(it) },
@@ -136,20 +216,151 @@ fun CreateNoteScreen(
                 }
             }
 
-            // 3. Блок Фото
-            Card(
-                shape = RoundedCornerShape(Dimens.CardCornerRadius),
-                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                ),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Column(
-                    modifier = Modifier.padding(Dimens.CardPadding)
+            // ═══════════════════════════════════════════════
+            // SECTION 2: PYROLYSIS
+            // ═══════════════════════════════════════════════
+            CommonCard {
+                // Section Header with Icon
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            start = Dimens.ScreenPaddingSides,
+                            end = Dimens.ScreenPaddingSides,
+                            top = Dimens.SpaceSmall
+                        ),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(Dimens.SpaceSmall)
                 ) {
-                    Text(text = strings.photoSection, style = MaterialTheme.typography.titleMedium)
+                    Icon(
+                        imageVector = Icons.Default.Whatshot,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(28.dp)
+                    )
+                    Text(
+                        text = strings.sectionPyrolysis,
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                }
+
+                Spacer(Modifier.height(Dimens.SpaceMedium))
+
+                // Duration
+                Column(modifier = Modifier.padding(horizontal = Dimens.ScreenPaddingSides)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(text = strings.pyrolysisDurationLabel, style = MaterialTheme.typography.labelMedium)
+                        if (pyrolysisDuration > 0) {
+                            Text(
+                                text = formatDuration(pyrolysisDuration),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
+                    Spacer(Modifier.height(Dimens.SpaceSmall))
+                    OutlinedTextField(
+                        value = pyrolysisDuration.toString(),
+                        onValueChange = { str ->
+                            if (!state.isReadOnly) {
+                                val num = str.toIntOrNull()
+                                if (num != null) pyrolysisDuration = num
+                            }
+                        },
+                        readOnly = state.isReadOnly,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        modifier = Modifier.fillMaxWidth(),
+                        enabled = !state.isReadOnly,
+                        shape = RoundedCornerShape(8.dp),
+                        singleLine = true,
+                        suffix = { Text("min") }
+                    )
+                }
+
+                Spacer(Modifier.height(Dimens.SpaceMedium))
+
+                // Temperature
+                Column(modifier = Modifier.padding(horizontal = Dimens.ScreenPaddingSides)) {
+                    Text(text = strings.pyrolysisTemperatureLabel, style = MaterialTheme.typography.labelMedium)
+                    Spacer(Modifier.height(Dimens.SpaceSmall))
+                    OutlinedTextField(
+                        value = pyrolysisTemperature.toString(),
+                        onValueChange = { str ->
+                            if (!state.isReadOnly) {
+                                val num = str.toDoubleOrNull()
+                                if (num != null) pyrolysisTemperature = num
+                            }
+                        },
+                        readOnly = state.isReadOnly,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        modifier = Modifier.fillMaxWidth(),
+                        enabled = !state.isReadOnly,
+                        shape = RoundedCornerShape(8.dp),
+                        singleLine = true
+                    )
+                }
+            }
+
+            // ═══════════════════════════════════════════════
+            // SECTION 3: BIOCHAR
+            // ═══════════════════════════════════════════════
+            CommonCard {
+                // Section Header with Icon
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            start = Dimens.ScreenPaddingSides,
+                            end = Dimens.ScreenPaddingSides,
+                            top = Dimens.SpaceSmall
+                        ),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(Dimens.SpaceSmall)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Science,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(28.dp)
+                    )
+                    Text(
+                        text = strings.sectionBiochar,
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                }
+
+                Spacer(Modifier.height(Dimens.SpaceMedium))
+
+                // Coal Weight
+                Column(modifier = Modifier.padding(horizontal = Dimens.ScreenPaddingSides)) {
+                    Text(text = strings.coalWeightLabel, style = MaterialTheme.typography.labelMedium)
+                    Spacer(Modifier.height(Dimens.SpaceSmall))
+                    OutlinedTextField(
+                        value = state.coalWeight.toString(),
+                        onValueChange = { str ->
+                            if (!state.isReadOnly) {
+                                val num = str.toDoubleOrNull()
+                                if (num != null) viewModel.updateCoal(num)
+                            }
+                        },
+                        readOnly = state.isReadOnly,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        modifier = Modifier.fillMaxWidth(),
+                        enabled = !state.isReadOnly,
+                        shape = RoundedCornerShape(8.dp),
+                        singleLine = true
+                    )
+                }
+
+                Spacer(Modifier.height(Dimens.SpaceMedium))
+
+                // Photo
+                Column(modifier = Modifier.padding(horizontal = Dimens.ScreenPaddingSides)) {
+                    Text(text = strings.photoSection, style = MaterialTheme.typography.labelMedium)
                     Spacer(Modifier.height(Dimens.SpaceMedium))
 
                     val photoPath = state.photoPath
@@ -202,15 +413,44 @@ fun CreateNoteScreen(
                 }
             }
 
-            // 4. Блок Угля
-            SmartInputCard(
-                title = strings.coalWeightLabel,
-                value = state.coalWeight,
-                onValueChange = { viewModel.updateCoal(it) },
-                range = 0f..1000f,
-                accent = true,
-                enabled = !state.isReadOnly
-            )
+            // ═══════════════════════════════════════════════
+            // SECTION 4: DELIVERY
+            // ═══════════════════════════════════════════════
+            CommonCard {
+                // Section Header with Icon
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            start = Dimens.ScreenPaddingSides,
+                            end = Dimens.ScreenPaddingSides,
+                            top = Dimens.SpaceSmall
+                        ),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(Dimens.SpaceSmall)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.LocalShipping,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(28.dp)
+                    )
+                    Text(
+                        text = strings.sectionDelivery,
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                }
+
+                Spacer(Modifier.height(Dimens.SpaceMedium))
+
+                // Placeholder for future delivery/logistics fields
+                Text(
+                    text = "Delivery information will be added here",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(horizontal = Dimens.ScreenPaddingSides)
+                )
+            }
         }
         }
         }
