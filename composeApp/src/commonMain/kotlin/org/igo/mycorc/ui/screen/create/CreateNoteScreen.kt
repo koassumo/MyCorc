@@ -127,7 +127,6 @@ fun CreateNoteScreen(
             // SECTION 1: BIOMASS
             // ═══════════════════════════════════════════════
             CommonCard {
-                // Section Header with Icon
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -136,83 +135,85 @@ fun CreateNoteScreen(
                             end = Dimens.ScreenPaddingSides,
                             top = Dimens.SpaceSmall
                         ),
-                    verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(Dimens.SpaceSmall)
                 ) {
+                    // Icon column
                     Icon(
                         imageVector = Icons.Default.Eco,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(28.dp)
                     )
-                    Text(
-                        text = strings.sectionBiomass,
-                        style = MaterialTheme.typography.titleLarge
-                    )
-                }
 
-                Spacer(Modifier.height(Dimens.SpaceMedium))
+                    // Content column
+                    Column(
+                        modifier = Modifier.weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(Dimens.SpaceMedium)
+                    ) {
+                        // Section Title
+                        Text(
+                            text = strings.sectionBiomass,
+                            style = MaterialTheme.typography.titleLarge
+                        )
 
-                // Biomass Weight
-                Column(modifier = Modifier.padding(horizontal = Dimens.ScreenPaddingSides)) {
-                    Text(text = strings.biomassWeightLabel, style = MaterialTheme.typography.labelMedium)
-                    Spacer(Modifier.height(Dimens.SpaceSmall))
-                    OutlinedTextField(
-                        value = state.biomassWeight.toString(),
-                        onValueChange = { str ->
-                            if (!state.isReadOnly) {
-                                val num = str.toDoubleOrNull()
-                                if (num != null) viewModel.updateBiomass(num)
-                            }
-                        },
-                        readOnly = state.isReadOnly,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        modifier = Modifier.fillMaxWidth(),
-                        enabled = !state.isReadOnly,
-                        shape = RoundedCornerShape(8.dp),
-                        singleLine = true
-                    )
-                }
+                        // Biomass Weight
+                        Column {
+                            Text(text = strings.biomassWeightLabel, style = MaterialTheme.typography.labelMedium)
+                            Spacer(Modifier.height(Dimens.SpaceSmall))
+                            OutlinedTextField(
+                                value = state.biomassWeight.toString(),
+                                onValueChange = { str ->
+                                    if (!state.isReadOnly) {
+                                        val num = str.toDoubleOrNull()
+                                        if (num != null) viewModel.updateBiomass(num)
+                                    }
+                                },
+                                readOnly = state.isReadOnly,
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                modifier = Modifier.fillMaxWidth(),
+                                enabled = !state.isReadOnly,
+                                shape = RoundedCornerShape(8.dp),
+                                singleLine = true
+                            )
+                        }
 
-                Spacer(Modifier.height(Dimens.SpaceMedium))
+                        // Transport Distance
+                        Column {
+                            Text(text = strings.transportDistanceLabel, style = MaterialTheme.typography.labelMedium)
+                            Spacer(Modifier.height(Dimens.SpaceSmall))
+                            OutlinedTextField(
+                                value = transportDistance.toString(),
+                                onValueChange = { str ->
+                                    if (!state.isReadOnly) {
+                                        val num = str.toDoubleOrNull()
+                                        if (num != null) transportDistance = num
+                                    }
+                                },
+                                readOnly = state.isReadOnly,
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                modifier = Modifier.fillMaxWidth(),
+                                enabled = !state.isReadOnly,
+                                shape = RoundedCornerShape(8.dp),
+                                singleLine = true
+                            )
+                        }
 
-                // Transport Distance
-                Column(modifier = Modifier.padding(horizontal = Dimens.ScreenPaddingSides)) {
-                    Text(text = strings.transportDistanceLabel, style = MaterialTheme.typography.labelMedium)
-                    Spacer(Modifier.height(Dimens.SpaceSmall))
-                    OutlinedTextField(
-                        value = transportDistance.toString(),
-                        onValueChange = { str ->
-                            if (!state.isReadOnly) {
-                                val num = str.toDoubleOrNull()
-                                if (num != null) transportDistance = num
-                            }
-                        },
-                        readOnly = state.isReadOnly,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        modifier = Modifier.fillMaxWidth(),
-                        enabled = !state.isReadOnly,
-                        shape = RoundedCornerShape(8.dp),
-                        singleLine = true
-                    )
-                }
-
-                Spacer(Modifier.height(Dimens.SpaceMedium))
-
-                // Description
-                Column(modifier = Modifier.padding(horizontal = Dimens.ScreenPaddingSides)) {
-                    Text(text = strings.descriptionSection, style = MaterialTheme.typography.labelMedium)
-                    Spacer(Modifier.height(Dimens.SpaceSmall))
-                    OutlinedTextField(
-                        value = state.description,
-                        onValueChange = { if (!state.isReadOnly) viewModel.updateDescription(it) },
-                        readOnly = state.isReadOnly,
-                        modifier = Modifier.fillMaxWidth(),
-                        placeholder = { Text(strings.enterDescription) },
-                        minLines = 2,
-                        maxLines = 4,
-                        shape = RoundedCornerShape(8.dp)
-                    )
+                        // Description
+                        Column {
+                            Text(text = strings.descriptionSection, style = MaterialTheme.typography.labelMedium)
+                            Spacer(Modifier.height(Dimens.SpaceSmall))
+                            OutlinedTextField(
+                                value = state.description,
+                                onValueChange = { if (!state.isReadOnly) viewModel.updateDescription(it) },
+                                readOnly = state.isReadOnly,
+                                modifier = Modifier.fillMaxWidth(),
+                                placeholder = { Text(strings.enterDescription) },
+                                minLines = 2,
+                                maxLines = 4,
+                                shape = RoundedCornerShape(8.dp)
+                            )
+                        }
+                    }
                 }
             }
 
@@ -220,7 +221,6 @@ fun CreateNoteScreen(
             // SECTION 2: PYROLYSIS
             // ═══════════════════════════════════════════════
             CommonCard {
-                // Section Header with Icon
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -229,79 +229,83 @@ fun CreateNoteScreen(
                             end = Dimens.ScreenPaddingSides,
                             top = Dimens.SpaceSmall
                         ),
-                    verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(Dimens.SpaceSmall)
                 ) {
+                    // Icon column
                     Icon(
                         imageVector = Icons.Default.Whatshot,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(28.dp)
                     )
-                    Text(
-                        text = strings.sectionPyrolysis,
-                        style = MaterialTheme.typography.titleLarge
-                    )
-                }
 
-                Spacer(Modifier.height(Dimens.SpaceMedium))
-
-                // Duration
-                Column(modifier = Modifier.padding(horizontal = Dimens.ScreenPaddingSides)) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                    // Content column
+                    Column(
+                        modifier = Modifier.weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(Dimens.SpaceMedium)
                     ) {
-                        Text(text = strings.pyrolysisDurationLabel, style = MaterialTheme.typography.labelMedium)
-                        if (pyrolysisDuration > 0) {
-                            Text(
-                                text = formatDuration(pyrolysisDuration),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.primary
+                        // Section Title
+                        Text(
+                            text = strings.sectionPyrolysis,
+                            style = MaterialTheme.typography.titleLarge
+                        )
+
+                        // Duration
+                        Column {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(text = strings.pyrolysisDurationLabel, style = MaterialTheme.typography.labelMedium)
+                                if (pyrolysisDuration > 0) {
+                                    Text(
+                                        text = formatDuration(pyrolysisDuration),
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.primary
+                                    )
+                                }
+                            }
+                            Spacer(Modifier.height(Dimens.SpaceSmall))
+                            OutlinedTextField(
+                                value = pyrolysisDuration.toString(),
+                                onValueChange = { str ->
+                                    if (!state.isReadOnly) {
+                                        val num = str.toIntOrNull()
+                                        if (num != null) pyrolysisDuration = num
+                                    }
+                                },
+                                readOnly = state.isReadOnly,
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                modifier = Modifier.fillMaxWidth(),
+                                enabled = !state.isReadOnly,
+                                shape = RoundedCornerShape(8.dp),
+                                singleLine = true,
+                                suffix = { Text("min") }
+                            )
+                        }
+
+                        // Temperature
+                        Column {
+                            Text(text = strings.pyrolysisTemperatureLabel, style = MaterialTheme.typography.labelMedium)
+                            Spacer(Modifier.height(Dimens.SpaceSmall))
+                            OutlinedTextField(
+                                value = pyrolysisTemperature.toString(),
+                                onValueChange = { str ->
+                                    if (!state.isReadOnly) {
+                                        val num = str.toDoubleOrNull()
+                                        if (num != null) pyrolysisTemperature = num
+                                    }
+                                },
+                                readOnly = state.isReadOnly,
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                modifier = Modifier.fillMaxWidth(),
+                                enabled = !state.isReadOnly,
+                                shape = RoundedCornerShape(8.dp),
+                                singleLine = true
                             )
                         }
                     }
-                    Spacer(Modifier.height(Dimens.SpaceSmall))
-                    OutlinedTextField(
-                        value = pyrolysisDuration.toString(),
-                        onValueChange = { str ->
-                            if (!state.isReadOnly) {
-                                val num = str.toIntOrNull()
-                                if (num != null) pyrolysisDuration = num
-                            }
-                        },
-                        readOnly = state.isReadOnly,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        modifier = Modifier.fillMaxWidth(),
-                        enabled = !state.isReadOnly,
-                        shape = RoundedCornerShape(8.dp),
-                        singleLine = true,
-                        suffix = { Text("min") }
-                    )
-                }
-
-                Spacer(Modifier.height(Dimens.SpaceMedium))
-
-                // Temperature
-                Column(modifier = Modifier.padding(horizontal = Dimens.ScreenPaddingSides)) {
-                    Text(text = strings.pyrolysisTemperatureLabel, style = MaterialTheme.typography.labelMedium)
-                    Spacer(Modifier.height(Dimens.SpaceSmall))
-                    OutlinedTextField(
-                        value = pyrolysisTemperature.toString(),
-                        onValueChange = { str ->
-                            if (!state.isReadOnly) {
-                                val num = str.toDoubleOrNull()
-                                if (num != null) pyrolysisTemperature = num
-                            }
-                        },
-                        readOnly = state.isReadOnly,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        modifier = Modifier.fillMaxWidth(),
-                        enabled = !state.isReadOnly,
-                        shape = RoundedCornerShape(8.dp),
-                        singleLine = true
-                    )
                 }
             }
 
@@ -309,7 +313,6 @@ fun CreateNoteScreen(
             // SECTION 3: BIOCHAR
             // ═══════════════════════════════════════════════
             CommonCard {
-                // Section Header with Icon
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -318,93 +321,97 @@ fun CreateNoteScreen(
                             end = Dimens.ScreenPaddingSides,
                             top = Dimens.SpaceSmall
                         ),
-                    verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(Dimens.SpaceSmall)
                 ) {
+                    // Icon column
                     Icon(
                         imageVector = Icons.Default.Science,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(28.dp)
                     )
-                    Text(
-                        text = strings.sectionBiochar,
-                        style = MaterialTheme.typography.titleLarge
-                    )
-                }
 
-                Spacer(Modifier.height(Dimens.SpaceMedium))
+                    // Content column
+                    Column(
+                        modifier = Modifier.weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(Dimens.SpaceMedium)
+                    ) {
+                        // Section Title
+                        Text(
+                            text = strings.sectionBiochar,
+                            style = MaterialTheme.typography.titleLarge
+                        )
 
-                // Coal Weight
-                Column(modifier = Modifier.padding(horizontal = Dimens.ScreenPaddingSides)) {
-                    Text(text = strings.coalWeightLabel, style = MaterialTheme.typography.labelMedium)
-                    Spacer(Modifier.height(Dimens.SpaceSmall))
-                    OutlinedTextField(
-                        value = state.coalWeight.toString(),
-                        onValueChange = { str ->
-                            if (!state.isReadOnly) {
-                                val num = str.toDoubleOrNull()
-                                if (num != null) viewModel.updateCoal(num)
-                            }
-                        },
-                        readOnly = state.isReadOnly,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        modifier = Modifier.fillMaxWidth(),
-                        enabled = !state.isReadOnly,
-                        shape = RoundedCornerShape(8.dp),
-                        singleLine = true
-                    )
-                }
-
-                Spacer(Modifier.height(Dimens.SpaceMedium))
-
-                // Photo
-                Column(modifier = Modifier.padding(horizontal = Dimens.ScreenPaddingSides)) {
-                    Text(text = strings.photoSection, style = MaterialTheme.typography.labelMedium)
-                    Spacer(Modifier.height(Dimens.SpaceMedium))
-
-                    val photoPath = state.photoPath
-                    val photoUrl = state.photoUrl
-
-                    if (photoPath == null) {
-                        if (!state.isReadOnly) {
-                            AppImagePicker { bytes ->
-                                viewModel.onPhotoPicked(bytes)
-                            }
-                        } else {
-                            Text(strings.noPhotoPlaceholder, style = MaterialTheme.typography.bodyMedium)
-                        }
-                    } else {
-                        val photoSource = when {
-                            photoUrl != null -> photoUrl
-                            else -> "file://$photoPath"
-                        }
-
+                        // Coal Weight
                         Column {
-                            AsyncImage(
-                                model = photoSource,
-                                contentDescription = "Photo preview",
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(200.dp)
-                                    .clip(RoundedCornerShape(8.dp))
-                                    .clickable { viewModel.openFullscreenPhoto() },
-                                contentScale = ContentScale.Crop
-                            )
+                            Text(text = strings.coalWeightLabel, style = MaterialTheme.typography.labelMedium)
                             Spacer(Modifier.height(Dimens.SpaceSmall))
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Text(
-                                    text = strings.photoSaved,
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    modifier = Modifier.weight(1f)
-                                )
+                            OutlinedTextField(
+                                value = state.coalWeight.toString(),
+                                onValueChange = { str ->
+                                    if (!state.isReadOnly) {
+                                        val num = str.toDoubleOrNull()
+                                        if (num != null) viewModel.updateCoal(num)
+                                    }
+                                },
+                                readOnly = state.isReadOnly,
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                modifier = Modifier.fillMaxWidth(),
+                                enabled = !state.isReadOnly,
+                                shape = RoundedCornerShape(8.dp),
+                                singleLine = true
+                            )
+                        }
+
+                        // Photo
+                        Column {
+                            Text(text = strings.photoSection, style = MaterialTheme.typography.labelMedium)
+                            Spacer(Modifier.height(Dimens.SpaceMedium))
+
+                            val photoPath = state.photoPath
+                            val photoUrl = state.photoUrl
+
+                            if (photoPath == null) {
                                 if (!state.isReadOnly) {
-                                    IconButton(onClick = { viewModel.clearPhoto() }) {
-                                        Icon(Icons.Default.Delete, contentDescription = "Delete")
+                                    AppImagePicker { bytes ->
+                                        viewModel.onPhotoPicked(bytes)
+                                    }
+                                } else {
+                                    Text(strings.noPhotoPlaceholder, style = MaterialTheme.typography.bodyMedium)
+                                }
+                            } else {
+                                val photoSource = when {
+                                    photoUrl != null -> photoUrl
+                                    else -> "file://$photoPath"
+                                }
+
+                                Column {
+                                    AsyncImage(
+                                        model = photoSource,
+                                        contentDescription = "Photo preview",
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .height(200.dp)
+                                            .clip(RoundedCornerShape(8.dp))
+                                            .clickable { viewModel.openFullscreenPhoto() },
+                                        contentScale = ContentScale.Crop
+                                    )
+                                    Spacer(Modifier.height(Dimens.SpaceSmall))
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        Text(
+                                            text = strings.photoSaved,
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            modifier = Modifier.weight(1f)
+                                        )
+                                        if (!state.isReadOnly) {
+                                            IconButton(onClick = { viewModel.clearPhoto() }) {
+                                                Icon(Icons.Default.Delete, contentDescription = "Delete")
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -417,7 +424,6 @@ fun CreateNoteScreen(
             // SECTION 4: DELIVERY
             // ═══════════════════════════════════════════════
             CommonCard {
-                // Section Header with Icon
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -426,30 +432,35 @@ fun CreateNoteScreen(
                             end = Dimens.ScreenPaddingSides,
                             top = Dimens.SpaceSmall
                         ),
-                    verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(Dimens.SpaceSmall)
                 ) {
+                    // Icon column
                     Icon(
                         imageVector = Icons.Default.LocalShipping,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(28.dp)
                     )
-                    Text(
-                        text = strings.sectionDelivery,
-                        style = MaterialTheme.typography.titleLarge
-                    )
+
+                    // Content column
+                    Column(
+                        modifier = Modifier.weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(Dimens.SpaceMedium)
+                    ) {
+                        // Section Title
+                        Text(
+                            text = strings.sectionDelivery,
+                            style = MaterialTheme.typography.titleLarge
+                        )
+
+                        // Placeholder for future delivery/logistics fields
+                        Text(
+                            text = "Delivery information will be added here",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
                 }
-
-                Spacer(Modifier.height(Dimens.SpaceMedium))
-
-                // Placeholder for future delivery/logistics fields
-                Text(
-                    text = "Delivery information will be added here",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(horizontal = Dimens.ScreenPaddingSides)
-                )
             }
         }
         }
