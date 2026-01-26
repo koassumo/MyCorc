@@ -17,7 +17,9 @@ data class SignInUpResponseDto(
     val refreshToken: String,
     val expiresIn: String,
     val localId: String,
-    val registered: Boolean? = null
+    val registered: Boolean? = null,
+    val kind: String? = null,
+    val displayName: String? = null
 )
 
 @Serializable

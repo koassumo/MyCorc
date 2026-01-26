@@ -23,6 +23,7 @@ import org.igo.mycorc.domain.rep_interface.AuthRepository
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 import org.igo.mycorc.core.time.TimeProvider
+import org.igo.mycorc.BuildKonfig
 import kotlin.time.ExperimentalTime
 
 
@@ -33,7 +34,9 @@ class AuthRepositoryRestImpl(
     private val timeProvider: TimeProvider
 ) : AuthRepository {
 
-    private val apiKey: String = "AIzaSyBXXcox-yKCugwAQCrRN_EnOkfXX0-E0-M"
+    private val apiKey: String = BuildKonfig.FIREBASE_API_KEY.also {
+        println("🔑 Firebase API Key loaded: ${it.take(10)}...")
+    }
     private val signUpUrl = "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=$apiKey"
     private val signInUrl = "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=$apiKey"
     private val refreshUrl = "https://securetoken.googleapis.com/v1/token?key=$apiKey"
@@ -51,11 +54,20 @@ class AuthRepositoryRestImpl(
 
     override suspend fun login(email: String, pass: String): Result<Unit> =
         runCatching {
-            val resp: SignInUpResponseDto = client.post(signInUrl) {
+            println("🔐 Attempting login for: $email")
+            val httpResponse = client.post(signInUrl) {
                 contentType(ContentType.Application.Json)
                 setBody(SignInUpRequestDto(email, pass))
-            }.body()
+            }
+            val rawBody = httpResponse.body<String>()
+            println("📡 Firebase response: $rawBody")
+
+            val resp = Json.decodeFromString<SignInUpResponseDto>(rawBody)
+            println("✅ Login successful")
             persistSession(resp)
+        }.onFailure { error ->
+            println("❌ Login failed: ${error.message}")
+            error.printStackTrace()
         }
 
     override suspend fun register(email: String, pass: String): Result<Unit> =

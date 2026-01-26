@@ -14,7 +14,15 @@
       "Bash(git commit:*)",
       "Bash(git push)",
       "Bash(.\\\\gradlew.bat:*)",
-      "Bash(./gradlew:*)"
+      "Bash(./gradlew:*)",
+      "WebFetch(domain:puro.earth)",
+      "WebSearch",
+      "WebFetch(domain:docs.api.puro.earth)",
+      "WebFetch(domain:7518557.fs1.hubspotusercontent-na1.net)",
+      "WebFetch(domain:carbonherald.com)",
+      "WebFetch(domain:api.portal.puro.earth)",
+      "WebFetch(domain:registry.api.puro.earth)",
+      "WebFetch(domain:www.mangrovesystems.com)"
     ]
   }
 }

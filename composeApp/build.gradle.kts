@@ -1,5 +1,7 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -8,6 +10,15 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.sqldelight)
+    alias(libs.plugins.buildkonfig)
+}
+
+// Читаем файл свойств
+val localProperties = Properties().apply {
+    val localPropsFile = rootProject.file("local.properties")
+    if (localPropsFile.exists()) {
+        load(localPropsFile.inputStream())
+    }
 }
 
 kotlin {
@@ -102,6 +113,19 @@ kotlin {
             //
             implementation(libs.koin.test)
         }
+    }
+}
+
+// 👇 НАСТРОЙКА BUILDKONFIG (для безопасного хранения ключей)
+buildkonfig {
+    packageName = "org.igo.mycorc"
+
+    defaultConfigs {
+        buildConfigField(
+            Type.STRING,
+            "FIREBASE_API_KEY",
+            localProperties.getProperty("firebase.api.key", "")
+        )
     }
 }
 
