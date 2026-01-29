@@ -20,7 +20,7 @@ class MainActivity : ComponentActivity() {
         window.navigationBarColor = Color.TRANSPARENT
 
         setContent {
-            App()
+            App(activityContext = this)
         }
     }
 }

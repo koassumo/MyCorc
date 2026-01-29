@@ -32,3 +32,32 @@ data class RefreshTokenResponseDto(
     @SerialName("user_id") val userId: String,
     @SerialName("project_id") val projectId: String? = null
 )
+
+/**
+ * Request for signInWithIdp (OAuth providers like Google, Apple)
+ */
+@Serializable
+data class SignInWithIdpRequestDto(
+    val postBody: String,
+    val requestUri: String = "http://localhost",
+    val returnIdpCredential: Boolean = true,
+    val returnSecureToken: Boolean = true
+)
+
+/**
+ * Response from signInWithIdp
+ */
+@Serializable
+data class SignInWithIdpResponseDto(
+    val idToken: String,
+    val email: String? = null,
+    val refreshToken: String,
+    val expiresIn: String,
+    val localId: String,
+    val providerId: String? = null,
+    val displayName: String? = null,
+    val photoUrl: String? = null,
+    val federatedId: String? = null,
+    val emailVerified: Boolean? = null,
+    val rawUserInfo: String? = null
+)

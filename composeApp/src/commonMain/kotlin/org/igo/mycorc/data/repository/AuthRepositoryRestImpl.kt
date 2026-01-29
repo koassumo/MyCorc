@@ -15,9 +15,12 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.igo.mycorc.data.auth.AuthStorage
+import org.igo.mycorc.data.auth.GoogleAuthProvider
 import org.igo.mycorc.data.auth.dto.RefreshTokenResponseDto
 import org.igo.mycorc.data.auth.dto.SignInUpRequestDto
 import org.igo.mycorc.data.auth.dto.SignInUpResponseDto
+import org.igo.mycorc.data.auth.dto.SignInWithIdpRequestDto
+import org.igo.mycorc.data.auth.dto.SignInWithIdpResponseDto
 import org.igo.mycorc.domain.model.AppUser
 import org.igo.mycorc.domain.rep_interface.AuthRepository
 import kotlin.io.encoding.Base64
@@ -31,7 +34,8 @@ import kotlin.time.ExperimentalTime
 class AuthRepositoryRestImpl(
     private val client: HttpClient,
     private val storage: AuthStorage,
-    private val timeProvider: TimeProvider
+    private val timeProvider: TimeProvider,
+    private val googleAuthProvider: GoogleAuthProvider
 ) : AuthRepository {
 
     private val apiKey: String = BuildKonfig.FIREBASE_API_KEY.also {
@@ -39,6 +43,7 @@ class AuthRepositoryRestImpl(
     }
     private val signUpUrl = "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=$apiKey"
     private val signInUrl = "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=$apiKey"
+    private val signInWithIdpUrl = "https://identitytoolkit.googleapis.com/v1/accounts:signInWithIdp?key=$apiKey"
     private val refreshUrl = "https://securetoken.googleapis.com/v1/token?key=$apiKey"
 
     private val _currentUser = MutableStateFlow<AppUser?>(null)
@@ -79,7 +84,31 @@ class AuthRepositoryRestImpl(
             persistSession(resp)
         }
 
+    override suspend fun signInWithGoogle(activityContext: Any): Result<Unit> {
+        return googleAuthProvider.signIn(activityContext).fold(
+            onSuccess = { googleIdToken ->
+                runCatching {
+                    println("🔐 Got Google ID Token, exchanging with Firebase...")
+                    val postBody = "id_token=$googleIdToken&providerId=google.com"
+
+                    val resp: SignInWithIdpResponseDto = client.post(signInWithIdpUrl) {
+                        contentType(ContentType.Application.Json)
+                        setBody(SignInWithIdpRequestDto(postBody = postBody))
+                    }.body()
+
+                    println("✅ Firebase sign-in successful: ${resp.email}")
+                    persistOAuthSession(resp)
+                }
+            },
+            onFailure = { error ->
+                println("❌ Google Sign-In failed: ${error.message}")
+                Result.failure(error)
+            }
+        )
+    }
+
     override suspend fun logout() {
+        googleAuthProvider.signOut()
         storage.clear()
         _currentUser.value = null
     }
@@ -110,6 +139,20 @@ class AuthRepositoryRestImpl(
             refreshToken = resp.refreshToken,
             userId = resp.localId,
             email = resp.email,
+            expiresAtEpochSec = expiresAt
+        )
+        _currentUser.value = AppUser(id = resp.localId, email = resp.email)
+    }
+
+    private fun persistOAuthSession(resp: SignInWithIdpResponseDto) {
+        val now = timeProvider.nowEpochSeconds()
+        val expiresAt = now + (resp.expiresIn.toLongOrNull() ?: 3600L)
+
+        storage.save(
+            idToken = resp.idToken,
+            refreshToken = resp.refreshToken,
+            userId = resp.localId,
+            email = resp.email ?: "",
             expiresAtEpochSec = expiresAt
         )
         _currentUser.value = AppUser(id = resp.localId, email = resp.email)

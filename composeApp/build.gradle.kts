@@ -11,6 +11,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.sqldelight)
     alias(libs.plugins.buildkonfig)
+    alias(libs.plugins.google.services)
 }
 
 // Читаем файл свойств
@@ -55,6 +56,11 @@ kotlin {
 
             implementation(libs.ktor.client.okhttp)
 
+            // Firebase Auth + Google Sign-In
+            implementation(libs.firebase.auth)
+            implementation(libs.credentials)
+            implementation(libs.credentials.play.services)
+            implementation(libs.googleid)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -125,6 +131,11 @@ buildkonfig {
             Type.STRING,
             "FIREBASE_API_KEY",
             localProperties.getProperty("firebase.api.key", "")
+        )
+        buildConfigField(
+            Type.STRING,
+            "GOOGLE_WEB_CLIENT_ID",
+            localProperties.getProperty("google.web.client.id", "")
         )
     }
 }

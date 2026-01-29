@@ -25,7 +25,7 @@ import org.igo.mycorc.ui.screen.profile.ProfileScreen
 import org.igo.mycorc.ui.theme.LocalAppStrings
 
 @Composable
-fun MainScreen() {
+fun MainScreen(activityContext: Any? = null) {
     // Теперь мы используем ViewModel, а не лезем в репозиторий напрямую
     val viewModel = koinViewModel<MainViewModel>()
     val state by viewModel.state.collectAsState()
@@ -38,7 +38,7 @@ fun MainScreen() {
             }
         }
         MainState.Unauthorized -> {
-            LoginScreen()
+            LoginScreen(activityContext = activityContext)
         }
         MainState.Authorized -> {
             AuthorizedAppContent(viewModel)

@@ -1,0 +1,10 @@
+## Example configuration file
+# Copy this file to 'local.properties' and fill in your actual values
+#
+# NOTE: local.properties is in .gitignore and should NEVER be committed to git
+
+# Android SDK location (required for Android builds)
+sdk.dir=C\:\\Users\\YourUsername\\AppData\\Local\\Android\\Sdk
+
+# Firebase API Key (get from https://console.cloud.google.com/apis/credentials)
+firebase.api.key=YOUR_FIREBASE_API_KEY_HERE

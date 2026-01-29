@@ -41,4 +41,19 @@ class LoginViewModel(
             result.onFailure { _error.value = it.message }
         }
     }
+
+    fun signInWithGoogle(activityContext: Any) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            _error.value = null
+
+            val result = authRepository.signInWithGoogle(activityContext)
+
+            _isLoading.value = false
+            result.onFailure {
+                _error.value = it.message ?: "Ошибка входа через Google"
+            }
+            // onSuccess ничего делать не надо, MainScreen сам переключится
+        }
+    }
 }

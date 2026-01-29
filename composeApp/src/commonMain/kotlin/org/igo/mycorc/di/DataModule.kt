@@ -23,6 +23,7 @@ import org.koin.dsl.module
 import org.igo.mycorc.domain.rep_interface.AuthRepository
 import org.igo.mycorc.data.remote.buildHttpClient
 import org.igo.mycorc.data.auth.AuthStorage
+import org.igo.mycorc.data.auth.GoogleAuthProvider
 import org.igo.mycorc.data.repository.AuthRepositoryRestImpl
 import org.igo.mycorc.data.remote.firestore.FirestorePackagesApi
 import org.igo.mycorc.data.remote.storage.FirebaseStorageApi
@@ -36,6 +37,7 @@ val dataModule = module {
     singleOf(::SystemTimeProvider) bind TimeProvider::class
     single { buildHttpClient() }
     singleOf(::AuthStorage)
+    single<GoogleAuthProvider> { GoogleAuthProvider() }
     singleOf(::AuthRepositoryRestImpl) bind AuthRepository::class
     single { FirestorePackagesApi(client = get(), projectId = "mycorc") }
     single { FirebaseStorageApi(client = get(), bucketName = "mycorc.firebasestorage.app") }
