@@ -5,9 +5,17 @@
     <string name="auth_card_title">Autorisierung</string>
     <string name="email_label">E-Mail</string>
     <string name="password_label">Passwort</string>
+    <string name="confirm_password_label">Passwort bestätigen</string>
     <string name="login_button">Anmelden</string>
     <string name="no_account_text">Kein Konto?</string>
     <string name="register_link">Registrieren</string>
+    <string name="sign_in_with_google">Mit Google anmelden</string>
+    <string name="or_divider">oder</string>
+    <string name="register_title">Registrierung</string>
+    <string name="register_button">Registrieren</string>
+    <string name="passwords_do_not_match">Passwörter stimmen nicht überein</string>
+    <string name="have_account_text">Haben Sie bereits ein Konto?</string>
+    <string name="sign_in_link">Anmelden</string>
 
     <!-- Dashboard Screen -->
     <string name="dashboard_title">Dashboard</string>

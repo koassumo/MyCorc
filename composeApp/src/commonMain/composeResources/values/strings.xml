@@ -5,9 +5,17 @@
     <string name="auth_card_title">Authorization</string>
     <string name="email_label">Email</string>
     <string name="password_label">Password</string>
+    <string name="confirm_password_label">Confirm password</string>
     <string name="login_button">Login</string>
     <string name="no_account_text">No account?</string>
     <string name="register_link">Register</string>
+    <string name="sign_in_with_google">Sign in with Google</string>
+    <string name="or_divider">or</string>
+    <string name="register_title">Registration</string>
+    <string name="register_button">Register</string>
+    <string name="passwords_do_not_match">Passwords do not match</string>
+    <string name="have_account_text">Already have an account?</string>
+    <string name="sign_in_link">Sign in</string>
 
     <!-- Dashboard Screen -->
     <string name="dashboard_title">Dashboard</string>

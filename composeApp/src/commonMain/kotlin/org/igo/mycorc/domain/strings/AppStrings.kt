@@ -6,9 +6,17 @@ interface AppStrings {
     val authCardTitle: String
     val emailLabel: String
     val passwordLabel: String
+    val confirmPasswordLabel: String
     val loginButton: String
     val noAccountText: String
     val registerLink: String
+    val signInWithGoogle: String
+    val orDivider: String
+    val registerTitle: String
+    val registerButton: String
+    val passwordsDoNotMatch: String
+    val haveAccountText: String
+    val signInLink: String
 
     // Dashboard Screen
     val dashboardTitle: String

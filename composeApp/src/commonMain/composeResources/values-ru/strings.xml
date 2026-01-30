@@ -5,9 +5,17 @@
     <string name="auth_card_title">Авторизация</string>
     <string name="email_label">Email</string>
     <string name="password_label">Пароль</string>
+    <string name="confirm_password_label">Подтвердите пароль</string>
     <string name="login_button">Войти</string>
     <string name="no_account_text">Нет аккаунта?</string>
     <string name="register_link">Зарегистрироваться</string>
+    <string name="sign_in_with_google">Войти через Google</string>
+    <string name="or_divider">или</string>
+    <string name="register_title">Регистрация</string>
+    <string name="register_button">Зарегистрироваться</string>
+    <string name="passwords_do_not_match">Пароли не совпадают</string>
+    <string name="have_account_text">Уже есть аккаунт?</string>
+    <string name="sign_in_link">Войти</string>
 
     <!-- Dashboard Screen -->
     <string name="dashboard_title">Dashboard</string>
