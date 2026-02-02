@@ -29,17 +29,19 @@ fun CommonCard(
         end = Dimens.ScreenPaddingSides,
         bottom = Dimens.CommonCardPaddingBottom),
 
-    // Внутренние отступы (Padding) - берем из Dimens
+    // Внутренние отступы (Padding)
+    // start/end = 0.dp по умолчанию - контент сам управляет своими горизонтальными отступами
     contentPadding: PaddingValues = PaddingValues(
         top = Dimens.CommonCardContentPaddingTop,
-        //start = Dimens.CommonCardContentPaddingSides,
-        //end = Dimens.CommonCardContentPaddingSides,
+        start = 0.dp,
+        end = 0.dp,
         bottom = Dimens.CommonCardContentPaddingBottom
     ),
 
     cornerRadius: Dp = Dimens.CommonCardCornerRadius,
     elevation: Dp = Dimens.CommonCardElevation,
     containerColor: Color = MaterialTheme.colorScheme.surfaceVariant,
+    backgroundAlpha: Float = Dimens.CommonCardAlpha,
     borderColor: Color? = null,
     borderWidth: Dp = Dimens.CommonCardBorderWidth,
 
@@ -53,7 +55,7 @@ fun CommonCard(
             .then(if (onClick != null) Modifier.clickable { onClick() } else Modifier),
         shape = RoundedCornerShape(cornerRadius),
         elevation = CardDefaults.cardElevation(defaultElevation = elevation),
-        colors = CardDefaults.cardColors(containerColor = containerColor),
+        colors = CardDefaults.cardColors(containerColor = containerColor.copy(alpha = backgroundAlpha)),
         border = if (borderColor != null) BorderStroke(borderWidth, borderColor) else null
     ) {
         Column(
