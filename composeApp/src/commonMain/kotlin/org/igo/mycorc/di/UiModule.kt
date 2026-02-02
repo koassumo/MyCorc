@@ -8,6 +8,7 @@ import org.igo.mycorc.data.local.ImageStorage
 //
 import org.igo.mycorc.ui.screen.auth.LoginViewModel
 import org.igo.mycorc.ui.screen.main.MainViewModel
+import org.igo.mycorc.ui.screen.main.RootViewModel
 import org.igo.mycorc.ui.screen.dashboard.DashboardViewModel
 import org.igo.mycorc.ui.screen.settings.SettingsViewModel
 import org.igo.mycorc.ui.screen.create.CreateNoteViewModel
@@ -16,6 +17,7 @@ import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 val uiModule = module {
+    viewModelOf(::RootViewModel)
     viewModelOf(::LoginViewModel)
     viewModelOf(::MainViewModel)
     viewModelOf(::DashboardViewModel)

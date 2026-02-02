@@ -8,7 +8,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import org.igo.mycorc.domain.rep_interface.SettingsRepository
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.igo.mycorc.ui.screen.main.MainScreen
+import org.igo.mycorc.ui.screen.main.RootScreen
 import org.igo.mycorc.ui.theme.MyAppTheme
 import org.igo.mycorc.ui.screen.settings.AppThemeConfig
 import org.igo.mycorc.ui.screen.settings.AppLanguageConfig
@@ -39,7 +39,7 @@ fun App() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MainScreen()
+                    RootScreen()
                 }
             }
         }
