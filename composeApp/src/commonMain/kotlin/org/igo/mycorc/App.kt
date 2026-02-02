@@ -16,7 +16,7 @@ import org.koin.compose.koinInject
 
 @Composable
 @Preview
-fun App(activityContext: Any? = null) {
+fun App() {
     val repository = koinInject<SettingsRepository>() //да прибудет с тобою koin
     val themeConfig by repository.themeState.collectAsState()
     val languageConfig by repository.languageState.collectAsState()
@@ -39,7 +39,7 @@ fun App(activityContext: Any? = null) {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MainScreen(activityContext = activityContext)
+                    MainScreen()
                 }
             }
         }

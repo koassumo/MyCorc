@@ -17,9 +17,10 @@ import org.koin.compose.viewmodel.koinViewModel
 import org.igo.mycorc.ui.theme.LocalAppStrings
 
 @Composable
-fun LoginScreen(
-    activityContext: Any? = null
-) {
+fun LoginScreen() {
+    // Получаем context внутри компонента (инкапсуляция)
+    val activityContext = getActivityContext()
+
     val viewModel = koinViewModel<LoginViewModel>()
     val isLoading by viewModel.isLoading.collectAsState()
     val error by viewModel.error.collectAsState()
