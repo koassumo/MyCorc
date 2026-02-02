@@ -14,7 +14,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
@@ -23,7 +22,7 @@ import androidx.compose.ui.unit.dp
 fun CommonTopBar(
     title: String,
     canNavigateBack: Boolean = false,
-    navigateUp: () -> Unit = {},
+    navigateUp: () -> Unit = {},            //callback for back button
     modifier: Modifier = Modifier,
     backButtonDescription: String = "Back",
     actions: @Composable () -> Unit = {}

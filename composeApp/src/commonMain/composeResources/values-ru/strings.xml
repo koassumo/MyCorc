@@ -73,4 +73,10 @@
     <!-- Common -->
     <string name="back_button_tooltip">Назад</string>
     <string name="facilities_section">Раздел Заводы</string>
+
+    <!-- Exit Dialog -->
+    <string name="exit_dialog_title">Выход из приложения</string>
+    <string name="exit_dialog_message">Вы уверены, что хотите выйти?</string>
+    <string name="exit_dialog_confirm">Выйти</string>
+    <string name="exit_dialog_cancel">Отмена</string>
 </resources>

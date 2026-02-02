@@ -75,6 +75,10 @@ data class AppStringsImpl(
     override val transportDistanceLabel: String,
     override val pyrolysisDurationLabel: String,
     override val pyrolysisTemperatureLabel: String,
+    override val exitDialogTitle: String,
+    override val exitDialogMessage: String,
+    override val exitDialogConfirm: String,
+    override val exitDialogCancel: String,
 ) : AppStrings
 
 val LocalAppStrings = compositionLocalOf<AppStrings> {
@@ -154,5 +158,9 @@ fun rememberAppStrings(languageConfig: org.igo.mycorc.ui.screen.settings.AppLang
         transportDistanceLabel = stringResource(Res.string.transport_distance_label),
         pyrolysisDurationLabel = stringResource(Res.string.pyrolysis_duration_label),
         pyrolysisTemperatureLabel = stringResource(Res.string.pyrolysis_temperature_label),
+        exitDialogTitle = stringResource(Res.string.exit_dialog_title),
+        exitDialogMessage = stringResource(Res.string.exit_dialog_message),
+        exitDialogConfirm = stringResource(Res.string.exit_dialog_confirm),
+        exitDialogCancel = stringResource(Res.string.exit_dialog_cancel),
     )
 }

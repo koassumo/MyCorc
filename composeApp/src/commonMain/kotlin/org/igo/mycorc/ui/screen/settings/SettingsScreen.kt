@@ -13,6 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import org.igo.mycorc.ui.common.AppBackHandler
 import org.igo.mycorc.ui.common.CommonTopBar
 import org.igo.mycorc.ui.common.Dimens
 import org.koin.compose.viewmodel.koinViewModel
@@ -33,6 +34,12 @@ fun SettingsScreen() {
 
     // Локальное состояние навигации
     var currentPage by remember { mutableStateOf<SettingsPage>(SettingsPage.MainList) }
+
+    // Физическая кнопка "Назад" на подэкранах настроек -> возврат к главному списку
+    // Имеет приоритет над хэндлером MainScreen, т.к. зарегистрирован позже
+    AppBackHandler(enabled = currentPage != SettingsPage.MainList) {
+        currentPage = SettingsPage.MainList
+    }
 
     // AnimatedContent для плавных переходов между "подэкранами"
     AnimatedContent(

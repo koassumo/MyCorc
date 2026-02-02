@@ -86,4 +86,10 @@
     <!-- Common -->
     <string name="back_button_tooltip">Back</string>
     <string name="facilities_section">Facilities section</string>
+
+    <!-- Exit Dialog -->
+    <string name="exit_dialog_title">Exit application</string>
+    <string name="exit_dialog_message">Are you sure you want to exit?</string>
+    <string name="exit_dialog_confirm">Exit</string>
+    <string name="exit_dialog_cancel">Cancel</string>
 </resources>

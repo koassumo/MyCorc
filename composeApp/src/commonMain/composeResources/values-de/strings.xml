@@ -73,4 +73,10 @@
     <!-- Common -->
     <string name="back_button_tooltip">Zurück</string>
     <string name="facilities_section">Anlagenbereich</string>
+
+    <!-- Exit Dialog -->
+    <string name="exit_dialog_title">App beenden</string>
+    <string name="exit_dialog_message">Möchten Sie die App wirklich beenden?</string>
+    <string name="exit_dialog_confirm">Beenden</string>
+    <string name="exit_dialog_cancel">Abbrechen</string>
 </resources>
