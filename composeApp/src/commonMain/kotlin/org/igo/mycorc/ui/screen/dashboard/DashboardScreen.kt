@@ -61,7 +61,7 @@ fun DashboardScreen(
     }
 
     Scaffold(
-        topBar = { CommonTopBar(title = strings.dashboardTitle) },
+        topBar = { CommonTopBar(title = strings.dashboardTitle, windowInsets = WindowInsets(0.dp)) },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = onNavigateToCreate,

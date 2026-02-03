@@ -97,7 +97,8 @@ fun CreateNoteScreen(
                     title = title,
                     canNavigateBack = true,
                     navigateUp = onNavigateBack,
-                    backButtonDescription = strings.backButtonTooltip
+                    backButtonDescription = strings.backButtonTooltip,
+                    windowInsets = WindowInsets(0.dp)
                 )
             },
             bottomBar = {

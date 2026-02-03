@@ -72,7 +72,7 @@ fun SettingsScreen() {
         when (page) {
             SettingsPage.MainList -> {
                 Scaffold(
-                    topBar = { CommonTopBar(title = strings.settingsTitle) },
+                    topBar = { CommonTopBar(title = strings.settingsTitle, windowInsets = WindowInsets(0.dp)) },
                     containerColor = MaterialTheme.colorScheme.background
                 ) { padding ->
                     SettingsMainList(
@@ -92,7 +92,8 @@ fun SettingsScreen() {
                             title = strings.themeSection,
                             canNavigateBack = true,
                             navigateUp = { currentPage = SettingsPage.MainList },
-                            backButtonDescription = strings.backButtonTooltip
+                            backButtonDescription = strings.backButtonTooltip,
+                            windowInsets = WindowInsets(0.dp)
                         )
                     },
                     containerColor = MaterialTheme.colorScheme.background
@@ -120,7 +121,8 @@ fun SettingsScreen() {
                             title = strings.languageSection,
                             canNavigateBack = true,
                             navigateUp = { currentPage = SettingsPage.MainList },
-                            backButtonDescription = strings.backButtonTooltip
+                            backButtonDescription = strings.backButtonTooltip,
+                            windowInsets = WindowInsets(0.dp)
                         )
                     },
                     containerColor = MaterialTheme.colorScheme.background

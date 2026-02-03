@@ -26,7 +26,8 @@ fun CommonTopBar(
     navigateUp: () -> Unit = {},
     modifier: Modifier = Modifier,
     backButtonDescription: String = "Back",
-    actions: @Composable RowScope.() -> Unit = {}
+    actions: @Composable RowScope.() -> Unit = {},
+    windowInsets: WindowInsets = TopAppBarDefaults.windowInsets
 ) {
     CenterAlignedTopAppBar(
         title = {
@@ -57,7 +58,7 @@ fun CommonTopBar(
             navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
             actionIconContentColor = MaterialTheme.colorScheme.onSurface
         ),
-        windowInsets = WindowInsets(0.dp),
+        windowInsets = windowInsets,
         modifier = modifier
     )
 }

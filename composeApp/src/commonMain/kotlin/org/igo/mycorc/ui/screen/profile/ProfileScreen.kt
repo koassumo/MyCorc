@@ -22,7 +22,7 @@ fun ProfileScreen() {
     val strings = LocalAppStrings.current
 
     Scaffold(
-        topBar = { CommonTopBar(title = strings.profileTitle) },
+        topBar = { CommonTopBar(title = strings.profileTitle, windowInsets = WindowInsets(0.dp)) },
         containerColor = MaterialTheme.colorScheme.surfaceContainer
     ) { padding ->
         Box(
