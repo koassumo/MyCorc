@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -46,6 +48,7 @@ fun MainScreen() {
 
     // Состояние диалога выхода
     var showExitDialog by remember { mutableStateOf(false) }
+    val snackbarHostState = remember { SnackbarHostState() }
 
     // Обработчик физической кнопки "Назад" (работает только на Android)
     // Не перехватываем на CREATE_NOTE — там своя кнопка "Назад" в TopBar
@@ -60,6 +63,7 @@ fun MainScreen() {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.surfaceContainer,
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         bottomBar = {
             if (currentRoute != Destinations.CREATE_NOTE) {
                 CommonBottomBar(
@@ -78,7 +82,8 @@ fun MainScreen() {
             when (currentRoute) {
                 Destinations.DASHBOARD -> DashboardScreen(
                     onNavigateToCreate = { viewModel.navigateToCreate() },
-                    onNavigateToEdit = { noteId -> viewModel.navigateToEdit(noteId) }
+                    onNavigateToEdit = { noteId -> viewModel.navigateToEdit(noteId) },
+                    snackbarHostState = snackbarHostState
                 )
                 Destinations.FACILITIES -> PlaceholderScreen(strings.facilitiesSection)
                 Destinations.SETTINGS -> SettingsScreen()

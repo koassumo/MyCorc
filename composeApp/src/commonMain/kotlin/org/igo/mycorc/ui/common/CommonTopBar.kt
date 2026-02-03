@@ -1,5 +1,6 @@
 package org.igo.mycorc.ui.common
 
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -22,10 +23,10 @@ import androidx.compose.ui.unit.dp
 fun CommonTopBar(
     title: String,
     canNavigateBack: Boolean = false,
-    navigateUp: () -> Unit = {},            //callback for back button
+    navigateUp: () -> Unit = {},
     modifier: Modifier = Modifier,
     backButtonDescription: String = "Back",
-    actions: @Composable () -> Unit = {}
+    actions: @Composable RowScope.() -> Unit = {}
 ) {
     CenterAlignedTopAppBar(
         title = {
@@ -34,7 +35,7 @@ fun CommonTopBar(
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = Dimens.ScreenPaddingSides),
+                    .padding(start = 0.dp),
                 textAlign = TextAlign.Start
             )
         },
@@ -48,7 +49,7 @@ fun CommonTopBar(
                 }
             }
         },
-        actions = { actions() },
+        actions = actions,
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainer,
             scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainer,

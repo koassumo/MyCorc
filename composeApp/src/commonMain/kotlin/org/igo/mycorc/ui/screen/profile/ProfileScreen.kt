@@ -23,12 +23,10 @@ fun ProfileScreen() {
 
     Scaffold(
         topBar = { CommonTopBar(title = strings.profileTitle) },
-        containerColor = MaterialTheme.colorScheme.background
+        containerColor = MaterialTheme.colorScheme.surfaceContainer
     ) { padding ->
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding),
+            modifier = Modifier.fillMaxSize().padding(padding),
             contentAlignment = Alignment.TopCenter
         ) {
             Card(
@@ -82,4 +80,4 @@ fun ProfileScreen() {
             }
         }
     }
-}
+    }

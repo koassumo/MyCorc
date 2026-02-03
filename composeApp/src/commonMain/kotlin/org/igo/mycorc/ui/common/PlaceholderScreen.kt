@@ -12,21 +12,23 @@ import androidx.compose.ui.Modifier
 
 /**
  * Универсальный placeholder экран для пустых/незаполненных разделов.
- * Показывает заголовок в центре экрана.
+ * Показывает текст в центре экрана.
  */
 @Composable
 fun PlaceholderScreen(title: String) {
     Scaffold(
         topBar = { CommonTopBar(title = title) },
-        containerColor = MaterialTheme.colorScheme.background
+        containerColor = MaterialTheme.colorScheme.surfaceContainer
     ) { padding ->
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding),
+            modifier = Modifier.fillMaxSize().padding(padding),
             contentAlignment = Alignment.Center
         ) {
-            Text(title, style = MaterialTheme.typography.headlineMedium)
+            Text(
+                text = "Coming soon...",
+                style = MaterialTheme.typography.headlineMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
     }
 }

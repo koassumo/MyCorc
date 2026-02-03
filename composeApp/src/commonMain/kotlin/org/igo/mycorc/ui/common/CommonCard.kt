@@ -22,27 +22,17 @@ import androidx.compose.ui.unit.dp
 fun CommonCard(
     modifier: Modifier = Modifier,
 
-    // Внешние отступы (Margin)
-    cardPadding: PaddingValues = PaddingValues(
-        top = Dimens.CommonCardPaddingTop,
-        start = Dimens.ScreenPaddingSides,
-        end = Dimens.ScreenPaddingSides,
-        bottom = Dimens.CommonCardPaddingBottom),
+    // Внешние отступы (Margin) - по умолчанию 0, управляется снаружи
+    cardPadding: PaddingValues = PaddingValues(0.dp),
 
-    // Внутренние отступы (Padding)
-    // start/end = 0.dp по умолчанию - контент сам управляет своими горизонтальными отступами
-    contentPadding: PaddingValues = PaddingValues(
-        top = Dimens.CommonCardContentPaddingTop,
-        start = 0.dp,
-        end = 0.dp,
-        bottom = Dimens.CommonCardContentPaddingBottom
-    ),
+    // Внутренние отступы (Padding) - единый отступ 16.dp (как в Dashboard)
+    contentPadding: PaddingValues = PaddingValues(Dimens.CommonCardContentPadding),
 
     cornerRadius: Dp = Dimens.CommonCardCornerRadius,
     elevation: Dp = Dimens.CommonCardElevation,
-    containerColor: Color = MaterialTheme.colorScheme.surfaceVariant,
+    containerColor: Color = MaterialTheme.colorScheme.surface,  // surface как в Dashboard
     backgroundAlpha: Float = Dimens.CommonCardAlpha,
-    borderColor: Color? = null,
+    borderColor: Color? = MaterialTheme.colorScheme.outline,  // null = без границы
     borderWidth: Dp = Dimens.CommonCardBorderWidth,
 
     onClick: (() -> Unit)? = null,

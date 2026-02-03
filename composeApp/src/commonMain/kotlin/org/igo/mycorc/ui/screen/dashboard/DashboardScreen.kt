@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.style.TextAlign
 import org.igo.mycorc.domain.model.Note
 import org.igo.mycorc.domain.model.NoteStatus
+import org.igo.mycorc.ui.common.CommonTopBar
 import org.igo.mycorc.ui.common.Dimens
 import org.igo.mycorc.ui.common.LoadingContent
 import org.igo.mycorc.ui.common.formatNoteTitle
@@ -39,12 +40,12 @@ import org.igo.mycorc.ui.theme.LocalAppStrings
 @Composable
 fun DashboardScreen(
     onNavigateToCreate: () -> Unit,
-    onNavigateToEdit: (String) -> Unit = {}
+    onNavigateToEdit: (String) -> Unit = {},
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
 ) {
     val viewModel = koinViewModel<DashboardViewModel>()
     val state by viewModel.state.collectAsState()
     val strings = LocalAppStrings.current
-    val snackbarHostState = remember { SnackbarHostState() }
     var selectedFilters by remember { mutableStateOf<Set<NoteStatus>>(emptySet()) }
 
     // Автоматическая синхронизация при открытии экрана
@@ -59,40 +60,30 @@ fun DashboardScreen(
         }
     }
 
-    LoadingContent(isLoading = state.isSyncing) {
-        Scaffold(
-            snackbarHost = { SnackbarHost(snackbarHostState) },
-            topBar = {
-                DashboardTopBar(
-                    onNotificationClick = {},
-                    onSyncClick = { viewModel.syncFromServer() },
-                    isSyncing = state.isSyncing
-                )
-            },
-            floatingActionButton = {
-                FloatingActionButton(
-                    onClick = onNavigateToCreate,
-                    containerColor = MaterialTheme.colorScheme.primary
-                ) {
-                    Icon(Icons.Default.Add, contentDescription = strings.addButtonTooltip)
-                }
+    Scaffold(
+        topBar = { CommonTopBar(title = strings.dashboardTitle) },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = onNavigateToCreate,
+                containerColor = MaterialTheme.colorScheme.primary
+            ) {
+                Icon(Icons.Default.Add, contentDescription = strings.addButtonTooltip)
             }
-        ) { innerPadding ->
-            Box(Modifier.fillMaxSize()) {
+        },
+        containerColor = MaterialTheme.colorScheme.surfaceContainer
+    ) { padding ->
+        LoadingContent(isLoading = state.isSyncing) {
+            Box(Modifier.fillMaxSize().padding(padding)) {
             if (state.isLoading) {
                 Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding),
+                    modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
                     CircularProgressIndicator()
                 }
             } else if (state.notes.isEmpty()) {
                 Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding),
+                    modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(strings.noRecordsMessage, style = MaterialTheme.typography.bodyLarge)
@@ -106,8 +97,7 @@ fun DashboardScreen(
                 }
 
                 LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = innerPadding
+                    modifier = Modifier.fillMaxSize()
                 ) {
                     // Фильтры как первый элемент списка
                     item {
@@ -147,56 +137,8 @@ fun DashboardScreen(
                 }
             }
         }
-        }
     }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun DashboardTopBar(
-    onNotificationClick: () -> Unit,
-    onSyncClick: () -> Unit,
-    isSyncing: Boolean = false
-) {
-    val strings = LocalAppStrings.current
-
-    CenterAlignedTopAppBar(
-        title = {
-            Text(
-                text = "My Carbon Packages",
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = Dimens.ScreenPaddingSides),
-                textAlign = TextAlign.Start
-            )
-        },
-        actions = {
-            IconButton(onClick = onNotificationClick) {
-                Icon(
-                    imageVector = Icons.Default.Notifications,
-                    contentDescription = "Notifications"
-                )
-            }
-            IconButton(
-                onClick = onSyncClick,
-                enabled = !isSyncing
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Refresh,
-                    contentDescription = "Sync"
-                )
-            }
-        },
-        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer,
-            scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-            titleContentColor = MaterialTheme.colorScheme.onSurface,
-            navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
-            actionIconContentColor = MaterialTheme.colorScheme.onSurface
-        ),
-        windowInsets = WindowInsets(0.dp)
-    )
+    }
 }
 
 data class FilterItem(

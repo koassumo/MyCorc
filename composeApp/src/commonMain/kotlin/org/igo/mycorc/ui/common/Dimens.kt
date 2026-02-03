@@ -10,19 +10,17 @@ import androidx.compose.ui.unit.sp
 object Dimens {
 
     // ==================== Screen / Display ====================
-    val ScreenPaddingSides = 16.dp
+    val ScreenPaddingSides = 12.dp
     val ScreenPaddingTop = 16.dp
     val ScreenPaddingBottom = 16.dp
 
     // ==================== CommonCard ====================
-    val CommonCardPaddingTop = 8.dp
+    val CommonCardPaddingTop = 0.dp
     val CommonCardPaddingBottom = 0.dp
-    val CommonCardContentPaddingTop = 24.dp
-    val CommonCardContentPaddingSides = 20.dp
-    val CommonCardContentPaddingBottom = 24.dp
-    val CommonCardCornerRadius = 28.dp
+    val CommonCardContentPadding = 16.dp  // Единый отступ со всех сторон (как в Dashboard)
+    val CommonCardCornerRadius = 16.dp  // Как в Dashboard (было 28.dp)
     val CommonCardElevation = 0.dp  // Тени не используем (Material Design 3 + iOS compatibility)
-    val CommonCardBorderWidth = 0.dp
+    val CommonCardBorderWidth = 1.dp  // Граница как в Dashboard (было 0.dp)
     val CommonCardAlpha = 1f
 
     // ==================== Card (общие карточки) ====================
