@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import org.igo.mycorc.ui.common.LoadingContent
-import org.igo.mycorc.ui.common.CommonTopBar
+import org.igo.mycorc.ui.common.LocalTopBarState
 import org.igo.mycorc.ui.common.CommonCard
 import org.igo.mycorc.ui.common.Dimens
 import org.igo.mycorc.ui.common.formatNoteTitle
@@ -55,6 +55,7 @@ fun CreateNoteScreen(
     noteId: String? = null,
     onNavigateBack: () -> Unit
 ) {
+    val topBar = LocalTopBarState.current
     val viewModel = koinViewModel<CreateNoteViewModel>()
     val state by viewModel.state.collectAsState()
     val strings = LocalAppStrings.current
@@ -85,41 +86,20 @@ fun CreateNoteScreen(
         }
     }
 
+    // Динамический заголовок TopBar
+    val title = state.existingNote?.let { note ->
+        formatNoteTitle(note)
+    } ?: strings.createNewTitle
+    topBar.title = title
+    topBar.canNavigateBack = true
+    topBar.onNavigateBack = onNavigateBack
+
     Box(modifier = Modifier.fillMaxSize()) {
         LoadingContent(isLoading = state.isLoading) {
-        Scaffold(
-            topBar = {
-                val title = state.existingNote?.let { note ->
-                    formatNoteTitle(note)
-                } ?: strings.createNewTitle
-
-                CommonTopBar(
-                    title = title,
-                    canNavigateBack = true,
-                    navigateUp = onNavigateBack,
-                    backButtonDescription = strings.backButtonTooltip,
-                    windowInsets = WindowInsets(0.dp)
-                )
-            },
-            bottomBar = {
-                if (!state.isReadOnly) {
-                    Button(
-                        onClick = { viewModel.saveNote() },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(Dimens.SpaceMedium)
-                            .height(Dimens.ButtonHeight),
-                        shape = RoundedCornerShape(8.dp)
-                    ) {
-                        Text(if (state.editMode) strings.saveChanges else strings.saveNote)
-                    }
-                }
-            }
-        ) { innerPadding ->
+        Column(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
+                .weight(1f)
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(Dimens.CardItemSpacing)
         ) {
@@ -462,6 +442,19 @@ fun CreateNoteScreen(
                         )
                     }
                 }
+            }
+        }
+        // Кнопка сохранения (была в bottomBar)
+        if (!state.isReadOnly) {
+            Button(
+                onClick = { viewModel.saveNote() },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(Dimens.SpaceMedium)
+                    .height(Dimens.ButtonHeight),
+                shape = RoundedCornerShape(8.dp)
+            ) {
+                Text(if (state.editMode) strings.saveChanges else strings.saveNote)
             }
         }
         }

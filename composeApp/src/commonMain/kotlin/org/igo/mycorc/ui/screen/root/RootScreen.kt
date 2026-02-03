@@ -27,7 +27,7 @@ fun RootScreen() {
 
     when (state) {
         RootState.Loading -> {
-            // Экран загрузки (Splash), пока проверяем авторизацию
+            // Экран загрузки, пока проверяем авторизацию
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator()
             }

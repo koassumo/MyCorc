@@ -10,25 +10,26 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import org.igo.mycorc.ui.common.CommonTopBar
+import org.igo.mycorc.ui.common.LocalTopBarState
 import org.igo.mycorc.ui.common.Dimens
 import org.koin.compose.viewmodel.koinViewModel
 import org.igo.mycorc.ui.theme.LocalAppStrings
 
 @Composable
 fun ProfileScreen() {
+    val topBar = LocalTopBarState.current
     val viewModel = koinViewModel<ProfileViewModel>()
     val user by viewModel.currentUser.collectAsState(initial = null)
     val strings = LocalAppStrings.current
 
-    Scaffold(
-        topBar = { CommonTopBar(title = strings.profileTitle, windowInsets = WindowInsets(0.dp)) },
-        containerColor = MaterialTheme.colorScheme.surfaceContainer
-    ) { padding ->
-        Box(
-            modifier = Modifier.fillMaxSize().padding(padding),
-            contentAlignment = Alignment.TopCenter
-        ) {
+    // Публикуем конфигурацию TopBar
+    topBar.title = strings.profileTitle
+    topBar.canNavigateBack = false
+
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.TopCenter
+    ) {
             Card(
                 modifier = Modifier
                     .fillMaxWidth(0.9f)
@@ -79,5 +80,4 @@ fun ProfileScreen() {
                 }
             }
         }
-    }
     }

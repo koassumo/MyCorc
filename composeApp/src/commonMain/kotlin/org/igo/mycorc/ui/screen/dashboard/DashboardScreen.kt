@@ -22,31 +22,30 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.style.TextAlign
 import org.igo.mycorc.domain.model.Note
 import org.igo.mycorc.domain.model.NoteStatus
-import org.igo.mycorc.ui.common.CommonTopBar
 import org.igo.mycorc.ui.common.Dimens
+import org.igo.mycorc.ui.common.LocalTopBarState
 import org.igo.mycorc.ui.common.LoadingContent
 import org.igo.mycorc.ui.common.formatNoteTitle
 import org.koin.compose.viewmodel.koinViewModel
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.CloudUpload
 import org.igo.mycorc.ui.theme.LocalAppStrings
 
 
-
-
 @Composable
 fun DashboardScreen(
-    onNavigateToCreate: () -> Unit,
     onNavigateToEdit: (String) -> Unit = {},
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
 ) {
+    val topBar = LocalTopBarState.current
     val viewModel = koinViewModel<DashboardViewModel>()
     val state by viewModel.state.collectAsState()
     val strings = LocalAppStrings.current
     var selectedFilters by remember { mutableStateOf<Set<NoteStatus>>(emptySet()) }
+
+    // Публикуем конфигурацию TopBar
+    topBar.title = strings.dashboardTitle
+    topBar.canNavigateBack = false
 
     // Автоматическая синхронизация при открытии экрана
     LaunchedEffect(Unit) {
@@ -60,85 +59,72 @@ fun DashboardScreen(
         }
     }
 
-    Scaffold(
-        topBar = { CommonTopBar(title = strings.dashboardTitle, windowInsets = WindowInsets(0.dp)) },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = onNavigateToCreate,
-                containerColor = MaterialTheme.colorScheme.primary
-            ) {
-                Icon(Icons.Default.Add, contentDescription = strings.addButtonTooltip)
-            }
-        },
-        containerColor = MaterialTheme.colorScheme.surfaceContainer
-    ) { padding ->
-        LoadingContent(isLoading = state.isSyncing) {
-            Box(Modifier.fillMaxSize().padding(padding)) {
-            if (state.isLoading) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
-            } else if (state.notes.isEmpty()) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(strings.noRecordsMessage, style = MaterialTheme.typography.bodyLarge)
-                }
-            } else {
-                // Фильтрация списка
-                val filteredNotes = if (selectedFilters.isEmpty()) {
-                    state.notes // Показываем все, если фильтры не выбраны (как "All")
+    LoadingContent(isLoading = state.isSyncing) {
+        Box(Modifier.fillMaxSize()) {
+                if (state.isLoading) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                } else if (state.notes.isEmpty()) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(strings.noRecordsMessage, style = MaterialTheme.typography.bodyLarge)
+                    }
                 } else {
-                    state.notes.filter { note -> note.status in selectedFilters }
-                }
-
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    // Фильтры как первый элемент списка
-                    item {
-                        Column {
-                            Spacer(modifier = Modifier.height(Dimens.SpaceMedium))
-                            DashboardFilterRow(
-                                selectedFilters = selectedFilters,
-                                onFilterToggle = { status ->
-                                    selectedFilters = if (status == null) {
-                                        // "All" button clicked - clear all filters
-                                        emptySet()
-                                    } else if (status in selectedFilters) {
-                                        // Deselect filter
-                                        selectedFilters - status
-                                    } else {
-                                        // Select filter
-                                        selectedFilters + status
-                                    }
-                                }
-                            )
-                            Spacer(modifier = Modifier.height(Dimens.SpaceMedium))
-                        }
+                    // Фильтрация списка
+                    val filteredNotes = if (selectedFilters.isEmpty()) {
+                        state.notes // Показываем все, если фильтры не выбраны (как "All")
+                    } else {
+                        state.notes.filter { note -> note.status in selectedFilters }
                     }
 
-                    // Список пакетов
-                    items(filteredNotes) { note ->
-                        Column {
-                            DashboardItem(
-                                note = note,
-                                onClick = { onNavigateToEdit(note.id) },
-                                onSendClick = { viewModel.syncNote(note) },
-                                modifier = Modifier.padding(horizontal = Dimens.ScreenPaddingSides)
-                            )
-                            Spacer(modifier = Modifier.height(Dimens.CardItemSpacing))
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        // Фильтры как первый элемент списка
+                        item {
+                            Column {
+                                Spacer(modifier = Modifier.height(Dimens.SpaceMedium))
+                                DashboardFilterRow(
+                                    selectedFilters = selectedFilters,
+                                    onFilterToggle = { status ->
+                                        selectedFilters = if (status == null) {
+                                            // "All" button clicked - clear all filters
+                                            emptySet()
+                                        } else if (status in selectedFilters) {
+                                            // Deselect filter
+                                            selectedFilters - status
+                                        } else {
+                                            // Select filter
+                                            selectedFilters + status
+                                        }
+                                    }
+                                )
+                                Spacer(modifier = Modifier.height(Dimens.SpaceMedium))
+                            }
+                        }
+
+                        // Список пакетов
+                        items(filteredNotes) { note ->
+                            Column {
+                                DashboardItem(
+                                    note = note,
+                                    onClick = { onNavigateToEdit(note.id) },
+                                    onSendClick = { viewModel.syncNote(note) },
+                                    modifier = Modifier.padding(horizontal = Dimens.ScreenPaddingSides)
+                                )
+                                Spacer(modifier = Modifier.height(Dimens.CardItemSpacing))
+                            }
                         }
                     }
                 }
             }
         }
-    }
-    }
 }
 
 data class FilterItem(
@@ -252,6 +238,7 @@ fun DashboardItem(
                         Text(strings.sendToRegistration)
                     }
                 }
+
                 else -> {}
             }
         }

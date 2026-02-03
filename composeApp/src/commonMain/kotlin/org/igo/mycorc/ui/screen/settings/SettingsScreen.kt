@@ -14,7 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.igo.mycorc.ui.common.AppBackHandler
-import org.igo.mycorc.ui.common.CommonTopBar
+import org.igo.mycorc.ui.common.LocalTopBarState
 import org.igo.mycorc.ui.common.Dimens
 import org.koin.compose.viewmodel.koinViewModel
 import org.igo.mycorc.ui.theme.LocalAppStrings
@@ -28,6 +28,7 @@ private sealed interface SettingsPage {
 
 @Composable
 fun SettingsScreen() {
+    val topBar = LocalTopBarState.current
     val viewModel = koinViewModel<SettingsViewModel>()
     val state by viewModel.state.collectAsState()
     val strings = LocalAppStrings.current
@@ -39,6 +40,24 @@ fun SettingsScreen() {
     // Имеет приоритет над хэндлером MainScreen, т.к. зарегистрирован позже
     AppBackHandler(enabled = currentPage != SettingsPage.MainList) {
         currentPage = SettingsPage.MainList
+    }
+
+    // Конфигурация TopBar (вне AnimatedContent — меняется мгновенно)
+    when (currentPage) {
+        SettingsPage.MainList -> {
+            topBar.title = strings.settingsTitle
+            topBar.canNavigateBack = false
+        }
+        SettingsPage.ThemeSelection -> {
+            topBar.title = strings.themeSection
+            topBar.canNavigateBack = true
+            topBar.onNavigateBack = { currentPage = SettingsPage.MainList }
+        }
+        SettingsPage.LanguageSelection -> {
+            topBar.title = strings.languageSection
+            topBar.canNavigateBack = true
+            topBar.onNavigateBack = { currentPage = SettingsPage.MainList }
+        }
     }
 
     // AnimatedContent для плавных переходов между "подэкранами"
@@ -71,77 +90,43 @@ fun SettingsScreen() {
     ) { page ->
         when (page) {
             SettingsPage.MainList -> {
-                Scaffold(
-                    topBar = { CommonTopBar(title = strings.settingsTitle, windowInsets = WindowInsets(0.dp)) },
-                    containerColor = MaterialTheme.colorScheme.background
-                ) { padding ->
-                    SettingsMainList(
-                        modifier = Modifier.padding(padding),
-                        currentTheme = state.selectedTheme,
-                        currentLanguage = state.selectedLanguage,
-                        onThemeClick = { currentPage = SettingsPage.ThemeSelection },
-                        onLanguageClick = { currentPage = SettingsPage.LanguageSelection }
-                    )
-                }
+                SettingsMainList(
+                    currentTheme = state.selectedTheme,
+                    currentLanguage = state.selectedLanguage,
+                    onThemeClick = { currentPage = SettingsPage.ThemeSelection },
+                    onLanguageClick = { currentPage = SettingsPage.LanguageSelection }
+                )
             }
 
             SettingsPage.ThemeSelection -> {
-                Scaffold(
-                    topBar = {
-                        CommonTopBar(
-                            title = strings.themeSection,
-                            canNavigateBack = true,
-                            navigateUp = { currentPage = SettingsPage.MainList },
-                            backButtonDescription = strings.backButtonTooltip,
-                            windowInsets = WindowInsets(0.dp)
-                        )
-                    },
-                    containerColor = MaterialTheme.colorScheme.background
-                ) { padding ->
-                    SelectionScreen(
-                        modifier = Modifier.padding(padding),
-                        options = listOf(
-                            AppThemeConfig.SYSTEM to strings.systemTheme,
-                            AppThemeConfig.LIGHT to strings.lightTheme,
-                            AppThemeConfig.DARK to strings.darkTheme
-                        ),
-                        selectedOption = state.selectedTheme,
-                        onOptionSelected = { newTheme ->
-                            viewModel.updateTheme(newTheme)
-                            currentPage = SettingsPage.MainList
-                        }
-                    )
-                }
+                SelectionScreen(
+                    options = listOf(
+                        AppThemeConfig.SYSTEM to strings.systemTheme,
+                        AppThemeConfig.LIGHT to strings.lightTheme,
+                        AppThemeConfig.DARK to strings.darkTheme
+                    ),
+                    selectedOption = state.selectedTheme,
+                    onOptionSelected = { newTheme ->
+                        viewModel.updateTheme(newTheme)
+                        currentPage = SettingsPage.MainList
+                    }
+                )
             }
 
             SettingsPage.LanguageSelection -> {
-                Scaffold(
-                    topBar = {
-                        CommonTopBar(
-                            title = strings.languageSection,
-                            canNavigateBack = true,
-                            navigateUp = { currentPage = SettingsPage.MainList },
-                            backButtonDescription = strings.backButtonTooltip,
-                            windowInsets = WindowInsets(0.dp)
-                        )
-                    },
-                    containerColor = MaterialTheme.colorScheme.background
-                ) { padding ->
-                    SelectionScreen(
-                        modifier = Modifier.padding(padding),
-                        options = listOf(
-                            AppLanguageConfig.SYSTEM to strings.systemTheme,
-                            AppLanguageConfig.EN to strings.languageEn,
-                            AppLanguageConfig.RU to strings.languageRu,
-                            AppLanguageConfig.DE to strings.languageDe
-                        ),
-                        selectedOption = state.selectedLanguage,
-                        onOptionSelected = { newLanguage ->
-                            viewModel.updateLanguage(newLanguage)
-                            currentPage = SettingsPage.MainList
-                        }
-                    )
-                }
+                SelectionScreen(
+                    options = listOf(
+                        AppLanguageConfig.SYSTEM to strings.systemTheme,
+                        AppLanguageConfig.EN to strings.languageEn,
+                        AppLanguageConfig.RU to strings.languageRu,
+                        AppLanguageConfig.DE to strings.languageDe
+                    ),
+                    selectedOption = state.selectedLanguage,
+                    onOptionSelected = { newLanguage ->
+                        viewModel.updateLanguage(newLanguage)
+                        currentPage = SettingsPage.MainList
+                    }
+                )
             }
         }
     }
