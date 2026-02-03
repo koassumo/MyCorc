@@ -63,6 +63,7 @@ fun MainScreen() {
         }
     }
 
+    // механизм kotlin для пропихивания состояния (верхнего бара во все дочерние экраны)
     CompositionLocalProvider(LocalTopBarState provides topBarState) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),

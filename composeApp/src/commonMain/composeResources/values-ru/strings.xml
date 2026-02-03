@@ -47,6 +47,19 @@
     <string name="already_sent_error">Этот пакет уже отправлен на регистрацию с другого устройства</string>
     <string name="already_sent_conflict_error">Этот пакет уже отправлен на регистрацию с другого устройства</string>
 
+    <!-- Section Headers -->
+    <string name="section_biomass">Биомасса</string>
+    <string name="section_pyrolysis">Пиролиз</string>
+    <string name="section_biochar">Биоуголь</string>
+    <string name="section_delivery">Доставка</string>
+
+    <!-- Biomass Section Fields -->
+    <string name="transport_distance_label">Расстояние транспортировки (км)</string>
+
+    <!-- Pyrolysis Section Fields -->
+    <string name="pyrolysis_duration_label">Длительность</string>
+    <string name="pyrolysis_temperature_label">Температура (°C)</string>
+
     <!-- Settings Screen -->
     <string name="settings_title">Настройки</string>
     <string name="theme_section">Тема оформления</string>
@@ -73,6 +86,12 @@
     <!-- Common -->
     <string name="back_button_tooltip">Назад</string>
     <string name="facilities_section">Раздел Заводы</string>
+    <string name="coming_soon">Скоро будет...</string>
+    <string name="ok_button">ОК</string>
+    <string name="time_unit_minutes">мин</string>
+
+    <!-- Delivery Section -->
+    <string name="delivery_info_placeholder">Информация о доставке будет добавлена сюда</string>
 
     <!-- Exit Dialog -->
     <string name="exit_dialog_title">Выход из приложения</string>

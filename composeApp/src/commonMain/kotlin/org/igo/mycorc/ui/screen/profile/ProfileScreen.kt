@@ -1,6 +1,5 @@
 package org.igo.mycorc.ui.screen.profile
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -10,6 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import org.igo.mycorc.ui.common.CommonCard
 import org.igo.mycorc.ui.common.LocalTopBarState
 import org.igo.mycorc.ui.common.Dimens
 import org.koin.compose.viewmodel.koinViewModel
@@ -30,21 +30,14 @@ fun ProfileScreen() {
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.TopCenter
     ) {
-            Card(
+            CommonCard(
                 modifier = Modifier
                     .fillMaxWidth(0.9f)
                     .padding(Dimens.SpaceLarge),
-                shape = RoundedCornerShape(Dimens.CardCornerRadius),
-                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                )
+                contentPadding = PaddingValues(Dimens.SpaceLarge)
             ) {
                 Column(
-                    modifier = Modifier
-                        .padding(Dimens.SpaceLarge)
-                        .fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(Dimens.SpaceMedium),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -73,7 +66,7 @@ fun ProfileScreen() {
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(Dimens.ButtonHeight),
-                        shape = RoundedCornerShape(8.dp)
+                        shape = RoundedCornerShape(Dimens.InputFieldCornerRadius)
                     ) {
                         Text(strings.logoutButton)
                     }

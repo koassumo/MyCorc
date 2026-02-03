@@ -86,6 +86,12 @@
     <!-- Common -->
     <string name="back_button_tooltip">Back</string>
     <string name="facilities_section">Facilities section</string>
+    <string name="coming_soon">Coming soon...</string>
+    <string name="ok_button">OK</string>
+    <string name="time_unit_minutes">min</string>
+
+    <!-- Delivery Section -->
+    <string name="delivery_info_placeholder">Delivery information will be added here</string>
 
     <!-- Exit Dialog -->
     <string name="exit_dialog_title">Exit application</string>

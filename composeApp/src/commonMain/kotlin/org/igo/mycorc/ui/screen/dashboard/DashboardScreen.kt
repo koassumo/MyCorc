@@ -1,11 +1,9 @@
 package org.igo.mycorc.ui.screen.dashboard
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -22,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.style.TextAlign
 import org.igo.mycorc.domain.model.Note
 import org.igo.mycorc.domain.model.NoteStatus
+import org.igo.mycorc.ui.common.CommonCard
 import org.igo.mycorc.ui.common.Dimens
 import org.igo.mycorc.ui.common.LocalTopBarState
 import org.igo.mycorc.ui.common.LoadingContent
@@ -147,10 +146,9 @@ fun DashboardFilterRow(
     )
 
     LazyRow(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = Dimens.ScreenPaddingSides),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        modifier = Modifier.fillMaxWidth(),
+        contentPadding = PaddingValues(horizontal = Dimens.ScreenPaddingSides),
+        horizontalArrangement = Arrangement.spacedBy(Dimens.SpaceSmall)
     ) {
         items(filters) { filter ->
             val isSelected = if (filter.status == null) {
@@ -180,67 +178,56 @@ fun DashboardItem(
 ) {
     val strings = LocalAppStrings.current
 
-    Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .clickable { onClick() },
-        shape = RoundedCornerShape(Dimens.CardCornerRadius),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        )
+    CommonCard(
+        modifier = modifier,
+        onClick = onClick
     ) {
-        Column(
-            modifier = Modifier.padding(Dimens.CardPadding)
+        // Header Row: Title + Status Badge
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            // Header Row: Title + Status Badge
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = formatNoteTitle(note),
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.weight(1f).padding(end = Dimens.SpaceSmall)
-                )
-                StatusBadge(status = note.status, strings = strings)
+            Text(
+                text = formatNoteTitle(note),
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.weight(1f).padding(end = Dimens.SpaceSmall)
+            )
+            StatusBadge(status = note.status, strings = strings)
+        }
+
+        Spacer(modifier = Modifier.height(Dimens.SpaceMedium))
+
+        // Info Row: Weight + Coal
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(Dimens.SpaceSmall)
+        ) {
+            InfoText("${strings.weightLabel}: ${note.massWeight} кг")
+
+            if (note.coalWeight != null && note.coalWeight!! > 0) {
+                InfoText("${strings.coalLabel}: ${note.coalWeight} кг")
             }
+        }
 
-            Spacer(modifier = Modifier.height(Dimens.SpaceMedium))
-
-            // Info Row: Weight + Coal
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(Dimens.SpaceSmall)
-            ) {
-                InfoText("${strings.weightLabel}: ${note.massWeight} кг")
-
-                if (note.coalWeight != null && note.coalWeight!! > 0) {
-                    InfoText("${strings.coalLabel}: ${note.coalWeight} кг")
+        // Action based on status
+        when (note.status) {
+            org.igo.mycorc.domain.model.NoteStatus.READY_TO_SEND -> {
+                Spacer(modifier = Modifier.height(Dimens.SpaceMedium))
+                Button(
+                    onClick = onSendClick,
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary
+                    )
+                ) {
+                    Icon(Icons.Default.CloudUpload, contentDescription = null)
+                    Spacer(Modifier.width(Dimens.SpaceSmall))
+                    Text(strings.sendToRegistration)
                 }
             }
 
-            // Action based on status
-            when (note.status) {
-                org.igo.mycorc.domain.model.NoteStatus.READY_TO_SEND -> {
-                    Spacer(modifier = Modifier.height(Dimens.SpaceMedium))
-                    Button(
-                        onClick = onSendClick,
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primary
-                        )
-                    ) {
-                        Icon(Icons.Default.CloudUpload, contentDescription = null)
-                        Spacer(Modifier.width(8.dp))
-                        Text(strings.sendToRegistration)
-                    }
-                }
-
-                else -> {}
-            }
+            else -> {}
         }
     }
 }
@@ -269,13 +256,13 @@ private fun StatusBadge(
 
     Surface(
         color = badgeColor,
-        shape = RoundedCornerShape(8.dp)
+        shape = RoundedCornerShape(Dimens.BadgeCornerRadius)
     ) {
         Text(
             text = badgeText,
             color = textColor,
             style = MaterialTheme.typography.labelSmall,
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+            modifier = Modifier.padding(horizontal = Dimens.BadgePaddingHorizontal, vertical = Dimens.BadgePaddingVertical)
         )
     }
 }

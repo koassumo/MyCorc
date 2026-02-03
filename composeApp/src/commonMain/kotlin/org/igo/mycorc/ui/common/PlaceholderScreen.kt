@@ -26,7 +26,7 @@ fun PlaceholderScreen() {
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = "Coming soon...",
+            text = strings.comingSoon,
             style = MaterialTheme.typography.headlineMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )

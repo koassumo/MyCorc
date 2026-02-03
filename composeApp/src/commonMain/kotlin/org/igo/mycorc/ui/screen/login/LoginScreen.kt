@@ -45,8 +45,8 @@ fun LoginScreen() {
                     .fillMaxWidth(0.9f)
                     .padding(Dimens.SpaceMedium),
                 shape = RoundedCornerShape(Dimens.CardCornerRadius),
-                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+                elevation = CardDefaults.cardElevation(defaultElevation = Dimens.CardElevation),
+                border = BorderStroke(Dimens.BorderWidthStandard, MaterialTheme.colorScheme.outline),
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.surface
                 )
@@ -106,21 +106,21 @@ private fun LoginContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(Dimens.ButtonHeight),
-                shape = RoundedCornerShape(8.dp),
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
+                shape = RoundedCornerShape(Dimens.InputFieldCornerRadius),
+                border = BorderStroke(Dimens.BorderWidthStandard, MaterialTheme.colorScheme.outline)
             ) {
                 if (isLoading) {
                     CircularProgressIndicator(
-                        modifier = Modifier.size(20.dp),
-                        strokeWidth = 2.dp
+                        modifier = Modifier.size(Dimens.IconSizeSmall),
+                        strokeWidth = Dimens.ProgressIndicatorStrokeWidth
                     )
                 } else {
                     Icon(
                         imageVector = Icons.Default.Email,
                         contentDescription = null,
-                        modifier = Modifier.size(20.dp)
+                        modifier = Modifier.size(Dimens.IconSizeSmall)
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(Dimens.SpaceSmall))
                     Text(strings.signInWithGoogle)
                 }
             }
@@ -153,7 +153,7 @@ private fun LoginContent(
             label = { Text(strings.emailLabel) },
             singleLine = true,
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(8.dp)
+            shape = RoundedCornerShape(Dimens.InputFieldCornerRadius)
         )
 
         OutlinedTextField(
@@ -163,7 +163,7 @@ private fun LoginContent(
             visualTransformation = PasswordVisualTransformation(),
             singleLine = true,
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(8.dp)
+            shape = RoundedCornerShape(Dimens.InputFieldCornerRadius)
         )
 
         ErrorMessage(error)
@@ -174,11 +174,11 @@ private fun LoginContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(Dimens.ButtonHeight),
-            shape = RoundedCornerShape(8.dp)
+            shape = RoundedCornerShape(Dimens.InputFieldCornerRadius)
         ) {
             if (isLoading) {
                 CircularProgressIndicator(
-                    modifier = Modifier.size(20.dp),
+                    modifier = Modifier.size(Dimens.IconSizeSmall),
                     color = MaterialTheme.colorScheme.onPrimary
                 )
             } else {
@@ -229,7 +229,7 @@ private fun RegisterContent(
             label = { Text(strings.emailLabel) },
             singleLine = true,
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(8.dp)
+            shape = RoundedCornerShape(Dimens.InputFieldCornerRadius)
         )
 
         OutlinedTextField(
@@ -242,7 +242,7 @@ private fun RegisterContent(
             visualTransformation = PasswordVisualTransformation(),
             singleLine = true,
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(8.dp)
+            shape = RoundedCornerShape(Dimens.InputFieldCornerRadius)
         )
 
         OutlinedTextField(
@@ -255,7 +255,7 @@ private fun RegisterContent(
             visualTransformation = PasswordVisualTransformation(),
             singleLine = true,
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(8.dp)
+            shape = RoundedCornerShape(Dimens.InputFieldCornerRadius)
         )
 
         ErrorMessage(displayError)
@@ -273,11 +273,11 @@ private fun RegisterContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(Dimens.ButtonHeight),
-            shape = RoundedCornerShape(8.dp)
+            shape = RoundedCornerShape(Dimens.InputFieldCornerRadius)
         ) {
             if (isLoading) {
                 CircularProgressIndicator(
-                    modifier = Modifier.size(20.dp),
+                    modifier = Modifier.size(Dimens.IconSizeSmall),
                     color = MaterialTheme.colorScheme.onPrimary
                 )
             } else {
@@ -299,7 +299,7 @@ private fun ErrorMessage(error: String?) {
     if (error != null) {
         Surface(
             color = MaterialTheme.colorScheme.errorContainer,
-            shape = RoundedCornerShape(8.dp),
+            shape = RoundedCornerShape(Dimens.InputFieldCornerRadius),
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(

@@ -44,6 +44,25 @@ object Dimens {
 
     // ==================== Components ====================
     val ChipHeight = 40.dp
+    val IconSizeSmall = 20.dp  // Маленькие иконки (спиннеры, trailing icons)
+    val IconSizeMedium = 24.dp  // Средние иконки (обычные действия)
+    val IconSizeLarge = 28.dp  // Большие иконки (заголовки секций)
+    val ProgressIndicatorStrokeWidth = 2.dp
+
+    // ==================== Input Fields ====================
+    val InputFieldCornerRadius = 8.dp  // TextField, Button и т.д.
+
+    // ==================== Badge ====================
+    val BadgeCornerRadius = 8.dp
+    val BadgePaddingHorizontal = 8.dp
+    val BadgePaddingVertical = 4.dp
+
+    // ==================== Photo / Image ====================
+    val PhotoPreviewHeight = 200.dp
+    val PhotoPreviewCornerRadius = 8.dp
+
+    // ==================== Other ====================
+    val BorderWidthStandard = 1.dp  // Стандартная толщина границы
 
     // ==================== Text Sizes ====================
     val TextSizeTitle = 20.sp

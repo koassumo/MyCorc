@@ -47,6 +47,19 @@
     <string name="already_sent_error">Dieses Paket wurde bereits von einem anderen Gerät zur Registrierung gesendet</string>
     <string name="already_sent_conflict_error">Dieses Paket wurde bereits von einem anderen Gerät zur Registrierung gesendet</string>
 
+    <!-- Section Headers -->
+    <string name="section_biomass">Biomasse</string>
+    <string name="section_pyrolysis">Pyrolyse</string>
+    <string name="section_biochar">Biokohle</string>
+    <string name="section_delivery">Lieferung</string>
+
+    <!-- Biomass Section Fields -->
+    <string name="transport_distance_label">Transportentfernung (km)</string>
+
+    <!-- Pyrolysis Section Fields -->
+    <string name="pyrolysis_duration_label">Dauer</string>
+    <string name="pyrolysis_temperature_label">Temperatur (°C)</string>
+
     <!-- Settings Screen -->
     <string name="settings_title">Einstellungen</string>
     <string name="theme_section">Design</string>
@@ -73,6 +86,12 @@
     <!-- Common -->
     <string name="back_button_tooltip">Zurück</string>
     <string name="facilities_section">Anlagenbereich</string>
+    <string name="coming_soon">Demnächst verfügbar...</string>
+    <string name="ok_button">OK</string>
+    <string name="time_unit_minutes">min</string>
+
+    <!-- Delivery Section -->
+    <string name="delivery_info_placeholder">Lieferinformationen werden hier hinzugefügt</string>
 
     <!-- Exit Dialog -->
     <string name="exit_dialog_title">App beenden</string>

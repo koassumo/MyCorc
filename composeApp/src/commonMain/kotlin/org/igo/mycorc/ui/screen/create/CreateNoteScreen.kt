@@ -123,7 +123,7 @@ fun CreateNoteScreen(
                         imageVector = Icons.Default.Eco,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(28.dp)
+                        modifier = Modifier.size(Dimens.IconSizeLarge)
                     )
 
                     // Content column
@@ -153,7 +153,7 @@ fun CreateNoteScreen(
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                 modifier = Modifier.fillMaxWidth(),
                                 enabled = !state.isReadOnly,
-                                shape = RoundedCornerShape(8.dp),
+                                shape = RoundedCornerShape(Dimens.InputFieldCornerRadius),
                                 singleLine = true
                             )
                         }
@@ -174,7 +174,7 @@ fun CreateNoteScreen(
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                 modifier = Modifier.fillMaxWidth(),
                                 enabled = !state.isReadOnly,
-                                shape = RoundedCornerShape(8.dp),
+                                shape = RoundedCornerShape(Dimens.InputFieldCornerRadius),
                                 singleLine = true
                             )
                         }
@@ -191,7 +191,7 @@ fun CreateNoteScreen(
                                 placeholder = { Text(strings.enterDescription) },
                                 minLines = 2,
                                 maxLines = 4,
-                                shape = RoundedCornerShape(8.dp)
+                                shape = RoundedCornerShape(Dimens.InputFieldCornerRadius)
                             )
                         }
                     }
@@ -217,7 +217,7 @@ fun CreateNoteScreen(
                         imageVector = Icons.Default.Whatshot,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(28.dp)
+                        modifier = Modifier.size(Dimens.IconSizeLarge)
                     )
 
                     // Content column
@@ -260,9 +260,9 @@ fun CreateNoteScreen(
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                 modifier = Modifier.fillMaxWidth(),
                                 enabled = !state.isReadOnly,
-                                shape = RoundedCornerShape(8.dp),
+                                shape = RoundedCornerShape(Dimens.InputFieldCornerRadius),
                                 singleLine = true,
-                                suffix = { Text("min") }
+                                suffix = { Text(strings.timeUnitMinutes) }
                             )
                         }
 
@@ -282,7 +282,7 @@ fun CreateNoteScreen(
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                 modifier = Modifier.fillMaxWidth(),
                                 enabled = !state.isReadOnly,
-                                shape = RoundedCornerShape(8.dp),
+                                shape = RoundedCornerShape(Dimens.InputFieldCornerRadius),
                                 singleLine = true
                             )
                         }
@@ -309,7 +309,7 @@ fun CreateNoteScreen(
                         imageVector = Icons.Default.Science,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(28.dp)
+                        modifier = Modifier.size(Dimens.IconSizeLarge)
                     )
 
                     // Content column
@@ -339,7 +339,7 @@ fun CreateNoteScreen(
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                 modifier = Modifier.fillMaxWidth(),
                                 enabled = !state.isReadOnly,
-                                shape = RoundedCornerShape(8.dp),
+                                shape = RoundedCornerShape(Dimens.InputFieldCornerRadius),
                                 singleLine = true
                             )
                         }
@@ -372,8 +372,8 @@ fun CreateNoteScreen(
                                         contentDescription = "Photo preview",
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .height(200.dp)
-                                            .clip(RoundedCornerShape(8.dp))
+                                            .height(Dimens.PhotoPreviewHeight)
+                                            .clip(RoundedCornerShape(Dimens.PhotoPreviewCornerRadius))
                                             .clickable { viewModel.openFullscreenPhoto() },
                                         contentScale = ContentScale.Crop
                                     )
@@ -420,7 +420,7 @@ fun CreateNoteScreen(
                         imageVector = Icons.Default.LocalShipping,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(28.dp)
+                        modifier = Modifier.size(Dimens.IconSizeLarge)
                     )
 
                     // Content column
@@ -436,7 +436,7 @@ fun CreateNoteScreen(
 
                         // Placeholder for future delivery/logistics fields
                         Text(
-                            text = "Delivery information will be added here",
+                            text = strings.deliveryInfoPlaceholder,
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -452,7 +452,7 @@ fun CreateNoteScreen(
                     .fillMaxWidth()
                     .padding(Dimens.SpaceMedium)
                     .height(Dimens.ButtonHeight),
-                shape = RoundedCornerShape(8.dp)
+                shape = RoundedCornerShape(Dimens.InputFieldCornerRadius)
             ) {
                 Text(if (state.editMode) strings.saveChanges else strings.saveNote)
             }
@@ -488,7 +488,7 @@ fun CreateNoteScreen(
                     onClick = { viewModel.closeFullscreenPhoto() },
                     modifier = Modifier
                         .align(Alignment.TopStart)
-                        .padding(16.dp)
+                        .padding(Dimens.SpaceMedium)
                 ) {
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
@@ -514,7 +514,7 @@ fun CreateNoteScreen(
                         viewModel.clearError()
                         onNavigateBack()
                     }) {
-                        Text("OK")
+                        Text(strings.okButton)
                     }
                 }
             )
@@ -535,8 +535,8 @@ fun SmartInputCard(
 
     Card(
         shape = RoundedCornerShape(Dimens.CardCornerRadius),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+        elevation = CardDefaults.cardElevation(defaultElevation = Dimens.CardElevation),
+        border = BorderStroke(Dimens.BorderWidthStandard, MaterialTheme.colorScheme.outline),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
@@ -561,7 +561,7 @@ fun SmartInputCard(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.fillMaxWidth(),
                 enabled = enabled,
-                shape = RoundedCornerShape(8.dp)
+                shape = RoundedCornerShape(Dimens.InputFieldCornerRadius)
             )
 
             Spacer(Modifier.height(Dimens.SpaceMedium))

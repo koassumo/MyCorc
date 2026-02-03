@@ -87,6 +87,12 @@ interface AppStrings {
     // Common
     val backButtonTooltip: String
     val facilitiesSection: String
+    val comingSoon: String
+    val okButton: String
+    val timeUnitMinutes: String
+
+    // Delivery Section
+    val deliveryInfoPlaceholder: String
 
     // Exit Dialog
     val exitDialogTitle: String
