@@ -346,24 +346,16 @@ This ensures:
 
 #### Architecture (цепочка цветов)
 
-**Стандартные цвета Material3:**
+**Все цвета управляются через Material3 ColorScheme:**
 ```
 Color.kt (определение цвета)  →  Theme.kt (привязка к роли Material3)  →  MaterialTheme.colorScheme  →  Компонент
 Пример: LightPrimary = Red500  →  primary = LightPrimary              →  .primary                   →  Button, FAB
 ```
 
-**Кастомные цвета (не входят в Material3 ColorScheme):**
-```
-Color.kt (определение цвета)  →  Theme.kt (CompositionLocal)  →  LocalCustomXxx.current  →  Компонент
-Пример: LightTopBarBackground = Grey100  →  LocalCustomTopBarBackground  →  CommonTopBar
-```
-
-Для дефолтных тем Material3 кастомные цвета получают `Color.Unspecified`, и компонент использует дефолт Material3.
-
 #### Key Files
 
-- **`ui/theme/Color.kt`** - Определение всех цветов. Палитра Material + семантические цвета для Light/Dark тем + кастомные цвета (секция "Custom Colors").
-- **`ui/theme/Theme.kt`** - Привязка цветов из Color.kt к ролям Material3 (`primary`, `surface`, `background` и т.д.). Содержит 4 схемы: кастомная Light/Dark + дефолтная Material3 Light/Dark. Также содержит `CompositionLocal` для кастомных цветов (`LocalCustomTopBarBackground`).
+- **`ui/theme/Color.kt`** - Определение всех цветов. Палитра Material + семантические цвета для Light/Dark тем.
+- **`ui/theme/Theme.kt`** - Привязка цветов из Color.kt к ролям Material3 (`primary`, `surface`, `background` и т.д.). Содержит 2 схемы: Light и Dark.
 
 #### Rules
 
@@ -384,41 +376,9 @@ Button(onClick = { ... }) { Text("Click") }
 
 3. **Используй Material3 роли только по назначению.** Не переопределяй `tertiary` для TopBar — если позже добавишь Switch, он тоже станет этим цветом.
 
-4. **Для нестандартных цветов — используй паттерн CompositionLocal.** Если нужен цвет, не вписывающийся ни в одну роль Material3:
-   - Определи варианты в секции "Custom Colors" в `Color.kt` (для Light/Dark тем)
-   - Создай `staticCompositionLocalOf` в `Theme.kt`
-   - Провайди значение в `MyAppTheme` через `CompositionLocalProvider`
-   - Для дефолтных тем Material3 используй `Color.Unspecified` (компонент сам подставит дефолт)
-   - В компоненте проверяй: если `!= Color.Unspecified` → используй кастомный, иначе → Material3 дефолт
+4. **Dynamic Color (Material You) отключен.** Системные обои пользователя не влияют на цвета приложения. Не добавляй `dynamicColorScheme()`.
 
-```kotlin
-// ❌ Wrong - хардкод кастомного цвета в компоненте
-containerColor = Orange500
-
-// ❌ Wrong - переопределение стандартной роли Material3 для другой цели
-tertiary = Orange500  // Это сломает Switch, Checkbox и другие tertiary-компоненты
-
-// ✅ Correct - CompositionLocal для кастомных цветов
-// Color.kt:
-val LightTopBarBackground = Grey100
-val DarkTopBarBackground = Grey900
-
-// Theme.kt:
-val LocalCustomTopBarBackground = staticCompositionLocalOf { Color.Unspecified }
-// В MyAppTheme: CompositionLocalProvider(LocalCustomTopBarBackground provides topBarBg)
-
-// CommonTopBar.kt:
-val customBg = LocalCustomTopBarBackground.current
-colors = if (customBg != Color.Unspecified) {
-    TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = customBg)
-} else {
-    TopAppBarDefaults.centerAlignedTopAppBarColors() // Material3 дефолт
-}
-```
-
-5. **Dynamic Color (Material You) отключен.** Системные обои пользователя не влияют на цвета приложения. Не добавляй `dynamicColorScheme()`.
-
-6. **В `Color.kt` не используй `Color(0x...)` для семантических цветов.** Все цвета берутся из палитры, определённой в начале файла (например, `Red500`, `Grey800`).
+5. **В `Color.kt` не используй `Color(0x...)` для семантических цветов.** Все цвета берутся из палитры, определённой в начале файла (например, `Red500`, `Grey800`).
 
 #### Material3 Color Roles (дефолты)
 
@@ -437,12 +397,10 @@ colors = if (customBg != Color.Unspecified) {
 
 #### Theme Options
 
-В настройках доступно 5 тем:
-- **System** — Light/Dark по системным настройкам (наши брендовые цвета)
-- **Light** — Светлая (наши брендовые цвета из Color.kt)
-- **Dark** — Тёмная (наши брендовые цвета из Color.kt)
-- **Material3 Light** — Чистый дефолт Material3 (фиолетовая палитра, для сравнения)
-- **Material3 Dark** — Чистый дефолт Material3 (фиолетовая палитра, для сравнения)
+В настройках доступно 3 темы:
+- **System** — Автоматическое переключение Light/Dark по системным настройкам
+- **Light** — Светлая тема (кастомные брендовые цвета)
+- **Dark** — Тёмная тема (кастомные брендовые цвета)
 
 #### Test Colors Screen
 

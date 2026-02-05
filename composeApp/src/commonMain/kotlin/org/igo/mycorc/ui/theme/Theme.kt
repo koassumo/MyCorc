@@ -6,23 +6,7 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.staticCompositionLocalOf
-import androidx.compose.ui.graphics.Color
 import org.igo.mycorc.ui.screen.settings.AppThemeConfig
-
-// ============================================================
-// Кастомные цвета, не входящие в Material3 ColorScheme
-// Доставляются через CompositionLocal (как LocalAppStrings)
-// ============================================================
-val LocalCustomTopBarBackground = staticCompositionLocalOf { Color.Unspecified }
-val LocalCustomListItemBackground = staticCompositionLocalOf { Color.Unspecified }
-
-// ============================================================
-// Дефолтные темы Material3 (встроенные фиолетовые цвета, без переопределений)
-// ============================================================
-
-private val DefaultLightColors = lightColorScheme()
-private val DefaultDarkColors = darkColorScheme()
 
 // ============================================================
 // Кастомные темы (наши брендовые цвета из Color.kt)
@@ -102,33 +86,11 @@ fun MyAppTheme(
         AppThemeConfig.SYSTEM -> if (isSystemDark) DarkColors else LightColors
         AppThemeConfig.LIGHT -> LightColors
         AppThemeConfig.DARK -> DarkColors
-        AppThemeConfig.DEFAULT_LIGHT -> DefaultLightColors
-        AppThemeConfig.DEFAULT_DARK -> DefaultDarkColors
-    }
-
-    // Кастомный цвет TopBar: для наших тем - кастомный, для дефолтных - Color.Unspecified (Material3 дефолт)
-    val topBarBackground = when (themeConfig) {
-        AppThemeConfig.SYSTEM -> if (isSystemDark) DarkTopBarBackground else LightTopBarBackground
-        AppThemeConfig.LIGHT -> LightTopBarBackground
-        AppThemeConfig.DARK -> DarkTopBarBackground
-        AppThemeConfig.DEFAULT_LIGHT -> Color.Unspecified  // Material3 сам подставит дефолт
-        AppThemeConfig.DEFAULT_DARK -> Color.Unspecified   // Material3 сам подставит дефолт
-    }
-
-    // Кастомный цвет ListItem: для наших тем - кастомный, для дефолтных - Color.Unspecified
-    val listItemBackground = when (themeConfig) {
-        AppThemeConfig.SYSTEM -> if (isSystemDark) DarkListItemBackground else LightListItemBackground
-        AppThemeConfig.LIGHT -> LightListItemBackground
-        AppThemeConfig.DARK -> DarkListItemBackground
-        AppThemeConfig.DEFAULT_LIGHT -> Color.Unspecified
-        AppThemeConfig.DEFAULT_DARK -> Color.Unspecified
     }
 
     val appStrings = rememberAppStrings(languageConfig)
 
     CompositionLocalProvider(
-        LocalCustomTopBarBackground provides topBarBackground,
-        LocalCustomListItemBackground provides listItemBackground,
         LocalAppStrings provides appStrings
     ) {
         MaterialTheme(

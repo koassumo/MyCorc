@@ -19,8 +19,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.graphics.Color
-import org.igo.mycorc.ui.theme.LocalCustomTopBarBackground
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,15 +54,7 @@ fun CommonTopBar(
                 }
             },
             actions = actions,
-            windowInsets = windowInsets,
-            // временное решение для CustomTopBarBackground (пока в системе дефолтная тема)
-            colors = if (LocalCustomTopBarBackground.current != Color.Unspecified) {
-                TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = LocalCustomTopBarBackground.current
-                )
-            } else {
-                TopAppBarDefaults.centerAlignedTopAppBarColors() // Полный дефолт Material3
-            }
+            windowInsets = windowInsets
         )
         HorizontalDivider()
     }

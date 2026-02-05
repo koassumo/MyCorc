@@ -390,14 +390,13 @@ val ErrorColor = Red700                        // error (ошибки валид
 // val CustomTopBarBackground = Orange500
 // val CustomTopBarContent = White
 
-// TopBar кастомный фон
-val LightTopBarBackground = White
-val DarkTopBarBackground = Grey900
-// Default темы: Color.Unspecified → Material3 сам подставит дефолтный surface
+// TopBar кастомный фон (закомментировано - не используется)
+// val LightTopBarBackground = White
+// val DarkTopBarBackground = Grey900
 
-// ListItem кастомный фон (для настроек)
-val LightListItemBackground = LightBackground
-val DarkListItemBackground = DarkBackground
+// ListItem кастомный фон (закомментировано - не используется)
+// val LightListItemBackground = LightBackground
+// val DarkListItemBackground = DarkBackground
 
 
 // Status Badge Colors (для DashboardScreen)

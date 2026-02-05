@@ -18,7 +18,6 @@ import org.igo.mycorc.ui.common.LocalTopBarState
 import org.igo.mycorc.ui.common.Dimens
 import org.koin.compose.viewmodel.koinViewModel
 import org.igo.mycorc.ui.theme.LocalAppStrings
-import org.igo.mycorc.ui.theme.LocalCustomListItemBackground
 
 // Sealed interface для локальной навигации внутри настроек
 private sealed interface SettingsPage {
@@ -107,9 +106,7 @@ fun SettingsScreen(
                     options = listOf(
                         AppThemeConfig.SYSTEM to strings.systemTheme,
                         AppThemeConfig.LIGHT to strings.lightTheme,
-                        AppThemeConfig.DARK to strings.darkTheme,
-                        AppThemeConfig.DEFAULT_LIGHT to "Material3 Light",
-                        AppThemeConfig.DEFAULT_DARK to "Material3 Dark"
+                        AppThemeConfig.DARK to strings.darkTheme
                     ),
                     selectedOption = state.selectedTheme,
                     onOptionSelected = { newTheme ->
@@ -165,8 +162,6 @@ private fun SettingsMainList(
                 AppThemeConfig.SYSTEM -> strings.systemTheme
                 AppThemeConfig.LIGHT -> strings.lightTheme
                 AppThemeConfig.DARK -> strings.darkTheme
-                AppThemeConfig.DEFAULT_LIGHT -> "Material3 Light"
-                AppThemeConfig.DEFAULT_DARK -> "Material3 Dark"
             },
             onClick = onThemeClick
         )
@@ -208,16 +203,8 @@ private fun SettingsMenuItem(
     currentValue: String,
     onClick: () -> Unit
 ) {
-    val customBg = LocalCustomListItemBackground.current
-    val colors = if (customBg != androidx.compose.ui.graphics.Color.Unspecified) {
-        ListItemDefaults.colors(containerColor = customBg)
-    } else {
-        ListItemDefaults.colors() // Material3 дефолт
-    }
-
     ListItem(
         modifier = Modifier.clickable(onClick = onClick),
-        colors = colors,
         headlineContent = {
             Text(
                 text = title,
