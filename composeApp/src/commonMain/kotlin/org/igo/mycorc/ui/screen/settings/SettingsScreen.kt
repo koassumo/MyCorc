@@ -103,7 +103,9 @@ fun SettingsScreen() {
                     options = listOf(
                         AppThemeConfig.SYSTEM to strings.systemTheme,
                         AppThemeConfig.LIGHT to strings.lightTheme,
-                        AppThemeConfig.DARK to strings.darkTheme
+                        AppThemeConfig.DARK to strings.darkTheme,
+                        AppThemeConfig.DEFAULT_LIGHT to "Material3 Light",
+                        AppThemeConfig.DEFAULT_DARK to "Material3 Dark"
                     ),
                     selectedOption = state.selectedTheme,
                     onOptionSelected = { newTheme ->
@@ -158,6 +160,8 @@ private fun SettingsMainList(
                 AppThemeConfig.SYSTEM -> strings.systemTheme
                 AppThemeConfig.LIGHT -> strings.lightTheme
                 AppThemeConfig.DARK -> strings.darkTheme
+                AppThemeConfig.DEFAULT_LIGHT -> "Material3 Light"
+                AppThemeConfig.DEFAULT_DARK -> "Material3 Dark"
             },
             onClick = onThemeClick
         )

@@ -307,33 +307,86 @@ val White = Color(0xFFFFFFFF)
 // ==========================================
 // Semantic Colors
 // ==========================================
+//
+// Определяем ТОЛЬКО те роли Material3, которые хотим переопределить.
+// Остальные роли (tertiary, inverseSurface, scrim и т.д.) берутся
+// из дефолтов Material3 автоматически.
+//
+// Если нужен цвет, не вписывающийся ни в одну роль Material3 —
+// создавай КАСТОМНУЮ переменную в секции "Custom Colors" внизу,
+// НЕ переопределяй чужую роль (иначе поплывут стандартные компоненты).
+//
+// ============================================================
+// 🌞 СВЕТЛАЯ ТЕМА (Light Theme)
+// ============================================================
 
-// 1. Brand
-val BrandKey = Red500        // Основной зеленый
-val BrandLight = Red300      // Светлый оттенок
-val BrandDark = Red700       // Темный оттенок
+// Primary (основной брендовый цвет)
+val LightPrimary = Red500                      // primary (FilledButton, FAB, ProgressIndicator, курсор TextField)
+val LightPrimaryContainer = Red300             // primaryContainer (FilledTonalButton, InputChip)
+val LightOnPrimary = White                     // onPrimary (текст/иконки НА primary)
+val LightOnPrimaryContainer = Black            // onPrimaryContainer (текст/иконки НА primaryContainer)
 
-// 2. Вторичный цвет (Accent)
-val AccentKey = BlueGrey500       // Коричневый
+// Secondary (дополнительный цвет)
+val LightSecondary = BlueGrey500               // secondary (FilterChip, Snackbar action)
+val LightOnSecondary = White                   // onSecondary (текст/иконки НА secondary)
 
-// 3. Базовые (Нейтральные)
-val GrayLight = Grey100        // Светло-серый фон
-val GrayDark = Grey900         // Темно-серый фон
+// Background (фон экрана)
+val LightBackground = Purple50                 // background (самый нижний слой — фон за всем контентом)
+val LightOnBackground = Black                  // onBackground (текст/иконки НА background)
 
-// 4. Цвета для тёмной темы (иерархия)
-val DarkBackground = Color(0xFF0A0A0A)     // Самый тёмный - фон экрана
-val DarkSurfaceBar = Grey900               // Средний - бары (чуть светлее фона)
-val DarkSurfaceCard = Grey800              // Светлее - карточки
-val DarkCardBorder = Color(0xFF2A2A2A)     // Обводка карточек (чуть светлее фона)
+// Surface (поверхности)
+val LightSurface = White                       // surface (Card, Sheet, Dialog, TopAppBar, Menu)
+val LightSurfaceContainer = White              // surfaceContainer (NavigationBar, NavigationRail, BottomSheet)
+val LightOnSurface = Black                     // onSurface (основной текст/иконки НА surface)
+val LightOnSurfaceVariant = Grey600            // onSurfaceVariant (placeholder, подписи, вторичные иконки)
 
-// 5. Цвета для светлой темы (иерархия)
-val LightBackground = Color(0xFFEEE9F5)    // Фон экрана с легким фиолетовым оттенком (чуть темнее)
-val LightSurfaceBar = White                // Средний - бары
-val LightSurfaceCard = White               // Карточки
-val LightCardBorder = Color(0xFFDDD5E8)    // Обводка карточек (чуть темнее фона)
+// Borders & Dividers
+val LightOutline = Purple100                   // outline (OutlinedButton, OutlinedTextField, Divider)
 
-// 6. Ошибки
-val ErrorRed = Red700
+// ============================================================
+// 🌙 ТЁМНАЯ ТЕМА (Dark Theme)
+// ============================================================
+
+// Primary (основной брендовый цвет)
+val DarkPrimary = Red500                       // primary (FilledButton, FAB, ProgressIndicator, курсор TextField)
+val DarkPrimaryContainer = Red700              // primaryContainer (FilledTonalButton, InputChip)
+val DarkOnPrimary = White                      // onPrimary (текст/иконки НА primary)
+val DarkOnPrimaryContainer = White             // onPrimaryContainer (текст/иконки НА primaryContainer)
+
+// Secondary (дополнительный цвет)
+val DarkSecondary = BlueGrey500                // secondary (FilterChip, Snackbar action)
+val DarkOnSecondary = White                    // onSecondary (текст/иконки НА secondary)
+
+// Background (фон экрана)
+val DarkBackground = Black                     // background (самый нижний слой — фон за всем контентом)
+val DarkOnBackground = White                   // onBackground (текст/иконки НА background)
+
+// Surface (поверхности)
+val DarkSurface = Grey800                      // surface (Card, Sheet, Dialog, TopAppBar, Menu)
+val DarkSurfaceContainer = Grey900             // surfaceContainer (NavigationBar, NavigationRail, BottomSheet)
+val DarkOnSurface = White                      // onSurface (основной текст/иконки НА surface)
+val DarkOnSurfaceVariant = Grey400             // onSurfaceVariant (placeholder, подписи, вторичные иконки)
+
+// Borders & Dividers
+val DarkOutline = Grey700                      // outline (OutlinedButton, OutlinedTextField, Divider)
+
+// ============================================================
+// ⚠️ ОБЩИЕ (используются в обеих темах)
+// ============================================================
+
+// Error
+val ErrorColor = Red700                        // error (ошибки валидации TextField, деструктивные действия)
+
+// ============================================================
+// 🎨 КАСТОМНЫЕ ЦВЕТА (не входят в Material3 ColorScheme)
+// ============================================================
+//
+// Сюда добавлять цвета, которые не вписываются ни в одну роль Material3.
+// Использовать напрямую в компонентах, НЕ через MaterialTheme.colorScheme.
+//
+// Пример:
+// val CustomTopBarBackground = Orange500
+// val CustomTopBarContent = White
 
 
 

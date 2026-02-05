@@ -52,11 +52,11 @@ fun CommonTopBar(
         },
         actions = actions,
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = androidx.compose.ui.graphics.Color(0xFFFF9800),
-            scrolledContainerColor = androidx.compose.ui.graphics.Color(0xFFFF9800),
-            titleContentColor = MaterialTheme.colorScheme.onSurface,
-            navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
-            actionIconContentColor = MaterialTheme.colorScheme.onSurface
+            containerColor = MaterialTheme.colorScheme.primary,
+            scrolledContainerColor = MaterialTheme.colorScheme.primary,
+            titleContentColor = MaterialTheme.colorScheme.onPrimary,
+            navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
+            actionIconContentColor = MaterialTheme.colorScheme.onPrimary
         ),
         windowInsets = windowInsets,
         modifier = modifier

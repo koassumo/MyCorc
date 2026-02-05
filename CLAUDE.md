@@ -191,3 +191,168 @@ val photoSource = when {
 ```
 DRAFT → READY_TO_SEND → SENT → APPROVED/REJECTED
 ```
+
+## UI Architecture & Patterns
+
+### Single TopBar Architecture
+
+The app uses a **single Scaffold in MainScreen** that owns TopBar, BottomBar, FAB, and Snackbar. Child screens publish their TopBar configuration through `TopBarState` via CompositionLocal.
+
+**Key components:**
+- **`TopBarState`** (`ui/common/TopBarState.kt`) - Reactive state holder with `mutableStateOf` properties
+- **`LocalTopBarState`** - `staticCompositionLocalOf` for distributing state down the composition tree
+- **Single Scaffold** - MainScreen owns the only Scaffold, child screens are content-only
+
+**Example usage in child screens:**
+```kotlin
+@Composable
+fun DashboardScreen() {
+    val topBar = LocalTopBarState.current
+    val strings = LocalAppStrings.current
+
+    // Publish TopBar configuration
+    topBar.title = strings.dashboardTitle
+    topBar.canNavigateBack = false
+
+    // Screen content (no Scaffold)
+    Box(Modifier.fillMaxSize()) { ... }
+}
+```
+
+**Why this pattern:**
+- ✅ Single source of truth for TopBar state
+- ✅ No nested Scaffolds (avoids window insets issues)
+- ✅ Status bar color propagates correctly
+- ✅ Centralized FAB management (shown only on specific routes)
+- ✅ Easy to test (no Koin needed, just create `TopBarState()`)
+
+### Centralized Dimensions (Dimens.kt)
+
+All UI dimensions are centralized in `ui/common/Dimens.kt`. **Never hardcode `.dp` values** in screens or components.
+
+**Key dimension groups:**
+```kotlin
+// Screen spacing
+val ScreenPaddingSides = 12.dp
+
+// Card styling
+val CardCornerRadius = 16.dp
+val CardPadding = 16.dp
+
+// Input fields
+val InputFieldCornerRadius = 8.dp
+
+// Icons
+val IconSizeSmall = 20.dp    // Spinners, trailing icons
+val IconSizeLarge = 28.dp    // Section headers
+
+// Common spacing
+val SpaceSmall = 8.dp
+val SpaceMedium = 16.dp
+val SpaceLarge = 24.dp
+```
+
+**Usage:**
+```kotlin
+// ❌ Wrong
+Text("Title", modifier = Modifier.padding(16.dp))
+
+// ✅ Correct
+Text("Title", modifier = Modifier.padding(Dimens.SpaceMedium))
+```
+
+### Reusable Components
+
+**CommonCard** (`ui/common/CommonCard.kt`) - Standard card component used across the app:
+```kotlin
+CommonCard(
+    modifier = Modifier.fillMaxWidth(),
+    onClick = { /* handle click */ }
+) {
+    // Card content
+    Text("Title")
+    Text("Details")
+}
+```
+
+Default styling:
+- Corner radius: `Dimens.CommonCardCornerRadius` (16.dp)
+- Border: 1.dp outline
+- Elevation: 0.dp (Material Design 3 + iOS compatibility)
+- Content padding: 16.dp
+
+**When to use:**
+- ✅ Dashboard items (package cards)
+- ✅ Profile card
+- ✅ Any clickable/non-clickable content cards
+- ❌ Settings menu items (use Material3 `ListItem` instead)
+
+### Localization
+
+All user-facing strings are managed through **Jetpack Compose Resources** (multiplatform string resources).
+
+**Supported languages:**
+- English (default) - `values/strings.xml`
+- Russian - `values-ru/strings.xml`
+- German - `values-de/strings.xml`
+
+**Adding new strings:**
+1. Add to interface: `domain/strings/AppStrings.kt`
+2. Add to data class: `ui/theme/AppStringsImpl.kt`
+3. Add resource mapping: `rememberAppStrings()` in `AppStringsImpl.kt`
+4. Add XML entries to all 3 language files: `composeResources/values*/strings.xml`
+
+**Usage in screens:**
+```kotlin
+@Composable
+fun MyScreen() {
+    val strings = LocalAppStrings.current
+    Text(strings.myStringKey)  // ✅ Correct
+    Text("Hardcoded text")      // ❌ Wrong
+}
+```
+
+**Never hardcode user-facing text.** All text must be in string resources.
+
+### LazyRow/LazyColumn Content Padding
+
+For horizontal scrolling lists (filters, chips), use **`contentPadding`** instead of `padding(horizontal = ...)`:
+
+```kotlin
+// ❌ Wrong - creates dead zone on right edge
+LazyRow(
+    modifier = Modifier.padding(horizontal = Dimens.ScreenPaddingSides)
+) { ... }
+
+// ✅ Correct - padding inside scroll area
+LazyRow(
+    contentPadding = PaddingValues(horizontal = Dimens.ScreenPaddingSides)
+) { ... }
+```
+
+This ensures:
+- First item starts with padding
+- Items can scroll under the padding (no dead zone)
+- Last item ends with padding
+
+### Navigation & BackHandler
+
+**AppBackHandler** - Cross-platform back button handling (`ui/common/AppBackHandler.kt`):
+```kotlin
+AppBackHandler(enabled = true) {
+    if (currentRoute == Destinations.DASHBOARD) {
+        showExitDialog = true
+    } else {
+        viewModel.navigateBack()
+    }
+}
+```
+
+**Back button priority:**
+1. Most recently registered `AppBackHandler` (wins in case of multiple handlers)
+2. Settings sub-pages → main settings list
+3. Create/Edit screen → Dashboard
+4. Other tabs → Dashboard
+5. Dashboard → Exit dialog
+
+**Important:** Multiple `AppBackHandler` calls stack - the last one registered has priority. Use `enabled` parameter to conditionally activate handlers.

@@ -2,9 +2,11 @@ package org.igo.mycorc.ui.screen.settings
 
 // 1. Перечисление наших вариантов
 enum class AppThemeConfig {
-    SYSTEM, // Как в системе (по умолчанию)
-    LIGHT,  // Всегда светлая
-    DARK    // Всегда темная
+    SYSTEM,        // Как в системе (по умолчанию)
+    LIGHT,         // Светлая (наши брендовые цвета)
+    DARK,          // Тёмная (наши брендовые цвета)
+    DEFAULT_LIGHT, // Дефолтная светлая Material3 (для сравнения)
+    DEFAULT_DARK   // Дефолтная тёмная Material3 (для сравнения)
 }
 
 // Перечисление языков

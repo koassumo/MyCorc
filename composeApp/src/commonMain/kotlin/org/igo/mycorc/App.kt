@@ -25,12 +25,14 @@ fun App() {
         AppThemeConfig.SYSTEM -> isSystemInDarkTheme()
         AppThemeConfig.LIGHT -> false
         AppThemeConfig.DARK -> true
+        AppThemeConfig.DEFAULT_LIGHT -> false
+        AppThemeConfig.DEFAULT_DARK -> true
     }
 
     // key() полностью пересоздаёт всё UI при смене языка
     key(languageConfig) {
         UpdateAppLanguage(languageConfig) {
-            MyAppTheme(useDarkTheme = useDarkTheme, languageConfig = languageConfig) {
+            MyAppTheme(themeConfig = themeConfig, languageConfig = languageConfig) {
                 // Обновляем цвет иконок статус-бара при смене темы
                 UpdateSystemBarsTheme(useDarkTheme)
 
