@@ -108,10 +108,17 @@ Koin modules are organized in `di/`:
 
 ## Collaborative Development Principles
 
+### Workflow & Permissions
+- **NEVER run the application** (`.\gradlew.bat :composeApp:run`) without explicit user request
+- **NEVER create git commits** unless explicitly asked by the user
+- **NEVER push to remote** unless explicitly asked by the user
+- The user handles app execution, commits, and pushes manually - focus on code changes only
+
 ### Code Quality & Context
 - **Meaningful Preservation**: Do not delete comments unless the refactored code makes them strictly redundant. If deleting a comment, briefly explain why in the chat.
 - **UI Integrity**: Treat existing user-facing strings (like "Без описания") as intentional. If you see a better way to handle empty states or localization, suggest it as an improvement rather than changing it silently.
 - **KMP Best Practices**: Prioritize shared code in `commonMain`. When using platform-specific APIs, ensure they follow the project's established `expect/actual` patterns.
+- **Minimize Color Hardcoding**: Avoid using explicit `Color()` values in components. All colors should be managed through `Color.kt` → `Theme.kt` → `MaterialTheme.colorScheme` or `CompositionLocal` for custom colors.
 
 ### Intelligent Refactoring
 - **Incremental Improvements**: If you see an opportunity to improve Clean Architecture or Koin usage, point it out. We value high-quality code over "just making it work."
@@ -339,15 +346,24 @@ This ensures:
 
 #### Architecture (цепочка цветов)
 
+**Стандартные цвета Material3:**
 ```
 Color.kt (определение цвета)  →  Theme.kt (привязка к роли Material3)  →  MaterialTheme.colorScheme  →  Компонент
 Пример: LightPrimary = Red500  →  primary = LightPrimary              →  .primary                   →  Button, FAB
 ```
 
+**Кастомные цвета (не входят в Material3 ColorScheme):**
+```
+Color.kt (определение цвета)  →  Theme.kt (CompositionLocal)  →  LocalCustomXxx.current  →  Компонент
+Пример: LightTopBarBackground = Grey100  →  LocalCustomTopBarBackground  →  CommonTopBar
+```
+
+Для дефолтных тем Material3 кастомные цвета получают `Color.Unspecified`, и компонент использует дефолт Material3.
+
 #### Key Files
 
-- **`ui/theme/Color.kt`** - Определение всех цветов. Палитра Material + семантические цвета для Light/Dark тем.
-- **`ui/theme/Theme.kt`** - Привязка цветов из Color.kt к ролям Material3 (`primary`, `surface`, `background` и т.д.). Содержит 4 схемы: кастомная Light/Dark + дефолтная Material3 Light/Dark.
+- **`ui/theme/Color.kt`** - Определение всех цветов. Палитра Material + семантические цвета для Light/Dark тем + кастомные цвета (секция "Custom Colors").
+- **`ui/theme/Theme.kt`** - Привязка цветов из Color.kt к ролям Material3 (`primary`, `surface`, `background` и т.д.). Содержит 4 схемы: кастомная Light/Dark + дефолтная Material3 Light/Dark. Также содержит `CompositionLocal` для кастомных цветов (`LocalCustomTopBarBackground`).
 
 #### Rules
 
@@ -368,7 +384,37 @@ Button(onClick = { ... }) { Text("Click") }
 
 3. **Используй Material3 роли только по назначению.** Не переопределяй `tertiary` для TopBar — если позже добавишь Switch, он тоже станет этим цветом.
 
-4. **Для нестандартных цветов — используй секцию "Custom Colors" в `Color.kt`.** Если нужен цвет, не вписывающийся ни в одну роль Material3, создай кастомную переменную и используй её напрямую (не через `MaterialTheme.colorScheme`).
+4. **Для нестандартных цветов — используй паттерн CompositionLocal.** Если нужен цвет, не вписывающийся ни в одну роль Material3:
+   - Определи варианты в секции "Custom Colors" в `Color.kt` (для Light/Dark тем)
+   - Создай `staticCompositionLocalOf` в `Theme.kt`
+   - Провайди значение в `MyAppTheme` через `CompositionLocalProvider`
+   - Для дефолтных тем Material3 используй `Color.Unspecified` (компонент сам подставит дефолт)
+   - В компоненте проверяй: если `!= Color.Unspecified` → используй кастомный, иначе → Material3 дефолт
+
+```kotlin
+// ❌ Wrong - хардкод кастомного цвета в компоненте
+containerColor = Orange500
+
+// ❌ Wrong - переопределение стандартной роли Material3 для другой цели
+tertiary = Orange500  // Это сломает Switch, Checkbox и другие tertiary-компоненты
+
+// ✅ Correct - CompositionLocal для кастомных цветов
+// Color.kt:
+val LightTopBarBackground = Grey100
+val DarkTopBarBackground = Grey900
+
+// Theme.kt:
+val LocalCustomTopBarBackground = staticCompositionLocalOf { Color.Unspecified }
+// В MyAppTheme: CompositionLocalProvider(LocalCustomTopBarBackground provides topBarBg)
+
+// CommonTopBar.kt:
+val customBg = LocalCustomTopBarBackground.current
+colors = if (customBg != Color.Unspecified) {
+    TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = customBg)
+} else {
+    TopAppBarDefaults.centerAlignedTopAppBarColors() // Material3 дефолт
+}
+```
 
 5. **Dynamic Color (Material You) отключен.** Системные обои пользователя не влияют на цвета приложения. Не добавляй `dynamicColorScheme()`.
 
@@ -398,7 +444,25 @@ Button(onClick = { ... }) { Text("Click") }
 - **Material3 Light** — Чистый дефолт Material3 (фиолетовая палитра, для сравнения)
 - **Material3 Dark** — Чистый дефолт Material3 (фиолетовая палитра, для сравнения)
 
+#### Test Colors Screen
+
+В Settings внизу есть кнопка **"Test Colors"** → открывает тестовый экран (`ui/screen/test/TestColorsScreen.kt`), который визуализирует все цвета текущей темы. Каждый элемент подписан названиями семантических цветов:
+- Цвет текста/иконки: `onPrimary`, `onSurface` и т.д.
+- Цвет фона: `← primary`, `← surface` и т.д. (стрелочка на отдельной строке, меньшим шрифтом)
+
+Экран содержит: Button, FilledTonalButton, OutlinedButton, FilterChip, Card, TextField, Divider, FAB, Error-элементы, описание цветов BottomBar.
+
 ### Navigation & BackHandler
+
+**Navigation Stack** - `MainViewModel` использует стек навигации для правильной обработки кнопки "Назад":
+- Переход на основные вкладки (Dashboard, Settings, Profile) → **очищает стек**
+- Переход на подэкраны (CreateNote, TestColors) → **добавляет текущий маршрут в стек**
+- Кнопка "Назад" → **возвращает на предыдущий экран из стека** (не всегда на Dashboard!)
+
+**Важно:** Подэкраны (CreateNote, TestColors) должны:
+1. Принимать параметр `onNavigateBack: () -> Unit`
+2. Устанавливать `topBar.onNavigateBack = onNavigateBack`
+3. Иначе TopBar будет использовать **старый** callback от предыдущего экрана (баг!)
 
 **AppBackHandler** - Cross-platform back button handling (`ui/common/AppBackHandler.kt`):
 ```kotlin
@@ -406,7 +470,7 @@ AppBackHandler(enabled = true) {
     if (currentRoute == Destinations.DASHBOARD) {
         showExitDialog = true
     } else {
-        viewModel.navigateBack()
+        viewModel.navigateBack()  // Возвращает на предыдущий экран из стека
     }
 }
 ```
@@ -414,7 +478,7 @@ AppBackHandler(enabled = true) {
 **Back button priority:**
 1. Most recently registered `AppBackHandler` (wins in case of multiple handlers)
 2. Settings sub-pages → main settings list
-3. Create/Edit screen → Dashboard
+3. Sub-screens (CreateNote, TestColors) → previous screen (from navigation stack)
 4. Other tabs → Dashboard
 5. Dashboard → Exit dialog
 

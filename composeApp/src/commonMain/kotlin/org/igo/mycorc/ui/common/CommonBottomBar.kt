@@ -1,5 +1,7 @@
 package org.igo.mycorc.ui.common
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -16,17 +18,19 @@ fun CommonBottomBar(
     onNavigate: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    NavigationBar(
-        modifier = modifier,
-        containerColor = MaterialTheme.colorScheme.surfaceContainer,
-    ) {
-        items.forEach { item ->
-            NavigationBarItem(
-                selected = currentRoute == item.route,
-                onClick = { onNavigate(item.route) },
-                label = { Text(item.name) },
-                icon = { Icon(item.icon, contentDescription = item.name) }
-            )
+    Column(modifier = modifier) {
+        HorizontalDivider()
+        NavigationBar(
+            containerColor = MaterialTheme.colorScheme.surfaceContainer,
+        ) {
+            items.forEach { item ->
+                NavigationBarItem(
+                    selected = currentRoute == item.route,
+                    onClick = { onNavigate(item.route) },
+                    label = { Text(item.name) },
+                    icon = { Icon(item.icon, contentDescription = item.name) }
+                )
+            }
         }
     }
 }

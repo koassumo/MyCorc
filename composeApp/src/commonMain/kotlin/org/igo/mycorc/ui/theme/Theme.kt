@@ -6,7 +6,16 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.graphics.Color
 import org.igo.mycorc.ui.screen.settings.AppThemeConfig
+
+// ============================================================
+// Кастомные цвета, не входящие в Material3 ColorScheme
+// Доставляются через CompositionLocal (как LocalAppStrings)
+// ============================================================
+val LocalCustomTopBarBackground = staticCompositionLocalOf { Color.Unspecified }
+val LocalCustomListItemBackground = staticCompositionLocalOf { Color.Unspecified }
 
 // ============================================================
 // Дефолтные темы Material3 (встроенные фиолетовые цвета, без переопределений)
@@ -24,9 +33,9 @@ private val DefaultDarkColors = darkColorScheme()
 // остаются дефолтными из Material3.
 private val LightColors = lightColorScheme(
     // Primary (основной брендовый цвет)
-    primary = LightPrimary,                    // FilledButton, FAB, ProgressIndicator, курсор TextField
+    primary = LightPrimary,                    // FilledButton, ProgressIndicator, курсор TextField
     onPrimary = LightOnPrimary,                // Текст/иконки НА primary
-    primaryContainer = LightPrimaryContainer,  // FilledTonalButton, InputChip
+    primaryContainer = LightPrimaryContainer,  // FAB, FilledTonalButton, InputChip
     onPrimaryContainer = LightOnPrimaryContainer, // Текст/иконки НА primaryContainer
 
     // Secondary (дополнительный цвет)
@@ -44,7 +53,8 @@ private val LightColors = lightColorScheme(
     onSurfaceVariant = LightOnSurfaceVariant,  // Placeholder, подписи, вторичные иконки
 
     // Borders & Dividers
-    outline = LightOutline,                    // OutlinedButton, OutlinedTextField, Divider
+    outline = LightOutline,                    // OutlinedButton, OutlinedTextField, обводка Card
+    outlineVariant = LightOutlineVariant,      // HorizontalDivider, мягкие разделители
 
     // Error
     error = ErrorColor                         // Ошибки валидации TextField, деструктивные действия
@@ -53,9 +63,9 @@ private val LightColors = lightColorScheme(
 // Настройка для ТЕМНОЙ темы
 private val DarkColors = darkColorScheme(
     // Primary (основной брендовый цвет)
-    primary = DarkPrimary,                     // FilledButton, FAB, ProgressIndicator, курсор TextField
+    primary = DarkPrimary,                     // FilledButton, ProgressIndicator, курсор TextField
     onPrimary = DarkOnPrimary,                 // Текст/иконки НА primary
-    primaryContainer = DarkPrimaryContainer,   // FilledTonalButton, InputChip
+    primaryContainer = DarkPrimaryContainer,   // FAB, FilledTonalButton, InputChip
     onPrimaryContainer = DarkOnPrimaryContainer, // Текст/иконки НА primaryContainer
 
     // Secondary (дополнительный цвет)
@@ -73,7 +83,8 @@ private val DarkColors = darkColorScheme(
     onSurfaceVariant = DarkOnSurfaceVariant,   // Placeholder, подписи, вторичные иконки
 
     // Borders & Dividers
-    outline = DarkOutline,                     // OutlinedButton, OutlinedTextField, Divider
+    outline = DarkOutline,                     // OutlinedButton, OutlinedTextField, обводка Card
+    outlineVariant = DarkOutlineVariant,       // HorizontalDivider, мягкие разделители
 
     // Error
     error = ErrorColor                         // Ошибки валидации TextField, деструктивные действия
@@ -95,9 +106,31 @@ fun MyAppTheme(
         AppThemeConfig.DEFAULT_DARK -> DefaultDarkColors
     }
 
+    // Кастомный цвет TopBar: для наших тем - кастомный, для дефолтных - Color.Unspecified (Material3 дефолт)
+    val topBarBackground = when (themeConfig) {
+        AppThemeConfig.SYSTEM -> if (isSystemDark) DarkTopBarBackground else LightTopBarBackground
+        AppThemeConfig.LIGHT -> LightTopBarBackground
+        AppThemeConfig.DARK -> DarkTopBarBackground
+        AppThemeConfig.DEFAULT_LIGHT -> Color.Unspecified  // Material3 сам подставит дефолт
+        AppThemeConfig.DEFAULT_DARK -> Color.Unspecified   // Material3 сам подставит дефолт
+    }
+
+    // Кастомный цвет ListItem: для наших тем - кастомный, для дефолтных - Color.Unspecified
+    val listItemBackground = when (themeConfig) {
+        AppThemeConfig.SYSTEM -> if (isSystemDark) DarkListItemBackground else LightListItemBackground
+        AppThemeConfig.LIGHT -> LightListItemBackground
+        AppThemeConfig.DARK -> DarkListItemBackground
+        AppThemeConfig.DEFAULT_LIGHT -> Color.Unspecified
+        AppThemeConfig.DEFAULT_DARK -> Color.Unspecified
+    }
+
     val appStrings = rememberAppStrings(languageConfig)
 
-    CompositionLocalProvider(LocalAppStrings provides appStrings) {
+    CompositionLocalProvider(
+        LocalCustomTopBarBackground provides topBarBackground,
+        LocalCustomListItemBackground provides listItemBackground,
+        LocalAppStrings provides appStrings
+    ) {
         MaterialTheme(
             colorScheme = colors,
             content = content

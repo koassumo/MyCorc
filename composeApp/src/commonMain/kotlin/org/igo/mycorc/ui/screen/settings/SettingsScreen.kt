@@ -18,6 +18,7 @@ import org.igo.mycorc.ui.common.LocalTopBarState
 import org.igo.mycorc.ui.common.Dimens
 import org.koin.compose.viewmodel.koinViewModel
 import org.igo.mycorc.ui.theme.LocalAppStrings
+import org.igo.mycorc.ui.theme.LocalCustomListItemBackground
 
 // Sealed interface для локальной навигации внутри настроек
 private sealed interface SettingsPage {
@@ -207,8 +208,16 @@ private fun SettingsMenuItem(
     currentValue: String,
     onClick: () -> Unit
 ) {
+    val customBg = LocalCustomListItemBackground.current
+    val colors = if (customBg != androidx.compose.ui.graphics.Color.Unspecified) {
+        ListItemDefaults.colors(containerColor = customBg)
+    } else {
+        ListItemDefaults.colors() // Material3 дефолт
+    }
+
     ListItem(
         modifier = Modifier.clickable(onClick = onClick),
+        colors = colors,
         headlineContent = {
             Text(
                 text = title,

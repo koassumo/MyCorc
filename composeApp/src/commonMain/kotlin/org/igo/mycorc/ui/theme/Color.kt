@@ -321,8 +321,8 @@ val White = Color(0xFFFFFFFF)
 // ============================================================
 
 // Primary (основной брендовый цвет)
-val LightPrimary = Red500                      // primary (FilledButton, FAB, ProgressIndicator, курсор TextField)
-val LightPrimaryContainer = Red300             // primaryContainer (FilledTonalButton, InputChip)
+val LightPrimary = Red300                      // primary (FilledButton, ProgressIndicator, курсор TextField)
+val LightPrimaryContainer = Red200             // primaryContainer (FAB, FilledTonalButton, InputChip)
 val LightOnPrimary = White                     // onPrimary (текст/иконки НА primary)
 val LightOnPrimaryContainer = Black            // onPrimaryContainer (текст/иконки НА primaryContainer)
 
@@ -331,7 +331,7 @@ val LightSecondary = BlueGrey500               // secondary (FilterChip, Snackba
 val LightOnSecondary = White                   // onSecondary (текст/иконки НА secondary)
 
 // Background (фон экрана)
-val LightBackground = Purple50                 // background (самый нижний слой — фон за всем контентом)
+val LightBackground = Grey100                 // background (самый нижний слой — фон за всем контентом)
 val LightOnBackground = Black                  // onBackground (текст/иконки НА background)
 
 // Surface (поверхности)
@@ -341,15 +341,16 @@ val LightOnSurface = Black                     // onSurface (основной т
 val LightOnSurfaceVariant = Grey600            // onSurfaceVariant (placeholder, подписи, вторичные иконки)
 
 // Borders & Dividers
-val LightOutline = Purple100                   // outline (OutlinedButton, OutlinedTextField, Divider)
+val LightOutline = Grey300                   // outline (OutlinedButton, OutlinedTextField, обводка Card)
+val LightOutlineVariant = Grey200           // outlineVariant (HorizontalDivider, мягкие разделители)
 
 // ============================================================
 // 🌙 ТЁМНАЯ ТЕМА (Dark Theme)
 // ============================================================
 
 // Primary (основной брендовый цвет)
-val DarkPrimary = Red500                       // primary (FilledButton, FAB, ProgressIndicator, курсор TextField)
-val DarkPrimaryContainer = Red700              // primaryContainer (FilledTonalButton, InputChip)
+val DarkPrimary = Red800                       // primary (FilledButton, ProgressIndicator, курсор TextField)
+val DarkPrimaryContainer = Red900              // primaryContainer (FAB, FilledTonalButton, InputChip)
 val DarkOnPrimary = White                      // onPrimary (текст/иконки НА primary)
 val DarkOnPrimaryContainer = White             // onPrimaryContainer (текст/иконки НА primaryContainer)
 
@@ -362,13 +363,14 @@ val DarkBackground = Black                     // background (самый ниж�
 val DarkOnBackground = White                   // onBackground (текст/иконки НА background)
 
 // Surface (поверхности)
-val DarkSurface = Grey800                      // surface (Card, Sheet, Dialog, TopAppBar, Menu)
+val DarkSurface = BlueGrey900                     // surface (Card, Sheet, Dialog, TopAppBar, Menu)
 val DarkSurfaceContainer = Grey900             // surfaceContainer (NavigationBar, NavigationRail, BottomSheet)
 val DarkOnSurface = White                      // onSurface (основной текст/иконки НА surface)
 val DarkOnSurfaceVariant = Grey400             // onSurfaceVariant (placeholder, подписи, вторичные иконки)
 
 // Borders & Dividers
-val DarkOutline = Grey700                      // outline (OutlinedButton, OutlinedTextField, Divider)
+val DarkOutline = Grey800                      // outline (OutlinedButton, OutlinedTextField, обводка Card)
+val DarkOutlineVariant = Grey900               // outlineVariant (HorizontalDivider, мягкие разделители)
 
 // ============================================================
 // ⚠️ ОБЩИЕ (используются в обеих темах)
@@ -387,6 +389,16 @@ val ErrorColor = Red700                        // error (ошибки валид
 // Пример:
 // val CustomTopBarBackground = Orange500
 // val CustomTopBarContent = White
+
+// TopBar кастомный фон
+val LightTopBarBackground = White
+val DarkTopBarBackground = Grey900
+// Default темы: Color.Unspecified → Material3 сам подставит дефолтный surface
+
+// ListItem кастомный фон (для настроек)
+val LightListItemBackground = LightBackground
+val DarkListItemBackground = DarkBackground
+
 
 // Status Badge Colors (для DashboardScreen)
 val StatusDraftBackground = Orange50          // Фон для DRAFT статуса
