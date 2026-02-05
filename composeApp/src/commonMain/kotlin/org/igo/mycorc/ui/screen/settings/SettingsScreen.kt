@@ -27,7 +27,9 @@ private sealed interface SettingsPage {
 }
 
 @Composable
-fun SettingsScreen() {
+fun SettingsScreen(
+    onNavigateToTest: () -> Unit = {}
+) {
     val topBar = LocalTopBarState.current
     val viewModel = koinViewModel<SettingsViewModel>()
     val state by viewModel.state.collectAsState()
@@ -94,7 +96,8 @@ fun SettingsScreen() {
                     currentTheme = state.selectedTheme,
                     currentLanguage = state.selectedLanguage,
                     onThemeClick = { currentPage = SettingsPage.ThemeSelection },
-                    onLanguageClick = { currentPage = SettingsPage.LanguageSelection }
+                    onLanguageClick = { currentPage = SettingsPage.LanguageSelection },
+                    onTestClick = onNavigateToTest
                 )
             }
 
@@ -141,7 +144,8 @@ private fun SettingsMainList(
     currentTheme: AppThemeConfig,
     currentLanguage: AppLanguageConfig,
     onThemeClick: () -> Unit,
-    onLanguageClick: () -> Unit
+    onLanguageClick: () -> Unit,
+    onTestClick: () -> Unit
 ) {
     val strings = LocalAppStrings.current
 
@@ -181,6 +185,18 @@ private fun SettingsMainList(
         )
 
         HorizontalDivider()
+
+        Spacer(modifier = Modifier.height(Dimens.SpaceLarge))
+
+        // Кнопка: Test Colors Screen
+        Button(
+            onClick = onTestClick,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Test Colors")
+        }
+
+        Spacer(modifier = Modifier.height(Dimens.SpaceMedium))
     }
 }
 

@@ -33,6 +33,7 @@ import org.igo.mycorc.ui.screen.create.CreateNoteScreen
 import org.igo.mycorc.ui.screen.dashboard.DashboardScreen
 import org.igo.mycorc.ui.screen.profile.ProfileScreen
 import org.igo.mycorc.ui.screen.settings.SettingsScreen
+import org.igo.mycorc.ui.screen.test.TestColorsScreen
 import org.igo.mycorc.ui.theme.LocalAppStrings
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -90,7 +91,12 @@ fun MainScreen() {
                     CommonBottomBar(
                         items = bottomNavItems,
                         currentRoute = currentRoute,
-                        onNavigate = { route -> viewModel.navigateTo(route) }
+                        onNavigate = { route ->
+                            // На тестовом экране навигация отключена (только для визуализации цветов)
+                            if (currentRoute != Destinations.TEST_COLORS) {
+                                viewModel.navigateTo(route)
+                            }
+                        }
                     )
                 }
             }
@@ -106,10 +112,15 @@ fun MainScreen() {
                         snackbarHostState = snackbarHostState
                     )
                     Destinations.FACILITIES -> PlaceholderScreen()
-                    Destinations.SETTINGS -> SettingsScreen()
+                    Destinations.SETTINGS -> SettingsScreen(
+                        onNavigateToTest = { viewModel.navigateTo(Destinations.TEST_COLORS) }
+                    )
                     Destinations.PROFILE -> ProfileScreen()
                     Destinations.CREATE_NOTE -> CreateNoteScreen(
                         noteId = selectedNoteId,
+                        onNavigateBack = { viewModel.navigateBack() }
+                    )
+                    Destinations.TEST_COLORS -> TestColorsScreen(
                         onNavigateBack = { viewModel.navigateBack() }
                     )
                 }

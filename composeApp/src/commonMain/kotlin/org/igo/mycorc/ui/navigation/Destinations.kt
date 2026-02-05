@@ -6,4 +6,5 @@ object Destinations {
     const val SETTINGS = "SETTINGS"
     const val PROFILE = "PROFILE"
     const val CREATE_NOTE = "CREATE_NOTE"
+    const val TEST_COLORS = "TEST_COLORS"
 }
