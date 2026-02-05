@@ -31,8 +31,7 @@ fun LoginScreen() {
     val topBarTitle = if (isRegisterMode) strings.registerTitle else strings.loginTitle
 
     Scaffold(
-        topBar = { CommonTopBar(title = topBarTitle) },
-        containerColor = MaterialTheme.colorScheme.background
+        topBar = { CommonTopBar(title = topBarTitle) }
     ) { padding ->
         Box(
             modifier = Modifier
@@ -46,10 +45,7 @@ fun LoginScreen() {
                     .padding(Dimens.SpaceMedium),
                 shape = RoundedCornerShape(Dimens.CardCornerRadius),
                 elevation = CardDefaults.cardElevation(defaultElevation = Dimens.CardElevation),
-                border = BorderStroke(Dimens.BorderWidthStandard, MaterialTheme.colorScheme.outline),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                )
+                border = BorderStroke(Dimens.BorderWidthStandard, MaterialTheme.colorScheme.outline)
             ) {
                 if (isRegisterMode) {
                     RegisterContent(
@@ -132,7 +128,6 @@ private fun LoginContent(
             ) {
                 HorizontalDivider(
                     modifier = Modifier.weight(1f),
-                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
                 )
                 Text(
                     text = strings.orDivider,
@@ -142,7 +137,6 @@ private fun LoginContent(
                 )
                 HorizontalDivider(
                     modifier = Modifier.weight(1f),
-                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
                 )
             }
         }
@@ -179,7 +173,6 @@ private fun LoginContent(
             if (isLoading) {
                 CircularProgressIndicator(
                     modifier = Modifier.size(Dimens.IconSizeSmall),
-                    color = MaterialTheme.colorScheme.onPrimary
                 )
             } else {
                 Text(strings.loginButton)
@@ -278,7 +271,6 @@ private fun RegisterContent(
             if (isLoading) {
                 CircularProgressIndicator(
                     modifier = Modifier.size(Dimens.IconSizeSmall),
-                    color = MaterialTheme.colorScheme.onPrimary
                 )
             } else {
                 Text(strings.registerButton)

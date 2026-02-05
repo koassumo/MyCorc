@@ -60,9 +60,6 @@ fun ProfileScreen() {
 
                     Button(
                         onClick = { viewModel.logout() },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.error
-                        ),
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(Dimens.ButtonHeight),

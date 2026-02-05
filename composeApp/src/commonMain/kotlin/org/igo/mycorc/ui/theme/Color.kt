@@ -388,6 +388,22 @@ val ErrorColor = Red700                        // error (ошибки валид
 // val CustomTopBarBackground = Orange500
 // val CustomTopBarContent = White
 
+// Status Badge Colors (для DashboardScreen)
+val StatusDraftBackground = Orange50          // Фон для DRAFT статуса
+val StatusDraftText = Orange900               // Текст для DRAFT статуса
+
+val StatusReadyBackground = Blue50            // Фон для READY_TO_SEND
+val StatusReadyText = Blue800                 // Текст для READY_TO_SEND статуса
+
+val StatusSentBackground = Teal50             // Фон для SENT статуса
+val StatusSentText = Teal800                  // Текст для SENT статуса
+
+val StatusApprovedBackground = Green100       // Фон для APPROVED статуса
+val StatusApprovedText = Green800             // Текст для APPROVED статуса
+
+val StatusRejectedBackground = Red100         // Фон для REJECTED статуса
+val StatusRejectedText = Red800               // Текст для REJECTED статуса
+
 
 
 

@@ -29,6 +29,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CloudUpload
 import org.igo.mycorc.ui.theme.LocalAppStrings
+import org.igo.mycorc.ui.theme.*
 
 
 @Composable
@@ -216,10 +217,7 @@ fun DashboardItem(
                 Spacer(modifier = Modifier.height(Dimens.SpaceMedium))
                 Button(
                     onClick = onSendClick,
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary
-                    )
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     Icon(Icons.Default.CloudUpload, contentDescription = null)
                     Spacer(Modifier.width(Dimens.SpaceSmall))
@@ -239,19 +237,19 @@ private fun StatusBadge(
 ) {
     val (badgeText, badgeColor, textColor) = when (status) {
         org.igo.mycorc.domain.model.NoteStatus.DRAFT ->
-            Triple("Pending", Color(0xFFFFF3E0), Color(0xFFE65100))
+            Triple("Pending", StatusDraftBackground, StatusDraftText)
 
         org.igo.mycorc.domain.model.NoteStatus.READY_TO_SEND ->
-            Triple("Ready", Color(0xFFF0F4FF), Color(0xFF1565C0))
+            Triple("Ready", StatusReadyBackground, StatusReadyText)
 
         org.igo.mycorc.domain.model.NoteStatus.SENT ->
-            Triple("Sent", Color(0xFFE0F2F1), Color(0xFF00695C))
+            Triple("Sent", StatusSentBackground, StatusSentText)
 
         org.igo.mycorc.domain.model.NoteStatus.APPROVED ->
-            Triple("Approved", Color(0xFFC8E6C9), Color(0xFF2E7D32))
+            Triple("Approved", StatusApprovedBackground, StatusApprovedText)
 
         org.igo.mycorc.domain.model.NoteStatus.REJECTED ->
-            Triple("Rejected", Color(0xFFFFCDD2), Color(0xFFC62828))
+            Triple("Rejected", StatusRejectedBackground, StatusRejectedText)
     }
 
     Surface(

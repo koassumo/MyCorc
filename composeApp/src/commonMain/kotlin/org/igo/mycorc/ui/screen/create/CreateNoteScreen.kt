@@ -243,7 +243,6 @@ fun CreateNoteScreen(
                                     Text(
                                         text = formatDuration(pyrolysisDuration),
                                         style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.primary
                                     )
                                 }
                             }
@@ -531,15 +530,10 @@ fun SmartInputCard(
     accent: Boolean = false,
     enabled: Boolean = true
 ) {
-    val color = if (accent) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary
-
     Card(
         shape = RoundedCornerShape(Dimens.CardCornerRadius),
         elevation = CardDefaults.cardElevation(defaultElevation = Dimens.CardElevation),
         border = BorderStroke(Dimens.BorderWidthStandard, MaterialTheme.colorScheme.outline),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        ),
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(
@@ -570,10 +564,6 @@ fun SmartInputCard(
                 value = value.toFloat(),
                 onValueChange = { if (enabled) onValueChange(it.toDouble().roundTo(1)) },
                 valueRange = range,
-                colors = SliderDefaults.colors(
-                    thumbColor = color,
-                    activeTrackColor = color
-                ),
                 enabled = enabled,
                 modifier = Modifier.fillMaxWidth()
             )

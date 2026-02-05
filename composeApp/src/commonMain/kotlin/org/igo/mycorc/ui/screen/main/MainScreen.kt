@@ -67,7 +67,6 @@ fun MainScreen() {
     CompositionLocalProvider(LocalTopBarState provides topBarState) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
-            containerColor = MaterialTheme.colorScheme.surfaceContainer,
             snackbarHost = { SnackbarHost(snackbarHostState) },
             topBar = {
                 CommonTopBar(
@@ -80,8 +79,7 @@ fun MainScreen() {
             floatingActionButton = {
                 if (currentRoute == Destinations.DASHBOARD) {
                     FloatingActionButton(
-                        onClick = { viewModel.navigateToCreate() },
-                        containerColor = MaterialTheme.colorScheme.primary
+                        onClick = { viewModel.navigateToCreate() }
                     ) {
                         Icon(Icons.Default.Add, contentDescription = strings.addButtonTooltip)
                     }

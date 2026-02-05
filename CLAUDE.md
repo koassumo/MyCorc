@@ -335,6 +335,69 @@ This ensures:
 - Items can scroll under the padding (no dead zone)
 - Last item ends with padding
 
+### Color System & Theming
+
+#### Architecture (цепочка цветов)
+
+```
+Color.kt (определение цвета)  →  Theme.kt (привязка к роли Material3)  →  MaterialTheme.colorScheme  →  Компонент
+Пример: LightPrimary = Red500  →  primary = LightPrimary              →  .primary                   →  Button, FAB
+```
+
+#### Key Files
+
+- **`ui/theme/Color.kt`** - Определение всех цветов. Палитра Material + семантические цвета для Light/Dark тем.
+- **`ui/theme/Theme.kt`** - Привязка цветов из Color.kt к ролям Material3 (`primary`, `surface`, `background` и т.д.). Содержит 4 схемы: кастомная Light/Dark + дефолтная Material3 Light/Dark.
+
+#### Rules
+
+1. **Никогда не устанавливай цвета в коде компонентов.** Все цвета должны управляться через `Color.kt` → `Theme.kt` → `MaterialTheme`. Компоненты Material3 автоматически используют правильные цвета из темы.
+
+```kotlin
+// ❌ Wrong - хардкод цвета в компоненте
+containerColor = Color(0xFFFF9800)
+
+// ❌ Wrong - переопределение дефолта Material3 (избыточно)
+containerColor = MaterialTheme.colorScheme.primary  // Button и так использует primary
+
+// ✅ Correct - не указывать цвет, Material3 сам подставит дефолт
+Button(onClick = { ... }) { Text("Click") }
+```
+
+2. **Для изменения цвета — меняй только `Color.kt`.** Если нужен другой цвет TopBar, кнопок, FAB — меняй соответствующую переменную в `Color.kt` (например, `LightPrimary = Blue500`). Не трогай код компонентов.
+
+3. **Используй Material3 роли только по назначению.** Не переопределяй `tertiary` для TopBar — если позже добавишь Switch, он тоже станет этим цветом.
+
+4. **Для нестандартных цветов — используй секцию "Custom Colors" в `Color.kt`.** Если нужен цвет, не вписывающийся ни в одну роль Material3, создай кастомную переменную и используй её напрямую (не через `MaterialTheme.colorScheme`).
+
+5. **Dynamic Color (Material You) отключен.** Системные обои пользователя не влияют на цвета приложения. Не добавляй `dynamicColorScheme()`.
+
+6. **В `Color.kt` не используй `Color(0x...)` для семантических цветов.** Все цвета берутся из палитры, определённой в начале файла (например, `Red500`, `Grey800`).
+
+#### Material3 Color Roles (дефолты)
+
+Комментарии в `Color.kt` и `Theme.kt` описывают, какие компоненты Material3 используют каждую роль **по умолчанию**:
+
+| Роль | Дефолтное использование |
+|---|---|
+| `primary` | FilledButton, FAB, ProgressIndicator, курсор TextField |
+| `primaryContainer` | FilledTonalButton, InputChip |
+| `secondary` | FilterChip, Snackbar action |
+| `surface` | Card, Sheet, Dialog, TopAppBar, Menu |
+| `surfaceContainer` | NavigationBar, NavigationRail, BottomSheet |
+| `onSurfaceVariant` | Placeholder текст, подписи, вторичные иконки |
+| `outline` | OutlinedButton, OutlinedTextField, Divider |
+| `error` | Ошибки валидации TextField |
+
+#### Theme Options
+
+В настройках доступно 5 тем:
+- **System** — Light/Dark по системным настройкам (наши брендовые цвета)
+- **Light** — Светлая (наши брендовые цвета из Color.kt)
+- **Dark** — Тёмная (наши брендовые цвета из Color.kt)
+- **Material3 Light** — Чистый дефолт Material3 (фиолетовая палитра, для сравнения)
+- **Material3 Dark** — Чистый дефолт Material3 (фиолетовая палитра, для сравнения)
+
 ### Navigation & BackHandler
 
 **AppBackHandler** - Cross-platform back button handling (`ui/common/AppBackHandler.kt`):
