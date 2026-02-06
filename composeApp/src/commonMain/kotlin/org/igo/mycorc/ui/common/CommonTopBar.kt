@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import org.igo.mycorc.ui.theme.myBarDivider
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,6 +57,6 @@ fun CommonTopBar(
             actions = actions,
             windowInsets = windowInsets
         )
-        HorizontalDivider()
+        HorizontalDivider(color = MaterialTheme.colorScheme.myBarDivider)
     }
 }

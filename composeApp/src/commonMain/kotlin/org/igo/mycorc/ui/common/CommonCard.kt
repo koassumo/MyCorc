@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import org.igo.mycorc.ui.theme.myCardBorder
 
 @Composable
 fun CommonCard(
@@ -32,7 +33,7 @@ fun CommonCard(
     elevation: Dp = Dimens.CommonCardElevation,
     containerColor: Color = MaterialTheme.colorScheme.surface,  // surface как в Dashboard
     backgroundAlpha: Float = Dimens.CommonCardAlpha,
-    borderColor: Color? = MaterialTheme.colorScheme.outline,  // null = без границы
+    borderColor: Color? = MaterialTheme.colorScheme.myCardBorder,  // null = без границы
     borderWidth: Dp = Dimens.CommonCardBorderWidth,
 
     onClick: (() -> Unit)? = null,

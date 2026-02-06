@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import org.igo.mycorc.ui.navigation.BottomNavItem
+import org.igo.mycorc.ui.theme.myBarDivider
 
 @Composable
 fun CommonBottomBar(
@@ -19,7 +20,7 @@ fun CommonBottomBar(
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
-        HorizontalDivider()
+        HorizontalDivider(color = MaterialTheme.colorScheme.myBarDivider)
         NavigationBar(
             containerColor = MaterialTheme.colorScheme.surfaceContainer,
         ) {

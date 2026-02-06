@@ -9,6 +9,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.*
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -62,10 +63,14 @@ fun SettingsScreen(
         }
     }
 
-    // AnimatedContent для плавных переходов между "подэкранами"
-    AnimatedContent(
-        targetState = currentPage,
-        transitionSpec = {
+    // Surface с цветом surface для фона Settings (отличается от background других экранов)
+    Surface(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        // AnimatedContent для плавных переходов между "подэкранами"
+        AnimatedContent(
+            targetState = currentPage,
+            transitionSpec = {
             if (targetState != SettingsPage.MainList) {
                 // Проваливаемся внутрь (слайд справа налево)
                 slideInHorizontally(
@@ -132,6 +137,7 @@ fun SettingsScreen(
                 )
             }
         }
+    }
     }
 }
 

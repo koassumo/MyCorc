@@ -321,28 +321,30 @@ val White = Color(0xFFFFFFFF)
 // ============================================================
 
 // Primary (основной брендовый цвет)
-val LightPrimary = Red300                      // primary (FilledButton, ProgressIndicator, курсор TextField)
-val LightPrimaryContainer = Red200             // primaryContainer (FAB, FilledTonalButton, InputChip)
+val LightPrimary = LightBlue600                      // primary (FilledButton, ProgressIndicator, курсор TextField)
+val LightPrimaryContainer = LightBlue200             // primaryContainer (FAB, FilledTonalButton, InputChip)
 val LightOnPrimary = White                     // onPrimary (текст/иконки НА primary)
-val LightOnPrimaryContainer = Black            // onPrimaryContainer (текст/иконки НА primaryContainer)
+val LightOnPrimaryContainer = Grey700            // onPrimaryContainer (текст/иконки НА primaryContainer)
 
 // Secondary (дополнительный цвет)
-val LightSecondary = BlueGrey500               // secondary (FilterChip, Snackbar action)
-val LightOnSecondary = White                   // onSecondary (текст/иконки НА secondary)
+val LightSecondary = LightBlue900                   // secondary (ниж.текст выбранного Chip в BottomBar, Snackbar action)
+val LightSecondaryContainer = LightBlue50          // secondaryContainer (фон выбранного FilterChip, NavigationBarItem)
+val LightOnSecondary = White                    // onSecondary (текст/иконки НА secondary)
+val LightOnSecondaryContainer = Black        // onSecondaryContainer (иконка-текст выбранного Chip (не ниж.текст в BottomBar)
 
 // Background (фон экрана)
 val LightBackground = Grey100                 // background (самый нижний слой — фон за всем контентом)
 val LightOnBackground = Black                  // onBackground (текст/иконки НА background)
 
 // Surface (поверхности)
-val LightSurface = White                       // surface (Card, Sheet, Dialog, TopAppBar, Menu)
+val LightSurface = White                       // surface (Card, Sheet, Dialog, TopAppBar, Menu, ListItem)
 val LightSurfaceContainer = White              // surfaceContainer (NavigationBar, NavigationRail, BottomSheet)
 val LightOnSurface = Black                     // onSurface (основной текст/иконки НА surface)
-val LightOnSurfaceVariant = Grey600            // onSurfaceVariant (placeholder, подписи, вторичные иконки)
+val LightOnSurfaceVariant = Grey700            // onSurfaceVariant (иконка-текст невыбр.фильтра, placeholder)
 
 // Borders & Dividers
-val LightOutline = Grey300                   // outline (OutlinedButton, OutlinedTextField, обводка Card)
-val LightOutlineVariant = Grey200           // outlineVariant (HorizontalDivider, мягкие разделители)
+val LightOutline = Green400                   // outline (OutlinedButton, OutlinedTextField, обводка Card)
+val LightOutlineVariant = Grey300           // outlineVariant (обводка фильтров, HorizontalDivider, мягкие разделители)
 
 // ============================================================
 // 🌙 ТЁМНАЯ ТЕМА (Dark Theme)
@@ -355,22 +357,24 @@ val DarkOnPrimary = White                      // onPrimary (текст/икон
 val DarkOnPrimaryContainer = White             // onPrimaryContainer (текст/иконки НА primaryContainer)
 
 // Secondary (дополнительный цвет)
-val DarkSecondary = BlueGrey500                // secondary (FilterChip, Snackbar action)
+val DarkSecondary = BlueGrey500                // secondary (нижн.текст выбранного Chip в BottomBar, Snackbar action)
+val DarkSecondaryContainer = BlueGrey700       // secondaryContainer (фон выбранного FilterChip, NavigationBarItem)
 val DarkOnSecondary = White                    // onSecondary (текст/иконки НА secondary)
+val DarkOnSecondaryContainer = BlueGrey50      // onSecondaryContainer (иконка-текст выбранного Chip (не ниж.текст в BottomBar)
 
 // Background (фон экрана)
 val DarkBackground = Black                     // background (самый нижний слой — фон за всем контентом)
 val DarkOnBackground = White                   // onBackground (текст/иконки НА background)
 
 // Surface (поверхности)
-val DarkSurface = BlueGrey900                     // surface (Card, Sheet, Dialog, TopAppBar, Menu)
+val DarkSurface = BlueGrey900                  // surface (Card, Sheet, Dialog, TopAppBar, Menu, ListItem)
 val DarkSurfaceContainer = Grey900             // surfaceContainer (NavigationBar, NavigationRail, BottomSheet)
 val DarkOnSurface = White                      // onSurface (основной текст/иконки НА surface)
-val DarkOnSurfaceVariant = Grey400             // onSurfaceVariant (placeholder, подписи, вторичные иконки)
+val DarkOnSurfaceVariant = Grey200             // onSurfaceVariant (иконка-текст невыбр.фильтра, placeholder)
 
 // Borders & Dividers
 val DarkOutline = Grey800                      // outline (OutlinedButton, OutlinedTextField, обводка Card)
-val DarkOutlineVariant = Grey900               // outlineVariant (HorizontalDivider, мягкие разделители)
+val DarkOutlineVariant = Grey900               // outlineVariant (обводка фильтров, HorizontalDivider, мягкие разделители)
 
 // ============================================================
 // ⚠️ ОБЩИЕ (используются в обеих темах)
@@ -386,17 +390,13 @@ val ErrorColor = Red700                        // error (ошибки валид
 // Сюда добавлять цвета, которые не вписываются ни в одну роль Material3.
 // Использовать напрямую в компонентах, НЕ через MaterialTheme.colorScheme.
 //
-// Пример:
-// val CustomTopBarBackground = Orange500
-// val CustomTopBarContent = White
+// Обводка карточек CommonCard      (по умолчанию был outline)
+val LightMyCardBorder = Grey400
+val DarkMyCardBorder = Grey800
 
-// TopBar кастомный фон (закомментировано - не используется)
-// val LightTopBarBackground = White
-// val DarkTopBarBackground = Grey900
-
-// ListItem кастомный фон (закомментировано - не используется)
-// val LightListItemBackground = LightBackground
-// val DarkListItemBackground = DarkBackground
+// Разделитель TopBar/BottomBar     (по умолчанию был outlineVariant)
+val LightMyBarDivider = Grey200
+val DarkMyBarDivider = Grey800
 
 
 // Status Badge Colors (для DashboardScreen)
@@ -404,13 +404,13 @@ val StatusDraftBackground = Orange50          // Фон для DRAFT стату�
 val StatusDraftText = Orange900               // Текст для DRAFT статуса
 
 val StatusReadyBackground = Blue50            // Фон для READY_TO_SEND
-val StatusReadyText = Blue800                 // Текст для READY_TO_SEND статуса
+val StatusReadyText = Blue900                 // Текст для READY_TO_SEND статуса
 
-val StatusSentBackground = Teal50             // Фон для SENT статуса
-val StatusSentText = Teal800                  // Текст для SENT статуса
+val StatusSentBackground = Grey50             // Фон для SENT статуса
+val StatusSentText = Grey900                  // Текст для SENT статуса
 
-val StatusApprovedBackground = Green100       // Фон для APPROVED статуса
-val StatusApprovedText = Green800             // Текст для APPROVED статуса
+val StatusApprovedBackground = Grey50       // Фон для APPROVED статуса
+val StatusApprovedText = Grey900             // Текст для APPROVED статуса
 
 val StatusRejectedBackground = Red100         // Фон для REJECTED статуса
 val StatusRejectedText = Red800               // Текст для REJECTED статуса
