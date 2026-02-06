@@ -119,6 +119,7 @@ Koin modules are organized in `di/`:
 - **UI Integrity**: Treat existing user-facing strings (like "Без описания") as intentional. If you see a better way to handle empty states or localization, suggest it as an improvement rather than changing it silently.
 - **KMP Best Practices**: Prioritize shared code in `commonMain`. When using platform-specific APIs, ensure they follow the project's established `expect/actual` patterns.
 - **Minimize Color Hardcoding**: Avoid using explicit `Color()` values in components. All colors should be managed through `Color.kt` → `Theme.kt` → `MaterialTheme.colorScheme` or `CompositionLocal` for custom colors.
+- **Use Component Templates**: Always use `CommonButton`/`CommonOutlinedButton` instead of Material3 `Button`/`OutlinedButton`. Always use `CommonCard` for cards. These templates ensure design consistency across the entire app.
 
 ### Intelligent Refactoring
 - **Incremental Improvements**: If you see an opportunity to improve Clean Architecture or Koin usage, point it out. We value high-quality code over "just making it work."
@@ -246,6 +247,10 @@ val ScreenPaddingSides = 12.dp
 val CardCornerRadius = 16.dp
 val CardPadding = 16.dp
 
+// Button styling
+val CommonButtonHeight = 48.dp         // Material Design 3 Large Button
+val CommonButtonCornerRadius = 24.dp   // Full rounded style
+
 // Input fields
 val InputFieldCornerRadius = 8.dp
 
@@ -293,6 +298,65 @@ Default styling:
 - ✅ Profile card
 - ✅ Any clickable/non-clickable content cards
 - ❌ Settings menu items (use Material3 `ListItem` instead)
+
+**CommonButton & CommonOutlinedButton** (`ui/common/CommonButton.kt`) - Unified button components following Material Design 3 standards:
+
+**CRITICAL: ALL buttons in the project MUST use these components. NEVER use Material3 `Button` or `OutlinedButton` directly in screens.**
+
+```kotlin
+// ✅ Correct - Filled button
+CommonButton(
+    text = strings.saveButton,
+    onClick = { viewModel.save() }
+)
+
+// ✅ Correct - Button with icon
+CommonButton(
+    text = strings.sendToServer,
+    onClick = { viewModel.sync() },
+    leadingIcon = {
+        Icon(Icons.Default.CloudUpload, contentDescription = null)
+    }
+)
+
+// ✅ Correct - Outlined button
+CommonOutlinedButton(
+    text = strings.signInWithGoogle,
+    onClick = { viewModel.signIn() },
+    leadingIcon = {
+        Icon(Icons.Default.Email, contentDescription = null)
+    }
+)
+
+// ❌ WRONG - Direct Material3 Button usage
+Button(onClick = { ... }) {
+    Text("Save")
+}
+```
+
+**Button specifications (Material Design 3 compliant):**
+- **Height**: `Dimens.CommonButtonHeight` (48.dp) - MD3 Large Button standard
+- **Corner radius**: `Dimens.CommonButtonCornerRadius` (24.dp) - Full rounded style
+- **Typography**: `MaterialTheme.typography.labelLarge` (14sp, weight 500) - MD3 Button standard
+- **Colors**: Automatically use `MaterialTheme.colorScheme.primary` / `onPrimary` (customizable via parameters)
+- **Width**: Always `fillMaxWidth()` by default
+
+**Available parameters:**
+- `text: String` - Button label (required)
+- `onClick: () -> Unit` - Click handler (required)
+- `modifier: Modifier` - For external spacing/sizing adjustments
+- `enabled: Boolean` - Enable/disable state
+- `leadingIcon: (@Composable () -> Unit)?` - Optional icon before text
+- `containerColor: Color` - Override background color (use sparingly)
+- `contentColor: Color` - Override text/icon color (use sparingly)
+- `height: Dp` - Override height (use sparingly, default is correct for 99% of cases)
+- `cornerRadius: Dp` - Override corner radius (use sparingly, default is correct for 99% of cases)
+
+**When to customize parameters:**
+Future use cases may require passing custom colors or dimensions, but **currently all buttons use default styling**. Only override parameters when explicitly needed and document the reason.
+
+**Exception:**
+`TestColorsScreen.kt` uses direct Material3 buttons for color demonstration purposes. This is the ONLY acceptable exception.
 
 ### Localization
 

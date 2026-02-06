@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import org.igo.mycorc.ui.common.CommonButton
 import org.igo.mycorc.ui.common.LoadingContent
 import org.igo.mycorc.ui.common.LocalTopBarState
 import org.igo.mycorc.ui.common.CommonCard
@@ -445,16 +446,11 @@ fun CreateNoteScreen(
         }
         // Кнопка сохранения (была в bottomBar)
         if (!state.isReadOnly) {
-            Button(
+            CommonButton(
+                text = if (state.editMode) strings.saveChanges else strings.saveNote,
                 onClick = { viewModel.saveNote() },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(Dimens.SpaceMedium)
-                    .height(Dimens.ButtonHeight),
-                shape = RoundedCornerShape(Dimens.InputFieldCornerRadius)
-            ) {
-                Text(if (state.editMode) strings.saveChanges else strings.saveNote)
-            }
+                modifier = Modifier.padding(Dimens.SpaceMedium)
+            )
         }
         }
         }

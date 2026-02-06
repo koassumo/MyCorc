@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.igo.mycorc.ui.common.AppBackHandler
+import org.igo.mycorc.ui.common.CommonButton
 import org.igo.mycorc.ui.common.LocalTopBarState
 import org.igo.mycorc.ui.common.Dimens
 import org.koin.compose.viewmodel.koinViewModel
@@ -191,12 +192,10 @@ private fun SettingsMainList(
         Spacer(modifier = Modifier.height(Dimens.SpaceLarge))
 
         // Кнопка: Test Colors Screen
-        Button(
-            onClick = onTestClick,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Test Colors")
-        }
+        CommonButton(
+            text = "Test Colors",
+            onClick = onTestClick
+        )
 
         Spacer(modifier = Modifier.height(Dimens.SpaceMedium))
     }

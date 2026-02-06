@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.style.TextAlign
 import org.igo.mycorc.domain.model.Note
 import org.igo.mycorc.domain.model.NoteStatus
+import org.igo.mycorc.ui.common.CommonButton
 import org.igo.mycorc.ui.common.CommonCard
 import org.igo.mycorc.ui.common.Dimens
 import org.igo.mycorc.ui.common.LocalTopBarState
@@ -215,14 +216,13 @@ fun DashboardItem(
         when (note.status) {
             org.igo.mycorc.domain.model.NoteStatus.READY_TO_SEND -> {
                 Spacer(modifier = Modifier.height(Dimens.SpaceMedium))
-                Button(
+                CommonButton(
+                    text = strings.sendToRegistration,
                     onClick = onSendClick,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Icon(Icons.Default.CloudUpload, contentDescription = null)
-                    Spacer(Modifier.width(Dimens.SpaceSmall))
-                    Text(strings.sendToRegistration)
-                }
+                    leadingIcon = {
+                        Icon(Icons.Default.CloudUpload, contentDescription = null)
+                    }
+                )
             }
 
             else -> {}

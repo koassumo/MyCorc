@@ -1,7 +1,6 @@
 package org.igo.mycorc.ui.screen.profile
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -9,6 +8,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import org.igo.mycorc.ui.common.CommonButton
 import org.igo.mycorc.ui.common.CommonCard
 import org.igo.mycorc.ui.common.LocalTopBarState
 import org.igo.mycorc.ui.common.Dimens
@@ -58,15 +58,10 @@ fun ProfileScreen() {
 
                     Spacer(modifier = Modifier.height(Dimens.SpaceSmall))
 
-                    Button(
-                        onClick = { viewModel.logout() },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(Dimens.ButtonHeight),
-                        shape = RoundedCornerShape(Dimens.InputFieldCornerRadius)
-                    ) {
-                        Text(strings.logoutButton)
-                    }
+                    CommonButton(
+                        text = strings.logoutButton,
+                        onClick = { viewModel.logout() }
+                    )
                 }
             }
         }

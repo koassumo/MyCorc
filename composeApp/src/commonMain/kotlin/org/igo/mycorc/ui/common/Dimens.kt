@@ -30,11 +30,8 @@ object Dimens {
     val CardItemSpacing = 12.dp
 
     // ==================== CommonButton ====================
-    val CommonButtonHeight = 50.dp
+    val CommonButtonHeight = 48.dp
     val CommonButtonCornerRadius = 24.dp
-
-    // Обратная совместимость (deprecated, используй CommonButtonHeight)
-    val ButtonHeight = CommonButtonHeight
 
     // ==================== Spacing (универсальные отступы) ====================
     val SpaceSmall = 8.dp

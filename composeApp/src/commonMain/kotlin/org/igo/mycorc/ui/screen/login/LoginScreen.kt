@@ -11,6 +11,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import org.igo.mycorc.ui.common.CommonButton
+import org.igo.mycorc.ui.common.CommonOutlinedButton
 import org.igo.mycorc.ui.common.CommonTopBar
 import org.igo.mycorc.ui.common.Dimens
 import org.koin.compose.viewmodel.koinViewModel
@@ -96,29 +98,30 @@ private fun LoginContent(
 
         // Google Sign-In button (показывается только на Android)
         if (activityContext != null) {
-            OutlinedButton(
-                onClick = { viewModel.signInWithGoogle(activityContext) },
-                enabled = !isLoading,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(Dimens.ButtonHeight),
-                shape = RoundedCornerShape(Dimens.InputFieldCornerRadius),
-                border = BorderStroke(Dimens.BorderWidthStandard, MaterialTheme.colorScheme.outline)
-            ) {
-                if (isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(Dimens.IconSizeSmall),
-                        strokeWidth = Dimens.ProgressIndicatorStrokeWidth
-                    )
-                } else {
-                    Icon(
-                        imageVector = Icons.Default.Email,
-                        contentDescription = null,
-                        modifier = Modifier.size(Dimens.IconSizeSmall)
-                    )
-                    Spacer(modifier = Modifier.width(Dimens.SpaceSmall))
-                    Text(strings.signInWithGoogle)
-                }
+            if (isLoading) {
+                CommonOutlinedButton(
+                    text = "",
+                    onClick = {},
+                    enabled = false,
+                    leadingIcon = {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(Dimens.IconSizeSmall),
+                            strokeWidth = Dimens.ProgressIndicatorStrokeWidth
+                        )
+                    }
+                )
+            } else {
+                CommonOutlinedButton(
+                    text = strings.signInWithGoogle,
+                    onClick = { viewModel.signInWithGoogle(activityContext) },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Email,
+                            contentDescription = null,
+                            modifier = Modifier.size(Dimens.IconSizeSmall)
+                        )
+                    }
+                )
             }
 
             // Разделитель "──── или ────"
@@ -162,21 +165,23 @@ private fun LoginContent(
 
         ErrorMessage(error)
 
-        Button(
-            onClick = { viewModel.login(email, password) },
-            enabled = !isLoading && email.isNotBlank() && password.isNotBlank(),
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(Dimens.ButtonHeight),
-            shape = RoundedCornerShape(Dimens.InputFieldCornerRadius)
-        ) {
-            if (isLoading) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(Dimens.IconSizeSmall),
-                )
-            } else {
-                Text(strings.loginButton)
-            }
+        if (isLoading) {
+            CommonButton(
+                text = "",
+                onClick = {},
+                enabled = false,
+                leadingIcon = {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(Dimens.IconSizeSmall),
+                    )
+                }
+            )
+        } else {
+            CommonButton(
+                text = strings.loginButton,
+                onClick = { viewModel.login(email, password) },
+                enabled = email.isNotBlank() && password.isNotBlank()
+            )
         }
 
         TextButton(
@@ -253,28 +258,30 @@ private fun RegisterContent(
 
         ErrorMessage(displayError)
 
-        Button(
-            onClick = {
-                if (password != confirmPassword) {
-                    localError = strings.passwordsDoNotMatch
-                } else {
-                    localError = null
-                    viewModel.register(email, password)
+        if (isLoading) {
+            CommonButton(
+                text = "",
+                onClick = {},
+                enabled = false,
+                leadingIcon = {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(Dimens.IconSizeSmall),
+                    )
                 }
-            },
-            enabled = !isLoading && email.isNotBlank() && password.isNotBlank() && confirmPassword.isNotBlank(),
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(Dimens.ButtonHeight),
-            shape = RoundedCornerShape(Dimens.InputFieldCornerRadius)
-        ) {
-            if (isLoading) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(Dimens.IconSizeSmall),
-                )
-            } else {
-                Text(strings.registerButton)
-            }
+            )
+        } else {
+            CommonButton(
+                text = strings.registerButton,
+                onClick = {
+                    if (password != confirmPassword) {
+                        localError = strings.passwordsDoNotMatch
+                    } else {
+                        localError = null
+                        viewModel.register(email, password)
+                    }
+                },
+                enabled = email.isNotBlank() && password.isNotBlank() && confirmPassword.isNotBlank()
+            )
         }
 
         TextButton(
